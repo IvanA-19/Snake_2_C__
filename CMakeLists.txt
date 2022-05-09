@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_EXE_LINKER_FLAGS "-static -static-libgcc")
 set(SFML_STATIC_LIBRARIES TRUE)
 
-add_executable(Snake_2_C__ main.cpp)
+add_executable(Snake_2_C__ WIN32 main.cpp)
 
 set(SFML_DIR "F:\\Cross-Zero_C++\\New folder\\lib\\SFML-2.5.1\\lib\\cmake\\SFML")
 

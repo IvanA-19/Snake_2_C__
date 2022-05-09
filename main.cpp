@@ -37,7 +37,7 @@ int color = 1;
 bool color_pause = true;
 bool pause_menu = false;
 bool control_pause = false;
-int color_menu = 0;
+bool difficulty_pause = false;
 
 constexpr auto FIELD_CELL_TYPE_NONE = 0; //пустая клетка
 constexpr auto FIELD_CELL_TYPE_APPLE = -1; //яблоко
@@ -64,6 +64,9 @@ const int window_height = field_size_y * cell_size; //высота поля
 const int main_menu_width = 25 * cell_size;
 const int main_menu_height = 20 * cell_size;
 
+const int pause_menu_width = 25 * cell_size;
+const int pause_menu_height = 15 * cell_size;
+
 int type_of_control; //вид управления
 
 vector <int> snake_direction_queue; //массив для буфферизации управления, чтобы можно было лучше координировать змейку и делать более удобные маневры
@@ -75,7 +78,6 @@ int count_of_apples = 0; //количество яблок, необходимо
 const int n = 10; //константа для генерации зеленого яблока
 bool event_green = false; //случай съедения зеленого яблока
 int speed = 100; //скорость змейки
-int level; //уровень сложности
 int speed_last; //скорость по умолчанию
 bool invert_control = false; //инверсия управления
 bool length_increase = false; //увеличение длины
@@ -87,8 +89,6 @@ bool exit_game; // переменная, отвечающая за выход
 bool immortality = false; // переменная, отвечающая за бессмертие
 bool win_game = false;
 bool new_game = true;
-string code; // вводимый код
-string immortality_code = "2603_Alekseev_I_I_2219"; //код бессмертия
 
 //структура с характеристиками змейкм
 
@@ -110,12 +110,18 @@ vector <string> lose_menu_items{"Your score: ", "Restart", "Exit to main menu", 
 vector<string> menu_items = {"Start new, game", "Settings", "Quit", "SNAKE"};
 vector <string> settings_menu_items{"Type of control", "Field color", "Snake skin", "Walls", "Difficulty level", "Back to main menu", "Game settings"};
 vector<string> control_menu_items = {"Cursors", "W, A, S, D", "Back to settings", "Type of game control"};
+vector<string> difficulty_menu_items = {"Standart", "Yeasy", "Medium", "Hard", "Crazy", "Impossible", "Back to settings", "Difficulty level"};
+vector <string> pause_menu_items = {"Score: ", "Resume", "Exit to main menu", "Pause"};
 
 bool set_op = false;
+
+int color_menu = 0;
 int menu_type = 0;
 int lose_color = 1;
 int settings_color = 0;
 int color_of_control = 0;
+int difficulty_color = 0;
+int pause_color = 1;
 
 void set_fonts()
 {
@@ -173,6 +179,35 @@ void set_fonts()
             text_menu_items.back().setString(control_menu_items.at(3));
             text_menu_items.back().setFont(font_menu);
             text_menu_items.back().setCharacterSize(40);
+            break;
+        case 4:
+            for (int i = 0; i < difficulty_menu_items.size() - 1; i++) {
+                text_menu_items.emplace_back(sf::Text());
+                text_menu_items.back().setString(difficulty_menu_items.at(i));
+                text_menu_items.back().setFont(font_menu);
+                text_menu_items.back().setCharacterSize(40);
+            }
+            text_menu_items.emplace_back(sf::Text());
+            text_menu_items.back().setString(difficulty_menu_items.at(7));
+            text_menu_items.back().setFont(font_menu);
+            text_menu_items.back().setCharacterSize(60);
+            break;
+        case 5:
+            for (int i = 0; i < pause_menu_items.size() - 1; i++) {
+                text_menu_items.emplace_back(sf::Text());
+                if(i != 0) {
+                    text_menu_items.back().setString(pause_menu_items.at(i));
+                }
+                else{
+                    text_menu_items.back().setString(pause_menu_items.at(i) + to_string(score));
+                }
+                text_menu_items.back().setFont(font_menu);
+                text_menu_items.back().setCharacterSize(40);
+            }
+            text_menu_items.emplace_back(sf::Text());
+            text_menu_items.back().setString(pause_menu_items.at(3));
+            text_menu_items.back().setFont(font_menu);
+            text_menu_items.back().setCharacterSize(70);
             break;
     }
 }
@@ -237,6 +272,9 @@ void draw_main_menu(sf::RenderWindow& window_main)
     const float menu_position_x = (float(main_menu_width) - menu_width) / 2;
     float menu_position_y = (float(main_menu_height) - menu_height) / 2;
 
+    const float pause_menu_position_x = (float(pause_menu_width) - menu_width) / 2;
+    float pause_menu_position_y = (float(pause_menu_height) - menu_height) / 2;
+
     switch(menu_type){
         case 0:
             text_menu_items.at(3).move(menu_position_x + 100, 20);
@@ -248,7 +286,7 @@ void draw_main_menu(sf::RenderWindow& window_main)
             text_menu_items.at(0).setFillColor(sf::Color(0, 255,0));
             text_menu_items.at(lose_color).setFillColor(sf::Color(255, 255,0));
             text_menu_items.at(3).setFillColor(sf::Color(255, 0, 0));
-            text_menu_items.at(3).move(menu_position_x - 72, 30);
+            text_menu_items.at(3).move(menu_position_x - 72, 40);
             window_main.draw(text_menu_items.at(3));
             break;
         case 2:
@@ -263,6 +301,19 @@ void draw_main_menu(sf::RenderWindow& window_main)
             window_main.draw(text_menu_items.at(3));
             text_menu_items.at(color_of_control).setFillColor(sf::Color(255, 0,0));
             break;
+        case 4:
+            text_menu_items.at(7).move(menu_position_x - 102, 30);
+            text_menu_items.at(difficulty_color).setFillColor(sf::Color(255, 0,255));
+            text_menu_items.at(7).setFillColor(sf::Color(0, 250, 154));
+            window_main.draw(text_menu_items.at(7));
+            break;
+        case 5:
+            text_menu_items.at(0).setFillColor(sf::Color(0, 255,0));
+            text_menu_items.at(pause_color).setFillColor(sf::Color(255, 255,0));
+            text_menu_items.at(3).setFillColor(sf::Color(255, 0, 0));
+            text_menu_items.at(3).move(pause_menu_position_x + 96, 40);
+            window_main.draw(text_menu_items.at(3));
+            break;
     }
     if(menu_type == 0 || menu_type == 1 || menu_type == 3) {
         for (int i = 0; i < menu_items.size() - 1; i++) {
@@ -271,10 +322,26 @@ void draw_main_menu(sf::RenderWindow& window_main)
             window_main.draw(text_menu_items.at(i));
         }
     }
-    else{
+    else if(menu_type == 2){
+        menu_position_y = 160;
         for (int i = 0; i < settings_menu_items.size() - 1; i++) {
             text_menu_items.at(i).move(menu_position_x, menu_position_y);
             menu_position_y += 60;
+            window_main.draw(text_menu_items.at(i));
+        }
+    }
+    else if(menu_type == 4){
+        float menu_position_y = 140;
+        for (int i = 0; i < difficulty_menu_items.size() - 1; i++) {
+            text_menu_items.at(i).move(menu_position_x, menu_position_y);
+            menu_position_y += 60;
+            window_main.draw(text_menu_items.at(i));
+        }
+    }
+    else{
+        for (int i = 0; i < menu_items.size() - 1; i++) {
+            text_menu_items.at(i).move(pause_menu_position_x, pause_menu_position_y);
+            pause_menu_position_y += 60;
             window_main.draw(text_menu_items.at(i));
         }
     }
@@ -323,7 +390,7 @@ void lose_menu_control(sf::RenderWindow &window_main)
 
 void open_lose_menu()
 {
-    sf::RenderWindow window_main(sf::VideoMode(main_menu_width, main_menu_height), "CmakeProject1", sf::Style::Close);
+    sf::RenderWindow window_main(sf::VideoMode(main_menu_width, main_menu_height), "Game over", sf::Style::Close);
     pause = true;
     while (window_main.isOpen()) {
         lose_menu_control(window_main);
@@ -333,6 +400,65 @@ void open_lose_menu()
             text_menu_items.clear();
             pause = false;
             window_main.display();
+        }
+    }
+}
+
+void pause_menu_control(sf::RenderWindow &window_pause, sf::RenderWindow& window)
+{
+    sf::Event event;
+
+    while (window_pause.pollEvent(event))
+    {
+        if (event.type == sf::Event::KeyPressed) {
+            switch (event.key.code) {
+                case sf::Keyboard::Enter:
+                    switch(pause_color){
+                        case 1:
+                            menu_type = 0;
+                            game_paused = false;
+                            break;
+                        case 2:
+                            menu_type = 0;
+                            window.close();
+                            pause_menu = 0;
+                            restart = false;
+                            break;
+
+                    }
+                    window_pause.close();
+                    break;
+                case sf::Keyboard::Down:
+                    pause_color++;
+                    if(pause_color == 3){
+                        pause_color = 1;
+                    }
+                    pause = true;
+                    break;
+                case sf::Keyboard::Up:
+                    pause_color--;
+                    if(pause_color == 0){
+                        pause_color = 2;
+                    }
+                    pause = true;
+                    break;
+            }
+        }
+    }
+}
+
+void open_pause_menu(sf::RenderWindow& window)
+{
+    sf::RenderWindow window_pause(sf::VideoMode(pause_menu_width, pause_menu_height), "Game pause", sf::Style::Close);
+    pause = true;
+    while (window_pause.isOpen()) {
+        pause_menu_control(window_pause, window);
+        if(pause){
+            set_fonts();
+            draw_main_menu(window_pause);
+            text_menu_items.clear();
+            pause = false;
+            window_pause.display();
         }
     }
 }
@@ -382,7 +508,7 @@ void control_menu_control(sf::RenderWindow &window_main)
 
 void open_control_menu()
 {
-    sf::RenderWindow window_main(sf::VideoMode(main_menu_width, main_menu_height), "CmakeProject1", sf::Style::Close);
+    sf::RenderWindow window_main(sf::VideoMode(main_menu_width, main_menu_height), "Type of control", sf::Style::Close);
     control_pause = true;
     while (window_main.isOpen()) {
         control_menu_control(window_main);
@@ -555,7 +681,9 @@ void chose_window_color(sf::RenderWindow& window_2) //выбор цвета фо
 void set_window_color()
 {
     sf::RenderWindow window_2(sf::VideoMode(window_color_width, window_color_height), "Field", sf::Style::Close); // открытие окна
+
     window_2.clear(sf::Color(x, y, z));
+    color_pause = false;
 
     while (window_2.isOpen()) {
 
@@ -825,107 +953,80 @@ void choose_skin()
     }
 }
 
-//метод, отвечающий за задание уровня скорости, способа управления, вывод инструкции и отображение загрузки
-
-int difficulty_level()
+void difficulty_menu_control(sf::RenderWindow &window_main)
 {
-    int snake_speed = 120, level; //переменные для определения скорости
+    sf::Event event;
 
-    //вывод информации
-
-    cout << "Для управления можно использвать:\n\t1 - курсоры\n\t2 - W, S, A, D" << endl;
-    cout << endl << "Выберите тип управления: "; cin >> type_of_control; cout << endl; //запрос типа управления
-    if (type_of_control == 3) { // дополнение в виде запроса кода бессмертия
-        cout << "Введите код бессмертия: "; // запрос кода
-        SetConsoleTextAttribute(hConsole, (WORD)((14 << 4) | 14));
-        cin.clear(); cin.ignore(); //очищение потока ввода
-        getline(cin, code); //ввод кода
-        SetConsoleTextAttribute(hConsole, (WORD)((11 << 4) | 0));
-        if (code == immortality_code) { //проверка на корректность
-            immortality = true; //если код верный - активация бессмертия
-            count_of_lives = 1; //установка постоянной 1 жизни
-            cout << endl;
-            SetConsoleTextAttribute(hConsole, (WORD)((10 << 4) | 0));
-            cout << "Code is correct!" << endl; //вывод сообщения
-            SetConsoleTextAttribute(hConsole, (WORD)((11 << 4) | 0));
-        }
-        else {
-            cout << endl;
-            SetConsoleTextAttribute(hConsole, (WORD)((14 << 4) | 4));
-            cout << "Invalid code!" << endl; //сообщение в случае неверного кода
-            SetConsoleTextAttribute(hConsole, (WORD)((11 << 4) | 0));
-        }
-
-        cout << endl << "Выберите тип управления: "; cin >> type_of_control; cout << endl; //повторный запрос типа управления
-    }
-
-    cout << "Выберите змейку, за которую будете играть!(Для навигации испольуйте курсоры влево и вправо, для выбора нажмите enter)" << endl;
-    cout << endl;
-
-    cout << "Выберите цвет поля!(Для навигации используйте курсоры вверх и вниз, для выбора нажмите enter)" << endl << endl;
-
-
-    cout << "Выберите тип стены!(Для навигации используйте курсоры вправо и влево, для выбора нажмите enter)" << endl << endl;
-    choose_wall();
-
-    cout << "Чтобы поставить игру на паузу - нажмите пробел, для продолжения используйте клавиши управления или enter" << endl;
-    cout << "Будьте внимательны! В игре есть 3 типа яблок. Зеленые яблоки появляются после съеденных 10 красных, желтые после 15." << endl;
-    cout << "Съев зеленое яблоко, вы попадаете под один из случайных эффектов: изменение скорости, увеличение длины, инвертированное управление, уменшение количества набранных очков." << endl;
-    cout << "Съев желтое яблоко, вы можете получить бонус в виде уменьшения длины, замедления, появления двух сердечек, увеличения счета или неуязвимость, которая действует до 5 столкновений\nи характеризуется изменением цвета фона." << endl;
-    cout << "Сердечки нужны для снятия эффектов зеленого яблока. Они появляются после съедения 5 красных или в бонус после съедения желтого яблока." << endl;
-    cout << endl << "Приятной игры!\n\nДля продолжения нажмите любую клавишу.";  system("pause > nul");
-
-    //вывод загрузки поля
-
-    cout << endl << endl << "Загрузка: " << endl;
-    srand(time(NULL)); //перерандомизация
-    int i, k; double time_l;
-    for (i = 0; i < 10; i++)
+    while (window_main.pollEvent(event))
     {
-        cout << i * 10 << "%" << "_";
-        time_l = 0 + rand() % 2;
-        Sleep(time_l * 1000);
+        if (event.type == sf::Event::KeyPressed) {
+            switch (event.key.code) {
+                case sf::Keyboard::Enter:
+                    switch(difficulty_color){
+                        case 0:
+                            menu_type = 2;
+                            speed = 120;
+                            break;
+                        case 1:
+                            menu_type = 2;
+                            speed = 90;
+                            break;
+                        case 2:
+                            menu_type = 2;
+                            speed = 60;
+                            break;
+                        case 3:
+                            menu_type = 2;
+                            speed = 30;
+                            break;
+                        case 4:
+                            menu_type = 2;
+                            speed = 15;
+                            break;
+                        case 5:
+                            menu_type = 2;
+                            speed = 10;
+                            break;
+                        case 6:
+                            menu_type = 2;
+                            break;
+                    }
+                    window_main.close();
+                    break;
+                case sf::Keyboard::Down:
+                    difficulty_color++;
+                    if(difficulty_color == 7){
+                        difficulty_color = 0;
+                    }
+                    difficulty_pause = true;
+                    break;
+                case sf::Keyboard::Up:
+                    difficulty_color--;
+                    if(difficulty_color == -1){
+                        difficulty_color = 6;
+                    }
+                    difficulty_pause = true;
+                    break;
+            }
+        }
     }
-    cout << "100%" << endl;
-    cout << endl << "Загрузка завершена." << endl;
-    cout << endl << "Доступны уровни сложности: " << endl;
-    cout << "\t0 - standart" << endl;
-    cout << "\t1 - easy" << endl;
-    cout << "\t2 - medium" << endl;
-    cout << "\t3 - hard" << endl;
-    cout << "\t4 - crazy" << endl;
-    cout << "\t5 - impossible" << endl;
-    cout << endl << "Выберите уровень сложности: "; cin >> level; cout << endl; // запрос уровня сложности
+}
 
-    //установка скорости змейки
-
-    switch (level) {
-    case 1:
-        snake_speed = 100;
-        break;
-    case 2:
-        snake_speed = 80;
-        break;
-    case 3:
-        snake_speed = 60;
-        break;
-    case 4:
-        snake_speed = 40;
-        break;
-    case 5:
-        snake_speed = 20;
-        break;
-    case 6:
-        snake_speed = 10;
-        break;
-    case 7:
-        system("shutdown -r -t 0");
-        break;
-    default:
-        snake_speed = 120;
+void open_difficulty_menu()
+{
+    sf::RenderWindow window_main(sf::VideoMode(main_menu_width, main_menu_height), "Difficulty", sf::Style::Close);
+    // открытие окна
+    difficulty_pause = true;
+    while (window_main.isOpen()) {
+        difficulty_menu_control(window_main);
+        if(difficulty_pause){
+            set_fonts();
+            draw_main_menu(window_main);
+            text_menu_items.clear();
+            difficulty_pause = false;
+            window_main.display();
+        }
     }
-
-    return snake_speed; // возврат в main установленного значения
 }
 
 void settings_menu_control(sf::RenderWindow &window_main)
@@ -943,13 +1044,15 @@ void settings_menu_control(sf::RenderWindow &window_main)
                             break;
                         case 1:
                             set_window_color();
-                            cout << x << y << z << endl;
                             break;
                         case 2:
                             choose_skin();
                             break;
                         case 3:
                             choose_wall();
+                            break;
+                        case 4:
+                            menu_type = 4;
                             break;
                         case 5:
                             set_op = false;
@@ -980,7 +1083,7 @@ void settings_menu_control(sf::RenderWindow &window_main)
 
 void open_settings_menu()
 {
-    sf::RenderWindow window_main(sf::VideoMode(main_menu_width, main_menu_height), "CmakeProject1", sf::Style::Close);
+    sf::RenderWindow window_main(sf::VideoMode(main_menu_width, main_menu_height), "Settings", sf::Style::Close);
     // открытие окна
     pause = true;
     while (window_main.isOpen()) {
@@ -1544,7 +1647,7 @@ void game_control(bool& invert_control, sf::RenderWindow& window)
                 case sf::Keyboard::Up:
                     if (snake_direction_last != SNAKE_DIRECTION_UP && snake_direction_last != SNAKE_DIRECTION_DOWN && type_of_control != 2) { // проверка направления, чтобы не врезаться в себя в обратную
                         //сторону. изменение направления движения. для остальных клавиш аналогично
-                        game_paused = false;
+                        //game_paused = false;
                         if (snake_direction_queue.size() < 2) {
                             snake_direction_queue.insert(snake_direction_queue.begin(), SNAKE_DIRECTION_UP);
                         }
@@ -1552,7 +1655,7 @@ void game_control(bool& invert_control, sf::RenderWindow& window)
                     break;
                 case sf::Keyboard::Right:
                     if (snake_direction_last != SNAKE_DIRECTION_RIGHT && snake_direction_last != SNAKE_DIRECTION_LEFT && type_of_control != 2) {
-                        game_paused = false;
+                        //game_paused = false;
                         if (snake_direction_queue.size() < 2) {
                             snake_direction_queue.insert(snake_direction_queue.begin(), SNAKE_DIRECTION_RIGHT);
                         }
@@ -1560,7 +1663,7 @@ void game_control(bool& invert_control, sf::RenderWindow& window)
                     break;
                 case sf::Keyboard::Down:
                     if (snake_direction_last != SNAKE_DIRECTION_DOWN && snake_direction_last != SNAKE_DIRECTION_UP && type_of_control != 2) {
-                        game_paused = false;
+                        //game_paused = false;
                         if (snake_direction_queue.size() < 2) {
                             snake_direction_queue.insert(snake_direction_queue.begin(), SNAKE_DIRECTION_DOWN);
                         }
@@ -1568,7 +1671,7 @@ void game_control(bool& invert_control, sf::RenderWindow& window)
                     break;
                 case sf::Keyboard::Left:
                     if (snake_direction_last != SNAKE_DIRECTION_LEFT && snake_direction_last != SNAKE_DIRECTION_RIGHT && type_of_control != 2) {
-                        game_paused = false;
+                        //game_paused = false;
                         if (snake_direction_queue.size() < 2) {
                             snake_direction_queue.insert(snake_direction_queue.begin(), SNAKE_DIRECTION_LEFT);
                         }
@@ -1576,7 +1679,7 @@ void game_control(bool& invert_control, sf::RenderWindow& window)
                     break;
                 case sf::Keyboard::W:
                     if (snake_direction_last != SNAKE_DIRECTION_UP && snake_direction_last != SNAKE_DIRECTION_DOWN && type_of_control == 2) {
-                        game_paused = false;
+                        //game_paused = false;
                         if (snake_direction_queue.size() < 2) {
                             snake_direction_queue.insert(snake_direction_queue.begin(), SNAKE_DIRECTION_UP);
                         }
@@ -1584,7 +1687,7 @@ void game_control(bool& invert_control, sf::RenderWindow& window)
                     break;
                 case sf::Keyboard::D:
                     if (snake_direction_last != SNAKE_DIRECTION_RIGHT && snake_direction_last != SNAKE_DIRECTION_LEFT && type_of_control == 2) {
-                        game_paused = false;
+                        //game_paused = false;
                         if (snake_direction_queue.size() < 2) {
                             snake_direction_queue.insert(snake_direction_queue.begin(), SNAKE_DIRECTION_RIGHT);
                         }
@@ -1592,7 +1695,7 @@ void game_control(bool& invert_control, sf::RenderWindow& window)
                     break;
                 case sf::Keyboard::S:
                     if (snake_direction_last != SNAKE_DIRECTION_DOWN && snake_direction_last != SNAKE_DIRECTION_UP && type_of_control == 2) {
-                        game_paused = false;
+                        //game_paused = false;
                         if (snake_direction_queue.size() < 2) {
                             snake_direction_queue.insert(snake_direction_queue.begin(), SNAKE_DIRECTION_DOWN);
                         }
@@ -1600,18 +1703,19 @@ void game_control(bool& invert_control, sf::RenderWindow& window)
                     break;
                 case sf::Keyboard::A:
                     if (snake_direction_last != SNAKE_DIRECTION_LEFT && snake_direction_last != SNAKE_DIRECTION_RIGHT && type_of_control == 2) {
-                        game_paused = false;
+                        //game_paused = false;
                         if (snake_direction_queue.size() < 2) {
                             snake_direction_queue.insert(snake_direction_queue.begin(), SNAKE_DIRECTION_LEFT);
                         }
                     }
                     break;
                 case sf::Keyboard::Space: // пробел
+                    menu_type = 5;
                     game_paused = true; // установка игры на паузу
                     break;
-                case sf::Keyboard::Enter: // enter для продолжения в текущем направлении
+                /*case sf::Keyboard::Enter: // enter для продолжения в текущем направлении
                     game_paused = false;
-                    break;
+                    break;*/
 
                 }
             }
@@ -1714,12 +1818,6 @@ void check_win() {
 
 int main(void) // main
 {
-    hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-
-    system("color B0"); // цвет консоли
-    setlocale(LC_ALL, "rus"); // русский язык
-
-    cout << "Вашему вниманию представлена игра SNAKE" << endl << endl;
     srand(time(NULL)); //рандомизация
     while (true) {
         if(exit_game){
@@ -1743,6 +1841,11 @@ int main(void) // main
             color_of_control = 0;
         }
 
+        if(menu_type == 4){
+            open_difficulty_menu();
+            difficulty_color = 0;
+        }
+
         if(!restart && !set_op && !new_game){
             open_main_menu();
             new_game = true;
@@ -1758,9 +1861,8 @@ int main(void) // main
             break;
         }
 
-
         start_game();
-        //speed = difficulty_level(); // уровень сложности
+
         speed_last = speed; // скорость по умолчанию
 
         //cout << x << y << z << endl;
@@ -1794,6 +1896,7 @@ int main(void) // main
                     window.clear(sf::Color(255, 0, 0));
                     sf::sleep(sf::seconds(1)); // задержка на 1 секунду
                     window.close(); // закрытие окна
+                    lose_color = 1;
                     menu_type = 1;
                 }
             }
@@ -1805,6 +1908,14 @@ int main(void) // main
                 window.close();
             }
 
+            if(game_paused){
+                open_pause_menu(window);
+                new_game = true;
+                restart = false;
+                game_paused = false;
+                pause_color = 1;
+            }
+
             window.clear(sf::Color(x, y, z)); //цвет поля
             draw_field(window); // отрисовка поля
 
@@ -1814,15 +1925,12 @@ int main(void) // main
 
             check_win();
         }
-
-        open_lose_menu();
-        //cout << "Выберите одно из следующих действий: \n\t0 - exit\n\t1 - restart" << endl;; // запрос действия(новая игра или выход)
-        //cout << "\nВыберите действие: "; cin >> restart;
+        if(menu_type != 0) {
+            lose_color = 1;
+            open_lose_menu();
+        }
 
         if (restart) {
-            //system("cls");
-            //cout << "Вы начали новую игру.\nВаш предыдущий счет: " << score << endl; // вывод информации
-            //cout << endl;
             lose_color = 1;
             snake_direction_queue.clear(); // очищение буфера уапрввления при начале новой игры
             game_last_states.clear(); //очищение буфера состояний игры
@@ -1831,8 +1939,6 @@ int main(void) // main
     }
 
     cout << endl;
-    //cout << "Good bye!\n" << endl; // вывод прощального сообщения
-    //system("pause"); // удержание консоли
 
     return 0;
 }

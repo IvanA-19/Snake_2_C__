@@ -67,7 +67,7 @@ build CMakeFiles/Snake_2_C__.dir/main.cpp.obj: CXX_COMPILER__Snake_2_C___Debug F
 
 build Snake_2_C__.exe: CXX_EXECUTABLE_LINKER__Snake_2_C___Debug CMakeFiles/Snake_2_C__.dir/main.cpp.obj | F$:/Cross-Zero_C++/New$ folder/lib/SFML-2.5.1/lib/libsfml-graphics-s-d.a F$:/Cross-Zero_C++/New$ folder/lib/SFML-2.5.1/lib/libsfml-window-s-d.a F$:/Cross-Zero_C++/New$ folder/lib/SFML-2.5.1/lib/libsfml-system-s-d.a F$:/Cross-Zero_C++/New$ folder/lib/SFML-2.5.1/lib/libfreetype.a
   FLAGS = -g
-  LINK_FLAGS = -static -static-libgcc
+  LINK_FLAGS = -static -static-libgcc  -mwindows
   LINK_LIBRARIES = "F:/Cross-Zero_C++/New folder/lib/SFML-2.5.1/lib/libsfml-graphics-s-d.a"  "F:/Cross-Zero_C++/New folder/lib/SFML-2.5.1/lib/libsfml-window-s-d.a"  "F:/Cross-Zero_C++/New folder/lib/SFML-2.5.1/lib/libsfml-system-s-d.a"  -lwinmm  -lgdi32  -lOpenGL32  "F:/Cross-Zero_C++/New folder/lib/SFML-2.5.1/lib/libfreetype.a"  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
   OBJECT_DIR = CMakeFiles\Snake_2_C__.dir
   POST_BUILD = cd .
