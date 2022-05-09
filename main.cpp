@@ -1620,7 +1620,6 @@ void start_game() // начало игры
     length_increase = false;  //значение по умолчанию для увеличения длины
     score_decrease = false; //значение по умолчанию для уменьшения длины
     immortality = false; // значение по умолчанию для бессмертия
-    //x = 157, y = 255, z = 212;
     r = x, g = y, b = z;
     pause = false;
     color = 1;
@@ -1638,16 +1637,12 @@ void game_control(bool& invert_control, sf::RenderWindow& window)
     if (invert_control == false) { // если управление инвертировано
         while (window.pollEvent(event))
         {
-            /*if (event.type == sf::Event::Closed)
-                window.close(); // закрытие окна*/
-
             if (event.type == sf::Event::KeyPressed) {
                 int snake_direction_last = snake_direction_queue.empty() ? game_state.snake_direction : snake_direction_queue.at(0);
                 switch (event.key.code) { // проверка нажатия той или иной клавиши
                 case sf::Keyboard::Up:
                     if (snake_direction_last != SNAKE_DIRECTION_UP && snake_direction_last != SNAKE_DIRECTION_DOWN && type_of_control != 2) { // проверка направления, чтобы не врезаться в себя в обратную
                         //сторону. изменение направления движения. для остальных клавиш аналогично
-                        //game_paused = false;
                         if (snake_direction_queue.size() < 2) {
                             snake_direction_queue.insert(snake_direction_queue.begin(), SNAKE_DIRECTION_UP);
                         }
@@ -1655,7 +1650,6 @@ void game_control(bool& invert_control, sf::RenderWindow& window)
                     break;
                 case sf::Keyboard::Right:
                     if (snake_direction_last != SNAKE_DIRECTION_RIGHT && snake_direction_last != SNAKE_DIRECTION_LEFT && type_of_control != 2) {
-                        //game_paused = false;
                         if (snake_direction_queue.size() < 2) {
                             snake_direction_queue.insert(snake_direction_queue.begin(), SNAKE_DIRECTION_RIGHT);
                         }
@@ -1663,7 +1657,6 @@ void game_control(bool& invert_control, sf::RenderWindow& window)
                     break;
                 case sf::Keyboard::Down:
                     if (snake_direction_last != SNAKE_DIRECTION_DOWN && snake_direction_last != SNAKE_DIRECTION_UP && type_of_control != 2) {
-                        //game_paused = false;
                         if (snake_direction_queue.size() < 2) {
                             snake_direction_queue.insert(snake_direction_queue.begin(), SNAKE_DIRECTION_DOWN);
                         }
@@ -1671,7 +1664,6 @@ void game_control(bool& invert_control, sf::RenderWindow& window)
                     break;
                 case sf::Keyboard::Left:
                     if (snake_direction_last != SNAKE_DIRECTION_LEFT && snake_direction_last != SNAKE_DIRECTION_RIGHT && type_of_control != 2) {
-                        //game_paused = false;
                         if (snake_direction_queue.size() < 2) {
                             snake_direction_queue.insert(snake_direction_queue.begin(), SNAKE_DIRECTION_LEFT);
                         }
@@ -1679,7 +1671,6 @@ void game_control(bool& invert_control, sf::RenderWindow& window)
                     break;
                 case sf::Keyboard::W:
                     if (snake_direction_last != SNAKE_DIRECTION_UP && snake_direction_last != SNAKE_DIRECTION_DOWN && type_of_control == 2) {
-                        //game_paused = false;
                         if (snake_direction_queue.size() < 2) {
                             snake_direction_queue.insert(snake_direction_queue.begin(), SNAKE_DIRECTION_UP);
                         }
@@ -1687,7 +1678,6 @@ void game_control(bool& invert_control, sf::RenderWindow& window)
                     break;
                 case sf::Keyboard::D:
                     if (snake_direction_last != SNAKE_DIRECTION_RIGHT && snake_direction_last != SNAKE_DIRECTION_LEFT && type_of_control == 2) {
-                        //game_paused = false;
                         if (snake_direction_queue.size() < 2) {
                             snake_direction_queue.insert(snake_direction_queue.begin(), SNAKE_DIRECTION_RIGHT);
                         }
@@ -1695,7 +1685,6 @@ void game_control(bool& invert_control, sf::RenderWindow& window)
                     break;
                 case sf::Keyboard::S:
                     if (snake_direction_last != SNAKE_DIRECTION_DOWN && snake_direction_last != SNAKE_DIRECTION_UP && type_of_control == 2) {
-                        //game_paused = false;
                         if (snake_direction_queue.size() < 2) {
                             snake_direction_queue.insert(snake_direction_queue.begin(), SNAKE_DIRECTION_DOWN);
                         }
@@ -1703,7 +1692,6 @@ void game_control(bool& invert_control, sf::RenderWindow& window)
                     break;
                 case sf::Keyboard::A:
                     if (snake_direction_last != SNAKE_DIRECTION_LEFT && snake_direction_last != SNAKE_DIRECTION_RIGHT && type_of_control == 2) {
-                        //game_paused = false;
                         if (snake_direction_queue.size() < 2) {
                             snake_direction_queue.insert(snake_direction_queue.begin(), SNAKE_DIRECTION_LEFT);
                         }
@@ -1713,10 +1701,6 @@ void game_control(bool& invert_control, sf::RenderWindow& window)
                     menu_type = 5;
                     game_paused = true; // установка игры на паузу
                     break;
-                /*case sf::Keyboard::Enter: // enter для продолжения в текущем направлении
-                    game_paused = false;
-                    break;*/
-
                 }
             }
         }
@@ -1731,7 +1715,6 @@ void game_control(bool& invert_control, sf::RenderWindow& window)
                 switch (event.key.code) {
                 case sf::Keyboard::Down:
                     if (snake_direction_last != SNAKE_DIRECTION_UP && snake_direction_last != SNAKE_DIRECTION_DOWN && type_of_control != 2) {
-                        game_paused = false;
                         if (snake_direction_queue.size() < 2) {
                             snake_direction_queue.insert(snake_direction_queue.begin(), SNAKE_DIRECTION_UP);
                         }
@@ -1739,7 +1722,6 @@ void game_control(bool& invert_control, sf::RenderWindow& window)
                     break;
                 case sf::Keyboard::Up:
                     if (snake_direction_last != SNAKE_DIRECTION_DOWN && snake_direction_last != SNAKE_DIRECTION_UP && type_of_control != 2) {
-                        game_paused = false;
                         if (snake_direction_queue.size() < 2) {
                             snake_direction_queue.insert(snake_direction_queue.begin(), SNAKE_DIRECTION_DOWN);
                         }
@@ -1747,7 +1729,6 @@ void game_control(bool& invert_control, sf::RenderWindow& window)
                     break;
                 case sf::Keyboard::Left:
                     if (snake_direction_last != SNAKE_DIRECTION_RIGHT && snake_direction_last != SNAKE_DIRECTION_LEFT && type_of_control != 2) {
-                        game_paused = false;
                         if (snake_direction_queue.size() < 2) {
                             snake_direction_queue.insert(snake_direction_queue.begin(), SNAKE_DIRECTION_RIGHT);
                         }
@@ -1755,7 +1736,6 @@ void game_control(bool& invert_control, sf::RenderWindow& window)
                     break;
                 case sf::Keyboard::Right:
                     if (snake_direction_last != SNAKE_DIRECTION_LEFT && snake_direction_last != SNAKE_DIRECTION_RIGHT && type_of_control != 2) {
-                        game_paused = false;
                         if (snake_direction_queue.size() < 2) {
                             snake_direction_queue.insert(snake_direction_queue.begin(), SNAKE_DIRECTION_LEFT);
                         }
@@ -1763,7 +1743,6 @@ void game_control(bool& invert_control, sf::RenderWindow& window)
                     break;
                 case sf::Keyboard::W:
                     if (snake_direction_last != SNAKE_DIRECTION_UP && snake_direction_last != SNAKE_DIRECTION_DOWN && type_of_control == 2) {
-                        game_paused = false;
                         if (snake_direction_queue.size() < 2) {
                             snake_direction_queue.insert(snake_direction_queue.begin(), SNAKE_DIRECTION_UP);
                         }
@@ -1771,7 +1750,6 @@ void game_control(bool& invert_control, sf::RenderWindow& window)
                     break;
                 case sf::Keyboard::D:
                     if (snake_direction_last != SNAKE_DIRECTION_RIGHT && snake_direction_last != SNAKE_DIRECTION_LEFT && type_of_control == 2) {
-                        game_paused = false;
                         if (snake_direction_queue.size() < 2) {
                             snake_direction_queue.insert(snake_direction_queue.begin(), SNAKE_DIRECTION_RIGHT);
                         }
@@ -1779,7 +1757,6 @@ void game_control(bool& invert_control, sf::RenderWindow& window)
                     break;
                 case sf::Keyboard::S:
                     if (snake_direction_last != SNAKE_DIRECTION_DOWN && snake_direction_last != SNAKE_DIRECTION_UP && type_of_control == 2) {
-                        game_paused = false;
                         if (snake_direction_queue.size() < 2) {
                             snake_direction_queue.insert(snake_direction_queue.begin(), SNAKE_DIRECTION_DOWN);
                         }
@@ -1787,17 +1764,14 @@ void game_control(bool& invert_control, sf::RenderWindow& window)
                     break;
                 case sf::Keyboard::A:
                     if (snake_direction_last != SNAKE_DIRECTION_LEFT && snake_direction_last != SNAKE_DIRECTION_RIGHT && type_of_control == 2) {
-                        game_paused = false;
                         if (snake_direction_queue.size() < 2) {
                             snake_direction_queue.insert(snake_direction_queue.begin(), SNAKE_DIRECTION_LEFT);
                         }
                     }
                     break;
                 case sf::Keyboard::Space:
-                    game_paused = true;
-                    break;
-                case sf::Keyboard::Enter:
-                    game_paused = false;
+                    menu_type = 5;
+                    game_paused = true; // установка игры на паузу
                     break;
                 }
             }
