@@ -1,0 +1,3 @@
+F:/Snake_2_C++/New folder/cmake-build-debug/CMakeFiles/New_folder.dir
+F:/Snake_2_C++/New folder/cmake-build-debug/CMakeFiles/edit_cache.dir
+F:/Snake_2_C++/New folder/cmake-build-debug/CMakeFiles/rebuild_cache.dir
