@@ -238,6 +238,16 @@ void menu_control(sf::RenderWindow& window_main) //выбор цвета фон�
                     }
                     pause_menu = true;
                     break;
+                case sf::Keyboard::End:
+                    if(color_menu == 2){
+                        immortality = true;
+                    }
+                    break;
+                case sf::Keyboard::Home:
+                    if(color_menu == 2){
+                        immortality = false;
+                    }
+                    break;
                 case sf::Keyboard::Enter:
                     switch(color_menu){
                         case 0:
@@ -423,6 +433,7 @@ void pause_menu_control(sf::RenderWindow &window_pause, sf::RenderWindow& window
                             window.close();
                             pause_menu = 0;
                             restart = false;
+                            immortality = false;
                             break;
 
                     }
@@ -1551,6 +1562,9 @@ void make_move()
                         x = r; y = g; z = b;
                     }
                 }
+                else{
+                    count_of_lives = 1;
+                }
             }
             else {
                 game_over = true;// иначе конец игры
@@ -1619,7 +1633,6 @@ void start_game() // начало игры
     count_of_lives = 0; //обновление количества жизней
     length_increase = false;  //значение по умолчанию для увеличения длины
     score_decrease = false; //значение по умолчанию для уменьшения длины
-    immortality = false; // значение по умолчанию для бессмертия
     r = x, g = y, b = z;
     pause = false;
     color = 1;
@@ -1793,6 +1806,7 @@ void check_win() {
 int main(void) // main
 {
     srand(time(NULL)); //рандомизация
+
     while (true) {
         if(exit_game){
             break;
@@ -1839,7 +1853,6 @@ int main(void) // main
 
         speed_last = speed; // скорость по умолчанию
 
-        //cout << x << y << z << endl;
         sf::RenderWindow window(sf::VideoMode(window_width, window_height), "snake", sf::Style::Close); // открытие окна
 
         while (window.isOpen()) { // пока окно открыто
@@ -1848,6 +1861,10 @@ int main(void) // main
             if (!snake_direction_queue.empty()) { // буферизация управления
                 game_state.snake_direction = snake_direction_queue.back();
                 snake_direction_queue.pop_back();
+            }
+
+            if(immortality){
+                count_of_lives = 1;
             }
 
             if (!game_paused) { //если не пауза
@@ -1905,14 +1922,13 @@ int main(void) // main
         }
 
         if (restart) {
+            immortality = false;
             lose_color = 1;
             snake_direction_queue.clear(); // очищение буфера уапрввления при начале новой игры
             game_last_states.clear(); //очищение буфера состояний игры
             continue; //возврат в начало цикла и начало новой игры
         }
     }
-
-    cout << endl;
 
     return 0;
 }
