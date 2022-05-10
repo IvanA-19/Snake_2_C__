@@ -1,4 +1,5 @@
 #include <SFML/Graphics.hpp> //графическая библиотека
+#include <SFML/Audio.hpp>
 #include <cstdlib> //стандартная библиотека
 #include <vector> //для использования std::vector
 #include <iostream> //для запроса от пользователя в консоли настроек игры
@@ -67,6 +68,9 @@ const int main_menu_height = 20 * cell_size;
 const int pause_menu_width = 25 * cell_size;
 const int pause_menu_height = 15 * cell_size;
 
+const int volume_menu_width = 25 * cell_size;
+const int volume_menu_height = 15 * cell_size;
+
 int type_of_control; //вид управления
 
 vector <int> snake_direction_queue; //массив для буфферизации управления, чтобы можно было лучше координировать змейку и делать более удобные маневры
@@ -108,10 +112,11 @@ sf::Font font_menu;
 vector <sf::Text> text_menu_items;
 vector <string> lose_menu_items{"Your score: ", "Restart", "Exit to main menu", "GAME OVER"};
 vector<string> menu_items = {"Start new, game", "Settings", "Quit", "SNAKE"};
-vector <string> settings_menu_items{"Type of control", "Field color", "Snake skin", "Walls", "Difficulty level", "Back to main menu", "Game settings"};
+vector <string> settings_menu_items{"Type of control", "Field color", "Snake skin", "Walls", "Difficulty level", "Volume", "Back to main menu", "Game settings"};
 vector<string> control_menu_items = {"Cursors", "W, A, S, D", "Back to settings", "Type of game control"};
 vector<string> difficulty_menu_items = {"Standart", "Yeasy", "Medium", "Hard", "Crazy", "Impossible", "Back to settings", "Difficulty level"};
 vector <string> pause_menu_items = {"Score: ", "Resume", "Exit to main menu", "Pause"};
+vector <string> volume_menu_items = {"Volume: ", "Exit to main menu", "Volume settings"};
 
 bool set_op = false;
 
@@ -122,6 +127,53 @@ int settings_color = 0;
 int color_of_control = 0;
 int difficulty_color = 0;
 int pause_color = 1;
+int volume_color = 1;
+
+int volume_level = 60;
+
+sf::Sound apple_sound;
+sf::SoundBuffer apple_buffer;
+
+sf::Sound game_over_sound;
+sf::SoundBuffer game_over_buffer;
+
+sf::Sound yellow_apple_sound;
+sf::SoundBuffer yellow_apple_buffer;
+
+sf::Sound green_apple_sound;
+sf::SoundBuffer green_apple_buffer;
+
+sf::Sound menu_sound;
+sf::SoundBuffer menu_buffer;
+
+sf::Sound enter_sound;
+sf::SoundBuffer enter_buffer;
+
+sf::Sound heart_sound;
+sf::SoundBuffer heart_buffer;
+
+void set_sounds(){
+    apple_buffer.loadFromFile("sounds/apple_2.wav");
+    apple_sound.setBuffer(apple_buffer);
+
+    game_over_buffer.loadFromFile("sounds/game_over.wav");
+    game_over_sound.setBuffer(game_over_buffer);
+
+    yellow_apple_buffer.loadFromFile("sounds/yellow_apple.wav");
+    yellow_apple_sound.setBuffer(yellow_apple_buffer);
+
+    menu_buffer.loadFromFile("sounds/menu.wav");
+    menu_sound.setBuffer(menu_buffer);
+
+    enter_buffer.loadFromFile("sounds/enter.wav");
+    enter_sound.setBuffer(enter_buffer);
+
+    green_apple_buffer.loadFromFile("sounds/green_apple.wav");
+    green_apple_sound.setBuffer(green_apple_buffer);
+
+    heart_buffer.loadFromFile("sounds/heart.wav");
+    heart_sound.setBuffer(heart_buffer);
+}
 
 void set_fonts()
 {
@@ -164,7 +216,7 @@ void set_fonts()
                 text_menu_items.back().setCharacterSize(40);
             }
             text_menu_items.emplace_back(sf::Text());
-            text_menu_items.back().setString(settings_menu_items.at(6));
+            text_menu_items.back().setString(settings_menu_items.at(7));
             text_menu_items.back().setFont(font_menu);
             text_menu_items.back().setCharacterSize(60);
             break;
@@ -209,6 +261,23 @@ void set_fonts()
             text_menu_items.back().setFont(font_menu);
             text_menu_items.back().setCharacterSize(70);
             break;
+        case 6:
+            for (int i = 0; i < volume_menu_items.size() - 1; i++) {
+                text_menu_items.emplace_back(sf::Text());
+                if(i != 0) {
+                    text_menu_items.back().setString(volume_menu_items.at(i));
+                }
+                else{
+                    text_menu_items.back().setString(volume_menu_items.at(i) + to_string(volume_level) + " %");
+                }
+                text_menu_items.back().setFont(font_menu);
+                text_menu_items.back().setCharacterSize(40);
+            }
+            text_menu_items.emplace_back(sf::Text());
+            text_menu_items.back().setString(volume_menu_items.at(2));
+            text_menu_items.back().setFont(font_menu);
+            text_menu_items.back().setCharacterSize(50);
+            break;
     }
 }
 
@@ -225,6 +294,7 @@ void menu_control(sf::RenderWindow& window_main) //выбор цвета фон�
         if (event.type == sf::Event::KeyPressed) {
             switch (event.key.code) {
                 case sf::Keyboard::Down:
+                    menu_sound.play();
                     color_menu++;
                     if(color_menu == 3){
                         color_menu = 0;
@@ -232,6 +302,7 @@ void menu_control(sf::RenderWindow& window_main) //выбор цвета фон�
                     pause_menu = true;
                     break;
                 case sf::Keyboard::Up:
+                    menu_sound.play();
                     color_menu--;
                     if(color_menu == -1){
                         color_menu = 2;
@@ -261,6 +332,7 @@ void menu_control(sf::RenderWindow& window_main) //выбор цвета фон�
                             exit_game = true;
                             break;
                     }
+                    enter_sound.play();
                     window_main.close();
                     break;
             }
@@ -285,6 +357,9 @@ void draw_main_menu(sf::RenderWindow& window_main)
     const float pause_menu_position_x = (float(pause_menu_width) - menu_width) / 2;
     float pause_menu_position_y = (float(pause_menu_height) - menu_height) / 2;
 
+    const float volume_menu_position_x = (float(volume_menu_width) - menu_width) / 2;
+    float volume_menu_position_y = (float(volume_menu_height) - menu_height) / 2;
+
     switch(menu_type){
         case 0:
             text_menu_items.at(3).move(menu_position_x + 100, 20);
@@ -300,10 +375,10 @@ void draw_main_menu(sf::RenderWindow& window_main)
             window_main.draw(text_menu_items.at(3));
             break;
         case 2:
-            text_menu_items.at(6).move(menu_position_x -85, 30);
+            text_menu_items.at(7).move(menu_position_x -85, 30);
             text_menu_items.at(settings_color).setFillColor(sf::Color(0, 0,255));
-            text_menu_items.at(6).setFillColor(sf::Color(255, 255, 0));
-            window_main.draw(text_menu_items.at(6));
+            text_menu_items.at(7).setFillColor(sf::Color(255, 255, 0));
+            window_main.draw(text_menu_items.at(7));
             break;
         case 3:
             text_menu_items.at(3).move(menu_position_x - 85, 20);
@@ -323,6 +398,14 @@ void draw_main_menu(sf::RenderWindow& window_main)
             text_menu_items.at(3).setFillColor(sf::Color(255, 0, 0));
             text_menu_items.at(3).move(pause_menu_position_x + 96, 40);
             window_main.draw(text_menu_items.at(3));
+            break;
+        case 6:
+            window_main.clear(sf::Color(0, 0, 0));
+            text_menu_items.at(0).setFillColor(sf::Color(124, 252,0));
+            text_menu_items.at(volume_color).setFillColor(sf::Color(255, 0,255));
+            text_menu_items.at(2).setFillColor(sf::Color(127, 255, 212));
+            text_menu_items.at(2).move(volume_menu_position_x - 64, 40);
+            window_main.draw(text_menu_items.at(2));
             break;
     }
     if(menu_type == 0 || menu_type == 1 || menu_type == 3) {
@@ -348,10 +431,17 @@ void draw_main_menu(sf::RenderWindow& window_main)
             window_main.draw(text_menu_items.at(i));
         }
     }
-    else{
+    else if(menu_type == 5){
         for (int i = 0; i < menu_items.size() - 1; i++) {
             text_menu_items.at(i).move(pause_menu_position_x, pause_menu_position_y);
             pause_menu_position_y += 60;
+            window_main.draw(text_menu_items.at(i));
+        }
+    }
+    else if(menu_type == 6){
+        for (int i = 0; i < volume_menu_items.size() - 1; i++) {
+            text_menu_items.at(i).move(volume_menu_position_x - 15, volume_menu_position_y);
+            volume_menu_position_y += 60;
             window_main.draw(text_menu_items.at(i));
         }
     }
@@ -366,6 +456,7 @@ void lose_menu_control(sf::RenderWindow &window_main)
         if (event.type == sf::Event::KeyPressed) {
             switch (event.key.code) {
                 case sf::Keyboard::Enter:
+                    enter_sound.play();
                     switch(lose_color){
                         case 1:
                             restart = true;
@@ -380,6 +471,7 @@ void lose_menu_control(sf::RenderWindow &window_main)
                     window_main.close();
                     break;
                 case sf::Keyboard::Down:
+                    menu_sound.play();
                     lose_color++;
                     if(lose_color == 3){
                         lose_color = 1;
@@ -387,6 +479,7 @@ void lose_menu_control(sf::RenderWindow &window_main)
                     pause = true;
                     break;
                 case sf::Keyboard::Up:
+                    menu_sound.play();
                     lose_color--;
                     if(lose_color == 0){
                         lose_color = 2;
@@ -423,6 +516,7 @@ void pause_menu_control(sf::RenderWindow &window_pause, sf::RenderWindow& window
         if (event.type == sf::Event::KeyPressed) {
             switch (event.key.code) {
                 case sf::Keyboard::Enter:
+                    enter_sound.play();
                     switch(pause_color){
                         case 1:
                             menu_type = 0;
@@ -440,6 +534,7 @@ void pause_menu_control(sf::RenderWindow &window_pause, sf::RenderWindow& window
                     window_pause.close();
                     break;
                 case sf::Keyboard::Down:
+                    menu_sound.play();
                     pause_color++;
                     if(pause_color == 3){
                         pause_color = 1;
@@ -447,6 +542,7 @@ void pause_menu_control(sf::RenderWindow &window_pause, sf::RenderWindow& window
                     pause = true;
                     break;
                 case sf::Keyboard::Up:
+                    menu_sound.play();
                     pause_color--;
                     if(pause_color == 0){
                         pause_color = 2;
@@ -483,6 +579,7 @@ void control_menu_control(sf::RenderWindow &window_main)
         if (event.type == sf::Event::KeyPressed) {
             switch (event.key.code) {
                 case sf::Keyboard::Enter:
+                    enter_sound.play();
                     switch(color_of_control){
                         case 0:
                             type_of_control = 1;
@@ -499,6 +596,7 @@ void control_menu_control(sf::RenderWindow &window_main)
                     window_main.close();
                     break;
                 case sf::Keyboard::Down:
+                    menu_sound.play();
                     color_of_control++;
                     if(color_of_control == 3){
                         color_of_control = 0;
@@ -506,6 +604,7 @@ void control_menu_control(sf::RenderWindow &window_main)
                     control_pause = true;
                     break;
                 case sf::Keyboard::Up:
+                    menu_sound.play();
                     color_of_control--;
                     if(color_of_control == -1){
                         color_of_control = 2;
@@ -575,6 +674,7 @@ void chose_window_color(sf::RenderWindow& window_2) //выбор цвета фо
         if (event.type == sf::Event::KeyPressed) {
             switch (event.key.code) {
             case sf::Keyboard::Up:
+                menu_sound.play();
                 if (color != 7) {
                     color++;
                 }
@@ -627,6 +727,7 @@ void chose_window_color(sf::RenderWindow& window_2) //выбор цвета фо
                 break;
 
             case sf::Keyboard::Down:
+                menu_sound.play();
                 if (color != 1) {
                     color--;
                 }
@@ -680,6 +781,7 @@ void chose_window_color(sf::RenderWindow& window_2) //выбор цвета фо
 
 
             case sf::Keyboard::Enter:
+                enter_sound.play();
                 window_2.close();
                 break;
             }
@@ -716,6 +818,7 @@ void check_event_2(sf::RenderWindow& window_wall)
         if (event.type == sf::Event::KeyPressed) {
             switch (event.key.code) {
             case sf::Keyboard::Right:
+                menu_sound.play();
                 if (choice_wall != 5) { //изменение количества выборов скина
                     choice_wall += 2;
                 }
@@ -725,11 +828,13 @@ void check_event_2(sf::RenderWindow& window_wall)
                 break;
 
             case sf::Keyboard::Left:
+                menu_sound.play();
                 if (choice_wall != 1) {
                     choice_wall -= 2;
                 }
                 break;
             case sf::Keyboard::Enter:
+                enter_sound.play();
                 switch (choice_wall) {
                 case 1:
                     wall = 0;
@@ -817,6 +922,7 @@ void check_event(sf::RenderWindow& window_1)
         if (event.type == sf::Event::KeyPressed) {
             switch (event.key.code) {
             case sf::Keyboard::Right:
+                menu_sound.play();
                 if (choice != 9) { //изменение количества выборов скина
                     choice += 2;
                 }
@@ -826,11 +932,13 @@ void check_event(sf::RenderWindow& window_1)
                 break;
 
             case sf::Keyboard::Left:
+                menu_sound.play();
                 if (choice != 1) {
                     choice -= 2;
                 }
                 break;
             case sf::Keyboard::Enter:
+                enter_sound.play();
                 switch (choice) {
                 case 1:
                     skin = 0;
@@ -973,6 +1081,7 @@ void difficulty_menu_control(sf::RenderWindow &window_main)
         if (event.type == sf::Event::KeyPressed) {
             switch (event.key.code) {
                 case sf::Keyboard::Enter:
+                    enter_sound.play();
                     switch(difficulty_color){
                         case 0:
                             menu_type = 2;
@@ -1005,6 +1114,7 @@ void difficulty_menu_control(sf::RenderWindow &window_main)
                     window_main.close();
                     break;
                 case sf::Keyboard::Down:
+                    menu_sound.play();
                     difficulty_color++;
                     if(difficulty_color == 7){
                         difficulty_color = 0;
@@ -1012,6 +1122,7 @@ void difficulty_menu_control(sf::RenderWindow &window_main)
                     difficulty_pause = true;
                     break;
                 case sf::Keyboard::Up:
+                    menu_sound.play();
                     difficulty_color--;
                     if(difficulty_color == -1){
                         difficulty_color = 6;
@@ -1025,8 +1136,7 @@ void difficulty_menu_control(sf::RenderWindow &window_main)
 
 void open_difficulty_menu()
 {
-    sf::RenderWindow window_main(sf::VideoMode(main_menu_width, main_menu_height), "Difficulty", sf::Style::Close);
-    // открытие окна
+    sf::RenderWindow window_main(sf::VideoMode(main_menu_width, main_menu_height), "Difficulty", sf::Style::Close);// открытие окна
     difficulty_pause = true;
     while (window_main.isOpen()) {
         difficulty_menu_control(window_main);
@@ -1040,6 +1150,66 @@ void open_difficulty_menu()
     }
 }
 
+void set_volume_level(){
+    apple_sound.setVolume(float(volume_level));
+    menu_sound.setVolume(float(volume_level));
+    game_over_sound.setVolume(float(volume_level));
+    yellow_apple_sound.setVolume(float(volume_level));
+    green_apple_sound.setVolume(float(volume_level));
+    enter_sound.setVolume(float(volume_level));
+    heart_sound.setVolume(float(volume_level));
+}
+
+void volume_menu_control(sf::RenderWindow& window_volume)
+{
+    sf::Event event;
+
+    while (window_volume.pollEvent(event))
+    {
+        if (event.type == sf::Event::KeyPressed) {
+            switch (event.key.code) {
+                case sf::Keyboard::Down:
+                    menu_sound.play();
+                    if(volume_level != 0){
+                        volume_level -= 5;
+                        set_volume_level();
+                    }
+                    pause = true;
+                    break;
+                case sf::Keyboard::Up:
+                    menu_sound.play();
+                    if(volume_level != 100){
+                        volume_level += 5;
+                        set_volume_level();
+                    }
+                    pause = true;
+                    break;
+                case sf::Keyboard::Enter:
+                    enter_sound.play();
+                    menu_type = 2;
+                    set_volume_level();
+                    window_volume.close();
+                    break;
+            }
+        }
+    }
+}
+
+void open_volume_menu(){
+    sf::RenderWindow window_volume(sf::VideoMode(volume_menu_width, volume_menu_height), "Volume", sf::Style::Close);// открытие окна
+    pause = true;
+    while (window_volume.isOpen()) {
+        volume_menu_control(window_volume);
+        if(pause){
+            set_fonts();
+            draw_main_menu(window_volume);
+            text_menu_items.clear();
+            pause = false;
+            window_volume.display();
+        }
+    }
+}
+
 void settings_menu_control(sf::RenderWindow &window_main)
 {
     sf::Event event;
@@ -1049,6 +1219,7 @@ void settings_menu_control(sf::RenderWindow &window_main)
         if (event.type == sf::Event::KeyPressed) {
             switch (event.key.code) {
                 case sf::Keyboard::Enter:
+                    enter_sound.play();
                     switch(settings_color){
                         case 0:
                             menu_type = 3;
@@ -1066,6 +1237,9 @@ void settings_menu_control(sf::RenderWindow &window_main)
                             menu_type = 4;
                             break;
                         case 5:
+                            menu_type = 6;
+                            break;
+                        case 6:
                             set_op = false;
                             menu_type = 0;
                             color_menu = 0;
@@ -1074,16 +1248,18 @@ void settings_menu_control(sf::RenderWindow &window_main)
                     window_main.close();
                     break;
                 case sf::Keyboard::Down:
+                    menu_sound.play();
                     settings_color++;
-                    if(settings_color == 6){
+                    if(settings_color == 7){
                         settings_color = 0;
                     }
                     pause = true;
                     break;
                 case sf::Keyboard::Up:
+                    menu_sound.play();
                     settings_color--;
                     if(settings_color == -1){
-                        settings_color = 5;
+                        settings_color = 6;
                     }
                     pause = true;
                     break;
@@ -1094,8 +1270,7 @@ void settings_menu_control(sf::RenderWindow &window_main)
 
 void open_settings_menu()
 {
-    sf::RenderWindow window_main(sf::VideoMode(main_menu_width, main_menu_height), "Settings", sf::Style::Close);
-    // открытие окна
+    sf::RenderWindow window_main(sf::VideoMode(main_menu_width, main_menu_height), "Settings", sf::Style::Close);// открытие окна
     pause = true;
     while (window_main.isOpen()) {
         settings_menu_control(window_main);
@@ -1503,6 +1678,8 @@ void make_move()
         case FIELD_CELL_TYPE_APPLE: // случай - яблоко
             last_score++; //предыдущий счет +1
             score++; //текущий счет +1
+            apple_sound.play();
+            //sf::sleep(sf::milliseconds(55));
             game_state.snake_length++; // увеличение длины на 1
             count_of_apples++; // считаем количество съеденных яблок
             if (count_of_apples == n) { // если их 10 - гененрируем одно зеленое
@@ -1520,6 +1697,7 @@ void make_move()
             add_apple(); // генерация нового яблока
             break;
         case FIELD_CELL_TYPE_GREEN_APPLE: // случай - зеленое яблоко
+            green_apple_sound.play();
             count_of_red_apples = 0; // подготовка к генерации сердечкка через 5 яблок
             count_of_apples = 0; // установка в 0 отсчета до следующего зеленого яблока
             random_event(); // получение случайной ловушки
@@ -1528,6 +1706,7 @@ void make_move()
             }
             break;
         case FIELD_CELL_TYPE_YELLOW_APPLE: // случай - желтое яблоко
+            yellow_apple_sound.play();
             if (random_bonus() == 1) { // получение случайного бонуса
                 for (int m = 0; m < 2; m++) {
                     add_heart(); // генерация двух сердечек в случае получения 1 в генераторе случайных чисел
@@ -1535,12 +1714,14 @@ void make_move()
             }
             break;
         case FIELD_CELL_TYPE_HEART: // случай - сердечко
+            heart_sound.play();
             normal_game(); // восставновление параметров игры
             if (immortality) {
                 x = r; y = g; z = b;
             }
             break;
         case FIELD_CELL_TYPE_WALL: //случай - стена
+            game_over_sound.play();
             if (count_of_lives != 0) { //если есть неуязвимость, проверяем, сколько осталось жизней
                 rall_back = true; //откат включен
                 if (!immortality) {//в случае, если не введен код бессмертия
@@ -1571,6 +1752,7 @@ void make_move()
             }
             break;
         default: // аналогично, если врезались в себя
+            game_over_sound.play();
             if (game_state.field[game_state.snake_position_y][game_state.snake_position_x] > 1) {
                 if (count_of_lives != 0) {
                     rall_back = true;
@@ -1807,6 +1989,8 @@ int main(void) // main
 {
     srand(time(NULL)); //рандомизация
 
+    set_sounds();
+
     while (true) {
         if(exit_game){
             break;
@@ -1832,6 +2016,10 @@ int main(void) // main
         if(menu_type == 4){
             open_difficulty_menu();
             difficulty_color = 0;
+        }
+
+        if(menu_type == 6){
+            open_volume_menu();
         }
 
         if(!restart && !set_op && !new_game){
@@ -1893,8 +2081,6 @@ int main(void) // main
             }
 
             if (win_game) {
-                cout << "You have won!" << endl;
-                cout << endl;
                 sf::sleep(sf::seconds(1)); // задержка на 1 секунду
                 window.close();
             }

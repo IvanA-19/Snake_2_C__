@@ -10,7 +10,7 @@ add_executable(Snake_2_C__ WIN32 main.cpp)
 
 set(SFML_DIR "F:\\Cross-Zero_C++\\New folder\\lib\\SFML-2.5.1\\lib\\cmake\\SFML")
 
-target_link_libraries(Snake_2_C__ sfml-graphics)
+target_link_libraries(Snake_2_C__ sfml-graphics sfml-audio)
 
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake_modules")
 find_package(SFML 2.5 REQUIRED graphics network audio window system)
