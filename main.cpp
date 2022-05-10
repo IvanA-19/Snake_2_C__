@@ -108,7 +108,7 @@ bool rall_back = false; //откат назад
 sf::Font font_menu;
 vector <sf::Text> text_menu_items;
 vector <string> lose_menu_items{"Your score: ", "Restart", "Exit to main menu", "GAME OVER"};
-vector<string> menu_items = {"Start new, game", "Settings", "Quit", "SNAKE"};
+vector<string> menu_items = {"Start new game", "Settings", "Quit", "SNAKE"};
 vector <string> settings_menu_items{"Type of control", "Field color", "Snake skin", "Walls", "Difficulty level", "Volume", "Back to main menu", "Game settings"};
 vector<string> control_menu_items = {"Cursors", "W, A, S, D", "Back to settings", "Type of game control"};
 vector<string> difficulty_menu_items = {"Standart", "Yeasy", "Medium", "Hard", "Crazy", "Impossible", "Back to settings", "Difficulty level"};
@@ -359,12 +359,14 @@ void draw_main_menu(sf::RenderWindow& window_main)
 
     switch(menu_type){
         case 0:
+            window_main.clear(sf::Color(0, 0, 0));
             text_menu_items.at(3).move(menu_position_x + 100, 20);
             text_menu_items.at(3).setFillColor(sf::Color(0, 255,0));
             window_main.draw(text_menu_items.at(3));
             text_menu_items.at(color_menu).setFillColor(sf::Color(255, 255,0));
             break;
         case 1:
+            window_main.clear(sf::Color(0, 0, 0));
             text_menu_items.at(0).setFillColor(sf::Color(0, 255,0));
             text_menu_items.at(lose_color).setFillColor(sf::Color(255, 255,0));
             text_menu_items.at(3).setFillColor(sf::Color(255, 0, 0));
@@ -372,24 +374,28 @@ void draw_main_menu(sf::RenderWindow& window_main)
             window_main.draw(text_menu_items.at(3));
             break;
         case 2:
+            window_main.clear(sf::Color(0, 0, 0));
             text_menu_items.at(7).move(menu_position_x -85, 30);
             text_menu_items.at(settings_color).setFillColor(sf::Color(0, 0,255));
             text_menu_items.at(7).setFillColor(sf::Color(255, 255, 0));
             window_main.draw(text_menu_items.at(7));
             break;
         case 3:
+            window_main.clear(sf::Color(0, 0, 0));
             text_menu_items.at(3).move(menu_position_x - 85, 20);
             text_menu_items.at(3).setFillColor(sf::Color(0, 255,0));
             window_main.draw(text_menu_items.at(3));
             text_menu_items.at(color_of_control).setFillColor(sf::Color(255, 0,0));
             break;
         case 4:
+            window_main.clear(sf::Color(0, 0, 0));
             text_menu_items.at(7).move(menu_position_x - 102, 30);
             text_menu_items.at(difficulty_color).setFillColor(sf::Color(255, 0,255));
             text_menu_items.at(7).setFillColor(sf::Color(0, 250, 154));
             window_main.draw(text_menu_items.at(7));
             break;
         case 5:
+            window_main.clear(sf::Color(0, 0, 0));
             text_menu_items.at(0).setFillColor(sf::Color(0, 255,0));
             text_menu_items.at(pause_color).setFillColor(sf::Color(255, 255,0));
             text_menu_items.at(3).setFillColor(sf::Color(255, 0, 0));
@@ -1061,7 +1067,6 @@ void volume_menu_control(sf::RenderWindow& window_volume)
                 case sf::Keyboard::Enter:
                     enter_sound.play();
                     menu_type = 2;
-                    set_volume_level();
                     window_volume.close();
                     break;
             }
@@ -1990,6 +1995,7 @@ int main(void) // main
     srand(time(NULL)); //рандомизация
 
     set_sounds();
+    set_volume_level();
 
     while (true) {
         if(exit_game){
