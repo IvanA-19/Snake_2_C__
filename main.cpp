@@ -2,11 +2,8 @@
 #include <SFML/Audio.hpp>
 #include <cstdlib> //стандартная библиотека
 #include <vector> //для использования std::vector
-#include <iostream> //для запроса от пользователя в консоли настроек игры
 #include <windows.h>
 #include <string>
-
-HANDLE hConsole;
 
 using namespace std; //стандартное пространство имен
 
@@ -1776,12 +1773,14 @@ void lose_menu_control(sf::RenderWindow &window_main)
                     enter_sound.play();
                     switch(lose_color){
                         case 1:
+                            lose_color = 1;
                             restart = true;
                             break;
                         case 2:
                             menu_type = 0;
                             color_menu = 0;
                             normal_game();
+                            lose_color = 1;
                             restart = false;
                             break;
 
