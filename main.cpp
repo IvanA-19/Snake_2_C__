@@ -2,11 +2,8 @@
 #include <SFML/Audio.hpp>
 #include <cstdlib> //стандартная библиотека
 #include <vector> //для использования std::vector
-#include <iostream> //для запроса от пользователя в консоли настроек игры
 #include <windows.h>
 #include <string>
-
-HANDLE hConsole;
 
 using namespace std; //стандартное пространство имен
 
@@ -443,129 +440,6 @@ void draw_main_menu(sf::RenderWindow& window_main)
             text_menu_items.at(i).move(volume_menu_position_x - 15, volume_menu_position_y);
             volume_menu_position_y += 60;
             window_main.draw(text_menu_items.at(i));
-        }
-    }
-}
-
-void lose_menu_control(sf::RenderWindow &window_main)
-{
-    sf::Event event;
-
-    while (window_main.pollEvent(event))
-    {
-        if (event.type == sf::Event::KeyPressed) {
-            switch (event.key.code) {
-                case sf::Keyboard::Enter:
-                    enter_sound.play();
-                    switch(lose_color){
-                        case 1:
-                            restart = true;
-                            break;
-                        case 2:
-                            menu_type = 0;
-                            color_menu = 0;
-                            restart = false;
-                            break;
-
-                    }
-                    window_main.close();
-                    break;
-                case sf::Keyboard::Down:
-                    menu_sound.play();
-                    lose_color++;
-                    if(lose_color == 3){
-                        lose_color = 1;
-                    }
-                    pause = true;
-                    break;
-                case sf::Keyboard::Up:
-                    menu_sound.play();
-                    lose_color--;
-                    if(lose_color == 0){
-                        lose_color = 2;
-                    }
-                    pause = true;
-                    break;
-            }
-        }
-    }
-}
-
-void open_lose_menu()
-{
-    sf::RenderWindow window_main(sf::VideoMode(main_menu_width, main_menu_height), "Game over", sf::Style::Close);
-    pause = true;
-    while (window_main.isOpen()) {
-        lose_menu_control(window_main);
-        if(pause){
-            set_fonts();
-            draw_main_menu(window_main);
-            text_menu_items.clear();
-            pause = false;
-            window_main.display();
-        }
-    }
-}
-
-void pause_menu_control(sf::RenderWindow &window_pause, sf::RenderWindow& window)
-{
-    sf::Event event;
-
-    while (window_pause.pollEvent(event))
-    {
-        if (event.type == sf::Event::KeyPressed) {
-            switch (event.key.code) {
-                case sf::Keyboard::Enter:
-                    enter_sound.play();
-                    switch(pause_color){
-                        case 1:
-                            menu_type = 0;
-                            game_paused = false;
-                            break;
-                        case 2:
-                            menu_type = 0;
-                            window.close();
-                            pause_menu = 0;
-                            restart = false;
-                            immortality = false;
-                            break;
-
-                    }
-                    window_pause.close();
-                    break;
-                case sf::Keyboard::Down:
-                    menu_sound.play();
-                    pause_color++;
-                    if(pause_color == 3){
-                        pause_color = 1;
-                    }
-                    pause = true;
-                    break;
-                case sf::Keyboard::Up:
-                    menu_sound.play();
-                    pause_color--;
-                    if(pause_color == 0){
-                        pause_color = 2;
-                    }
-                    pause = true;
-                    break;
-            }
-        }
-    }
-}
-
-void open_pause_menu(sf::RenderWindow& window)
-{
-    sf::RenderWindow window_pause(sf::VideoMode(pause_menu_width, pause_menu_height), "Game pause", sf::Style::Close);
-    pause = true;
-    while (window_pause.isOpen()) {
-        pause_menu_control(window_pause, window);
-        if(pause){
-            set_fonts();
-            draw_main_menu(window_pause);
-            text_menu_items.clear();
-            pause = false;
-            window_pause.display();
         }
     }
 }
@@ -1631,6 +1505,71 @@ void normal_game()
     }
 }
 
+void pause_menu_control(sf::RenderWindow &window_pause, sf::RenderWindow& window)
+{
+    sf::Event event;
+
+    while (window_pause.pollEvent(event))
+    {
+        if (event.type == sf::Event::KeyPressed) {
+            switch (event.key.code) {
+                case sf::Keyboard::Enter:
+                    enter_sound.play();
+                    switch(pause_color){
+                        case 1:
+                            menu_type = 0;
+                            game_paused = false;
+                            break;
+                        case 2:
+                            menu_type = 0;
+                            window.close();
+                            pause_menu = 0;
+                            restart = false;
+                            immortality = false;
+                            x = r; y = g; z = b;
+                            normal_game();
+                            break;
+
+                    }
+                    window_pause.close();
+                    break;
+                case sf::Keyboard::Down:
+                    menu_sound.play();
+                    pause_color++;
+                    if(pause_color == 3){
+                        pause_color = 1;
+                    }
+                    pause = true;
+                    break;
+                case sf::Keyboard::Up:
+                    menu_sound.play();
+                    pause_color--;
+                    if(pause_color == 0){
+                        pause_color = 2;
+                    }
+                    pause = true;
+                    break;
+            }
+        }
+    }
+}
+
+void open_pause_menu(sf::RenderWindow& window)
+{
+    sf::RenderWindow window_pause(sf::VideoMode(pause_menu_width, pause_menu_height), "Game pause", sf::Style::Close);
+    pause = true;
+    while (window_pause.isOpen()) {
+        pause_menu_control(window_pause, window);
+        if(pause){
+            set_fonts();
+            draw_main_menu(window_pause);
+            text_menu_items.clear();
+            pause = false;
+            window_pause.display();
+        }
+    }
+}
+
 //метод, отвечающий за движение и изменение поля
 
 void make_move()
@@ -1677,9 +1616,8 @@ void make_move()
         switch (game_state.field[game_state.snake_position_y][game_state.snake_position_x]) {
         case FIELD_CELL_TYPE_APPLE: // случай - яблоко
             last_score++; //предыдущий счет +1
-            score++; //текущий счет +1
             apple_sound.play();
-            //sf::sleep(sf::milliseconds(55));
+            score++; //текущий счет +1
             game_state.snake_length++; // увеличение длины на 1
             count_of_apples++; // считаем количество съеденных яблок
             if (count_of_apples == n) { // если их 10 - гененрируем одно зеленое
@@ -1823,6 +1761,68 @@ void start_game() // начало игры
     clear_field(); // очищение поля
 }
 
+void lose_menu_control(sf::RenderWindow &window_main)
+{
+    sf::Event event;
+
+    while (window_main.pollEvent(event))
+    {
+        if (event.type == sf::Event::KeyPressed) {
+            switch (event.key.code) {
+                case sf::Keyboard::Enter:
+                    enter_sound.play();
+                    switch(lose_color){
+                        case 1:
+                            lose_color = 1;
+                            restart = true;
+                            break;
+                        case 2:
+                            menu_type = 0;
+                            color_menu = 0;
+                            normal_game();
+                            lose_color = 1;
+                            restart = false;
+                            break;
+
+                    }
+                    window_main.close();
+                    break;
+                case sf::Keyboard::Down:
+                    menu_sound.play();
+                    lose_color++;
+                    if(lose_color == 3){
+                        lose_color = 1;
+                    }
+                    pause = true;
+                    break;
+                case sf::Keyboard::Up:
+                    menu_sound.play();
+                    lose_color--;
+                    if(lose_color == 0){
+                        lose_color = 2;
+                    }
+                    pause = true;
+                    break;
+            }
+        }
+    }
+}
+
+void open_lose_menu()
+{
+    sf::RenderWindow window_main(sf::VideoMode(main_menu_width, main_menu_height), "Game over", sf::Style::Close);
+    pause = true;
+    while (window_main.isOpen()) {
+        lose_menu_control(window_main);
+        if(pause){
+            set_fonts();
+            draw_main_menu(window_main);
+            text_menu_items.clear();
+            pause = false;
+            window_main.display();
+        }
+    }
+}
 
 //метод управления игрой
 
@@ -2000,6 +2000,8 @@ int main(void) // main
 
         if(!restart && new_game){
             open_main_menu();
+            r = x; g = y; b = z;
+            speed_last = speed;
         }
 
         if(set_op){
@@ -2024,6 +2026,7 @@ int main(void) // main
 
         if(!restart && !set_op && !new_game){
             open_main_menu();
+            speed_last = speed;
             new_game = true;
         }
 
@@ -2038,8 +2041,7 @@ int main(void) // main
         }
 
         start_game();
-
-        speed_last = speed; // скорость по умолчанию
+        // скорость по умолчанию
 
         sf::RenderWindow window(sf::VideoMode(window_width, window_height), "snake", sf::Style::Close); // открытие окна
 
@@ -2108,6 +2110,7 @@ int main(void) // main
         }
 
         if (restart) {
+            normal_game();
             immortality = false;
             lose_color = 1;
             snake_direction_queue.clear(); // очищение буфера уапрввления при начале новой игры
