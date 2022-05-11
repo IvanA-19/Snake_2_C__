@@ -126,7 +126,7 @@ int difficulty_color = 0;
 int pause_color = 1;
 int volume_color = 1;
 
-int volume_level = 60;
+int volume_level = 30;
 
 sf::Sound apple_sound;
 sf::SoundBuffer apple_buffer;
@@ -1429,7 +1429,7 @@ void grow_snake()
 
 void random_event()
 {
-    srand(time(NULL));
+    srand(time(nullptr));
     int random_trap;
     random_trap = rand() % 4; //генерация случайного числа
     switch (random_trap) {
@@ -1474,7 +1474,7 @@ void random_event()
 
 int random_bonus()
 {
-    srand(time(NULL));
+    srand(time(nullptr));
     int bonus;
     if (immortality) {
         bonus = rand() % 4; // генерация случайного числа
@@ -1847,7 +1847,7 @@ void open_lose_menu()
 void game_control(bool& invert_control, sf::RenderWindow& window)
 {
     sf::Event event;
-    if (invert_control == false) { // если управление инвертировано
+    if (!invert_control) { // если управление инвертировано
         while (window.pollEvent(event))
         {
             if (event.type == sf::Event::KeyPressed) {
@@ -2003,9 +2003,9 @@ void check_win() {
     }
 }
 
-int main(void) // main
+int main() // main
 {
-    srand(time(NULL)); //рандомизация
+    srand(time(nullptr)); //рандомизация
 
     set_sounds();
     set_volume_level();
