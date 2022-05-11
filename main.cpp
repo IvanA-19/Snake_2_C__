@@ -1234,8 +1234,6 @@ void add_green_apple() //зеленое аналогично
     }
 }
 
-
-
 //метод очищения поля для генерации стен, первого зеленого и красного яблока, пустых клеток, змейки на анчальной позиции
 
 void clear_field()
@@ -1439,7 +1437,22 @@ void random_event()
         invert_control = true; // инверсия управления
         break;
     case 1:
-        speed = 50; // ускорение
+        if (speed > 30) {
+            speed = 40; // ускорение
+        }
+        else{
+            switch(speed){
+                case 30:
+                    speed = 20;
+                    break;
+                case 15:
+                    speed = 10;
+                    break;
+                case 10:
+                    speed = 5;
+                    break;
+            }
+        }
         break;
     case 2:
         if (score >= 10) {
