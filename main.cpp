@@ -3,7 +3,7 @@
 #include <cstdlib> //стандартная библиотека
 #include <vector> //для использования std::vector
 #include <windows.h>
-#include <string>
+#include <cstring>
 
 using namespace std; //стандартное пространство имен
 
@@ -36,6 +36,7 @@ bool color_pause = true;
 bool pause_menu = false;
 bool control_pause = false;
 bool difficulty_pause = false;
+bool game_level_pause = false;
 
 constexpr auto FIELD_CELL_TYPE_NONE = 0; //пустая клетка
 constexpr auto FIELD_CELL_TYPE_APPLE = -1; //яблоко
@@ -91,6 +92,8 @@ bool immortality = false; // переменная, отвечающая за б�
 bool win_game = false;
 bool new_game = true;
 
+bool op_main = false;
+
 //структура с характеристиками змейкм
 
 struct GameState {
@@ -108,12 +111,14 @@ bool rall_back = false; //откат назад
 sf::Font font_menu;
 vector <sf::Text> text_menu_items;
 vector <string> lose_menu_items{"Your score: ", "Restart", "Exit to main menu", "GAME OVER"};
-vector<string> menu_items = {"Start new game", "Settings", "Quit", "SNAKE"};
+vector<string> menu_items = {"Start new game", "Level", "Settings", "Quit", "SNAKE"};
 vector <string> settings_menu_items{"Type of control", "Field color", "Snake skin", "Walls", "Difficulty level", "Volume", "Back to main menu", "Game settings"};
 vector<string> control_menu_items = {"Cursors", "W, A, S, D", "Back to settings", "Type of game control"};
 vector<string> difficulty_menu_items = {"Standart", "Yeasy", "Medium", "Hard", "Crazy", "Impossible", "Back to settings", "Difficulty level"};
 vector <string> pause_menu_items = {"Score: ", "Resume", "Exit to main menu", "Pause"};
 vector <string> volume_menu_items = {"Volume: ", "Exit to main menu", "Volume settings"};
+vector <string> level_menu_items = {"Level 1", "Level 2", "Level 3", "Level 4", "Level 5",
+                                    "Level 6" , "Level 7", "Back to main menu", "Choose level"};
 
 bool set_op = false;
 
@@ -125,7 +130,9 @@ int color_of_control = 0;
 int difficulty_color = 0;
 int pause_color = 1;
 int volume_color = 1;
+int level_color = 0;
 
+int game_level = 0;
 int volume_level = 30;
 
 sf::Sound apple_sound;
@@ -184,7 +191,7 @@ void set_fonts()
                 text_menu_items.back().setCharacterSize(40);
             }
             text_menu_items.emplace_back(sf::Text());
-            text_menu_items.back().setString(menu_items.at(3));
+            text_menu_items.back().setString(menu_items.at(4));
             text_menu_items.back().setFont(font_menu);
             text_menu_items.back().setCharacterSize(70);
             break;
@@ -275,6 +282,18 @@ void set_fonts()
             text_menu_items.back().setFont(font_menu);
             text_menu_items.back().setCharacterSize(50);
             break;
+        case 7:
+            for (int i = 0; i < level_menu_items.size() - 1; i++) {
+                text_menu_items.emplace_back(sf::Text());
+                text_menu_items.back().setString(level_menu_items.at(i));
+                text_menu_items.back().setFont(font_menu);
+                text_menu_items.back().setCharacterSize(40);
+            }
+            text_menu_items.emplace_back(sf::Text());
+            text_menu_items.back().setString(level_menu_items.at(8));
+            text_menu_items.back().setFont(font_menu);
+            text_menu_items.back().setCharacterSize(60);
+            break;
     }
 }
 
@@ -293,7 +312,7 @@ void menu_control(sf::RenderWindow& window_main) //выбор цвета фон�
                 case sf::Keyboard::Down:
                     menu_sound.play();
                     color_menu++;
-                    if(color_menu == 3){
+                    if(color_menu == 4){
                         color_menu = 0;
                     }
                     pause_menu = true;
@@ -302,7 +321,7 @@ void menu_control(sf::RenderWindow& window_main) //выбор цвета фон�
                     menu_sound.play();
                     color_menu--;
                     if(color_menu == -1){
-                        color_menu = 2;
+                        color_menu = 3;
                     }
                     pause_menu = true;
                     break;
@@ -322,10 +341,13 @@ void menu_control(sf::RenderWindow& window_main) //выбор цвета фон�
                             window_main.close();
                             break;
                         case 1:
+                            menu_type = 7;
+                            break;
+                        case 2:
                             menu_type = 2;
                             set_op = true;
                             break;
-                        case 2:
+                        case 3:
                             exit_game = true;
                             break;
                     }
@@ -336,7 +358,6 @@ void menu_control(sf::RenderWindow& window_main) //выбор цвета фон�
         }
     }
 }
-
 
 void draw_main_menu(sf::RenderWindow& window_main)
 {
@@ -349,7 +370,7 @@ void draw_main_menu(sf::RenderWindow& window_main)
     float menu_height = 120;//current_menu_item_offset_y;
 
     const float menu_position_x = (float(main_menu_width) - menu_width) / 2;
-    float menu_position_y = (float(main_menu_height) - menu_height) / 2;
+    float menu_position_y = (float(main_menu_height) - menu_height) / 2 - 30;
 
     const float pause_menu_position_x = (float(pause_menu_width) - menu_width) / 2;
     float pause_menu_position_y = (float(pause_menu_height) - menu_height) / 2;
@@ -360,9 +381,9 @@ void draw_main_menu(sf::RenderWindow& window_main)
     switch(menu_type){
         case 0:
             window_main.clear(sf::Color(0, 0, 0));
-            text_menu_items.at(3).move(menu_position_x + 100, 20);
-            text_menu_items.at(3).setFillColor(sf::Color(0, 255,0));
-            window_main.draw(text_menu_items.at(3));
+            text_menu_items.at(4).move(menu_position_x + 100, 20);
+            text_menu_items.at(4).setFillColor(sf::Color(0, 255,0));
+            window_main.draw(text_menu_items.at(4));
             text_menu_items.at(color_menu).setFillColor(sf::Color(255, 255,0));
             break;
         case 1:
@@ -410,9 +431,25 @@ void draw_main_menu(sf::RenderWindow& window_main)
             text_menu_items.at(2).move(volume_menu_position_x - 64, 40);
             window_main.draw(text_menu_items.at(2));
             break;
+        case 7:
+            window_main.clear(sf::Color(0, 0, 0));
+            text_menu_items.at(8).move(menu_position_x - 25, 30);
+            text_menu_items.at(level_color).setFillColor(sf::Color(0, 206,209));
+            text_menu_items.at(8).setFillColor(sf::Color(255, 0, 0));
+            window_main.draw(text_menu_items.at(8));
+            break;
     }
-    if(menu_type == 0 || menu_type == 1 || menu_type == 3) {
+
+    if(menu_type == 0){
         for (int i = 0; i < menu_items.size() - 1; i++) {
+            text_menu_items.at(i).move(menu_position_x, menu_position_y);
+            menu_position_y += 60;
+            window_main.draw(text_menu_items.at(i));
+        }
+    }
+
+    if(menu_type == 1 || menu_type == 3) {
+        for (int i = 0; i < menu_items.size() - 2; i++) {
             text_menu_items.at(i).move(menu_position_x, menu_position_y);
             menu_position_y += 60;
             window_main.draw(text_menu_items.at(i));
@@ -435,7 +472,7 @@ void draw_main_menu(sf::RenderWindow& window_main)
         }
     }
     else if(menu_type == 5){
-        for (int i = 0; i < menu_items.size() - 1; i++) {
+        for (int i = 0; i < menu_items.size() - 2; i++) {
             text_menu_items.at(i).move(pause_menu_position_x, pause_menu_position_y);
             pause_menu_position_y += 60;
             window_main.draw(text_menu_items.at(i));
@@ -445,6 +482,15 @@ void draw_main_menu(sf::RenderWindow& window_main)
         for (int i = 0; i < volume_menu_items.size() - 1; i++) {
             text_menu_items.at(i).move(volume_menu_position_x - 15, volume_menu_position_y);
             volume_menu_position_y += 60;
+            window_main.draw(text_menu_items.at(i));
+        }
+    }
+
+    if(menu_type == 7){
+        float menu_position_y = 140;
+        for (int i = 0; i < level_menu_items.size() - 1; i++) {
+            text_menu_items.at(i).move(menu_position_x, menu_position_y);
+            menu_position_y += 60;
             window_main.draw(text_menu_items.at(i));
         }
     }
@@ -1030,6 +1076,90 @@ void open_difficulty_menu()
     }
 }
 
+
+void level_menu_control(sf::RenderWindow &window_main)
+{
+    sf::Event event;
+
+    while (window_main.pollEvent(event))
+    {
+        if (event.type == sf::Event::KeyPressed) {
+            switch (event.key.code) {
+                case sf::Keyboard::Enter:
+                    enter_sound.play();
+                    switch(level_color){
+                        case 0:
+                            menu_type = 0;
+                            game_level = 0;
+                            break;
+                        case 1:
+                            menu_type = 0;
+                            game_level = 1;
+                            break;
+                        case 2:
+                            game_level = 2;
+                            menu_type = 0;
+                            break;
+                        case 3:
+                            game_level = 3;
+                            menu_type = 0;
+                            break;
+                        case 4:
+                            game_level = 4;
+                            menu_type = 0;
+                            break;
+                        case 5:
+                            game_level = 5;
+                            menu_type = 0;
+                            break;
+                        case 6:
+                            game_level = 6;
+                            menu_type = 0;
+                            break;
+                        case 7:
+                            op_main = true;
+                            menu_type = 0;
+                            break;
+                    }
+                    window_main.close();
+                    break;
+                case sf::Keyboard::Down:
+                    menu_sound.play();
+                    level_color++;
+                    if(level_color == 8){
+                        level_color = 0;
+                    }
+                    game_level_pause = true;
+                    break;
+                case sf::Keyboard::Up:
+                    menu_sound.play();
+                    level_color--;
+                    if(level_color == -1){
+                        level_color = 7;
+                    }
+                    game_level_pause = true;
+                    break;
+            }
+        }
+    }
+}
+
+void open_level_menu()
+{
+    sf::RenderWindow window_main(sf::VideoMode(main_menu_width, main_menu_height), "Level", sf::Style::Close);// открытие окна
+    game_level_pause = true;
+    while (window_main.isOpen()) {
+        level_menu_control(window_main);
+        if(game_level_pause){
+            set_fonts();
+            draw_main_menu(window_main);
+            text_menu_items.clear();
+            game_level_pause = false;
+            window_main.display();
+        }
+    }
+}
+
 void set_volume_level(){
     apple_sound.setVolume(float(volume_level));
     menu_sound.setVolume(float(volume_level));
@@ -1247,18 +1377,46 @@ void clear_field()
     for (int i = 0; i < game_state.snake_length; i++) //установка позиции змейки в начале
         game_state.field[game_state.snake_position_y][game_state.snake_position_x - i] = game_state.snake_length - i;
 
-    for (int i = 0; i < field_size_x; i++) {
-       if (i < 10 || field_size_x - i - 1 < 10) {
-           game_state.field[0][i] = FIELD_CELL_TYPE_WALL;
-           game_state.field[field_size_y - 1][i] = FIELD_CELL_TYPE_WALL; //генерация горизонтальных стен
-       }
-    }
 
-    for (int j = 1; j < field_size_y - 1; j++) {
-        if (j < 8 || field_size_y - j - 1 < 8) {
-           game_state.field[j][0] = FIELD_CELL_TYPE_WALL; // генерация уголка
-           game_state.field[j][field_size_x - 1] = FIELD_CELL_TYPE_WALL; // генерация вертикальных стен
-        }
+    switch(game_level) {
+        case 1:
+            for (int i = 0; i < field_size_x; i++) {
+                if (i < 10 || field_size_x - i - 1 < 10) {
+                    game_state.field[0][i] = FIELD_CELL_TYPE_WALL;
+                    game_state.field[field_size_y - 1][i] = FIELD_CELL_TYPE_WALL; //генерация горизонтальных стен
+                }
+            }
+            for (int j = 1; j < field_size_y - 1; j++) {
+                if (j < 8 || field_size_y - j - 1 < 8) {
+                    game_state.field[j][0] = FIELD_CELL_TYPE_WALL; // генерация уголка
+                    game_state.field[j][field_size_x - 1] = FIELD_CELL_TYPE_WALL; // генерация вертикальных стен
+                }
+            }
+            break;
+        case 2:
+            for (int i = 0; i < field_size_x; i++) {
+                game_state.field[0][i] = FIELD_CELL_TYPE_WALL;
+                game_state.field[field_size_y - 1][i] = FIELD_CELL_TYPE_WALL; //генерация горизонтальных сте
+            }
+            for (int j = 1; j < field_size_y - 1; j++) {
+                game_state.field[j][0] = FIELD_CELL_TYPE_WALL; // генерация уголка
+                game_state.field[j][field_size_x - 1] = FIELD_CELL_TYPE_WALL; // генерация вертикальных стен
+            }
+
+            for (int i = 0; i < field_size_x - 10; i++) {
+                if (i > 9 && i < 17 || i > 22) {
+                    game_state.field[5][i] = FIELD_CELL_TYPE_WALL;
+                    game_state.field[field_size_y - 6][i] = FIELD_CELL_TYPE_WALL; //генерация горизонтальных стен
+                }
+            }
+            for (int j = 1; j < field_size_y - 6; j++) {
+                if (j > 5 && j < 10 || j > 14 && j < 30) {
+                    game_state.field[j][10] = FIELD_CELL_TYPE_WALL; // генерация уголка
+                    game_state.field[j][field_size_x - 11] = FIELD_CELL_TYPE_WALL; // генерация вертикальных стен
+                }
+            }
+
+            break;
     }
 
     add_green_apple(); // генерация зеленого ябллока
@@ -2052,6 +2210,17 @@ int main() // main
         if(set_op){
             settings_color = 0;
             new_game = false;
+            continue;
+        }
+
+        if(menu_type == 7){
+            open_level_menu();
+            level_color = 0;
+            color_menu = 0;
+        }
+
+        if(op_main){
+            op_main = false;
             continue;
         }
 
