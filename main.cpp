@@ -91,6 +91,7 @@ bool immortality = false; // переменная, отвечающая за б�
 bool win_game = false;
 bool new_game = true;
 
+bool set_op = false;
 bool op_main = false;
 
 //структура с характеристиками змейкм
@@ -108,19 +109,27 @@ vector <GameState> game_last_states; //массив с сохранением с
 bool rall_back = false; //откат назад
 
 sf::Font font_menu;
+
 vector <sf::Text> text_menu_items;
+
 vector <string> lose_menu_items{"Your score: ", "Restart", "Exit to main menu", "GAME OVER"};
+
 vector<string> menu_items = {"Start new game", "Level", "Settings", "Quit", "SNAKE"};
-vector <string> settings_menu_items{"Type of control", "Field color", "Snake skin", "Walls", "Difficulty level", "Volume", "Back to main menu", "Game settings"};
+
+vector <string> settings_menu_items{"Type of control", "Field color", "Snake skin", "Walls",
+                                    "Difficulty level", "Volume", "Back to main menu", "Game settings"};
+
 vector<string> control_menu_items = {"Cursors", "W, A, S, D", "Back to settings", "Type of game control"};
-vector<string> difficulty_menu_items = {"Standart", "Yeasy", "Medium", "Hard", "Crazy", "Impossible", "Back to settings", "Difficulty level"};
+
+vector<string> difficulty_menu_items = {"Standart", "Yeasy", "Medium", "Hard", "Crazy", "Impossible",
+                                        "Back to settings", "Difficulty level"};
+
 vector <string> pause_menu_items = {"Score: ", "Resume", "Exit to main menu", "Pause"};
+
 vector <string> volume_menu_items = {"Volume: ", "Exit to main menu", "Volume settings"};
+
 vector <string> level_menu_items = {"Level 1", "Level 2", "Level 3", "Level 4", "Level 5",
                                     "Level 6" , "Level 7", "Back to main menu", "Choose level"};
-
-bool set_op = false;
-
 int color_menu = 0;
 int menu_type = 0;
 int lose_color = 1;
