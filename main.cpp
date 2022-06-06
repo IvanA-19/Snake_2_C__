@@ -71,9 +71,7 @@ const int volume_menu_height = 15 * cell_size;
 
 int type_of_control; //вид управления
 
-vector <int> snake_direction_queue; //массив для буфферизации управления, чтобы можно было лучше координировать змейку и делать более удобные маневры
-int last_score = 0;
-int score = 0; //переменная для подсчета количества очков
+vector <int> snake_direction_queue; //массив для буфферизации управления, чтобы можно было лучше координировать змейку и делать более удобные маневр
 bool game_over = false; //переменнная, отвечающая за конец игры
 bool game_paused = false; //переменная, отвечающая за паузу
 int count_of_apples = 0; //количество яблок, необходимое для генерации других предметов
@@ -104,6 +102,8 @@ struct GameState {
     int snake_position_y = field_size_y / 2; //позицция змейки по y
     int snake_length = 4; //длиня змейки, равная изначально 4
     int snake_direction = SNAKE_DIRECTION_RIGHT; //направление движения, изначально вправо
+    int score = 0;
+    int last_score = 0;
 };
 
 GameState game_state; //текущая стадия игры
@@ -135,8 +135,8 @@ vector <string> level_menu_items = {"Level 1", "Level 2", "Level 3", "Level 4", 
 
 vector<string> help_menu_items = {"Apples: ", "\t*Green - random trap", "\t*Gold - random bonus",
                                   "\t*Red - food for snake", "Heart - removes bad effect",
-                                  "Space - game pause", "Tab to turn off the music",
-                                  "X to turn on the music", "Back to main menu", "Help"};
+                                  "Space - game pause", "Tab - to turn off the music",
+                                  "X - to turn on the music", "Back to main menu", "Help"};
 
 int color_menu = 0;
 int menu_type = 0;
@@ -230,7 +230,7 @@ void set_fonts()
                     text_menu_items.back().setString(lose_menu_items.at(i));
                 }
                 else{
-                    text_menu_items.back().setString(lose_menu_items.at(i) + to_string(score));
+                    text_menu_items.back().setString(lose_menu_items.at(i) + to_string(game_state.score));
                 }
                 text_menu_items.back().setFont(font_menu);
                 text_menu_items.back().setCharacterSize(40);
@@ -283,7 +283,7 @@ void set_fonts()
                     text_menu_items.back().setString(pause_menu_items.at(i));
                 }
                 else{
-                    text_menu_items.back().setString(pause_menu_items.at(i) + to_string(score));
+                    text_menu_items.back().setString(pause_menu_items.at(i) + to_string(game_state.score));
                 }
                 text_menu_items.back().setFont(font_menu);
                 text_menu_items.back().setCharacterSize(40);
@@ -1926,11 +1926,11 @@ void random_event()
         }
         break;
     case 2:
-        if (score >= 10) {
-            score -= 10; //уменьшение счета
+        if (game_state.score >= 10) {
+            game_state.score -= 10; //уменьшение счета
         }
         else {
-            score = 0;
+            game_state.score = 0;
         }
         score_decrease = true; // запоминаем, что счет уменьшен для того, чтобы вернуться в начальное состояние
         break;
@@ -1955,7 +1955,7 @@ int random_bonus()
     }
     switch (bonus) {
     case 0:
-        score += 15; // увеличение счета
+        game_state.score += 15; // увеличение счета
         break;
     case 1:
         return 1;
@@ -1990,7 +1990,7 @@ void normal_game()
     }
     if (score_decrease) {
         score_decrease = false; //переключение переменной, отвечающей за счет
-        score = last_score; // уменьшение счета
+        game_state.score = game_state.last_score; // уменьшение счета
     }
 }
 
@@ -2107,9 +2107,9 @@ void make_move()
     if (game_state.field[game_state.snake_position_y][game_state.snake_position_x] != FIELD_CELL_TYPE_NONE) {
         switch (game_state.field[game_state.snake_position_y][game_state.snake_position_x]) {
         case FIELD_CELL_TYPE_APPLE: // случай - яблоко
-            last_score++; //предыдущий счет +1
+            game_state.last_score++; //предыдущий счет +1
             apple_sound.play();
-            score++; //текущий счет +1
+            game_state.score++; //текущий счет +1
             game_state.snake_length++; // увеличение длины на 1
             count_of_apples++; // считаем количество съеденных яблок
             if (count_of_apples == n) { // если их 10 - гененрируем одно зеленое
@@ -2120,7 +2120,7 @@ void make_move()
             if (count_of_red_apples == 5) { // если 5 - гененрируем сердечко
                 add_heart();
             }
-            if (score != 0 && score % 15 == 0) { //генерация желтого яблока в случае, если съедено 15 красных
+            if (game_state.score != 0 && game_state.score % 15 == 0) { //генерация желтого яблока в случае, если съедено 15 красных
                 add_yellow_apple();
             }
             grow_snake(); // увеличение змейки
@@ -2233,9 +2233,9 @@ void start_game() // начало игры
     game_state.snake_position_y = field_size_y / 2;
     game_state.snake_length = 4; // длина по умолчанию
     game_state.snake_direction = SNAKE_DIRECTION_RIGHT; // начальное направление - вправо
-    score = 0; // счет равен 0
+    game_state.score = 0; // счет равен 0
     choice = 1;
-    last_score = 0; //обновление предыдущего счета
+    game_state.last_score = 0; //обновление предыдущего счета
     game_over = false; // обновление значения конца игры
     exit_game = false; //обновление значения выхода из игры
     invert_control = false; // значение по умолчанию для инверсии
@@ -2651,6 +2651,5 @@ int main() // main
             continue; //возврат в начало цикла и начало новой игры
         }
     }
-
     return 0;
 }
