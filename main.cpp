@@ -3,7 +3,6 @@
 #include <cstdlib> //стандартная библиотека
 #include <vector> //для использования std::vector
 #include <windows.h>
-#include <cstring>
 
 using namespace std; //стандартное пространство имен
 
