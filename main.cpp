@@ -15,7 +15,7 @@ const int skin_count = 5; // количество скинов
 const int skin_choice_height = (skin_length + 4) * skin_cell_size;
 const int skin_choice_width = (skin_count + 6) * skin_cell_size;
 int choice = 1;
-int skin;
+int skin = 0;
 
 const int wall_cell_size = 32;
 const int wall_length = 2;
@@ -23,7 +23,7 @@ const int wall_count = 4; // количество скинов
 const int wall_choice_height = (wall_length + 3) * wall_cell_size;
 const int wall_choice_width = (wall_count + 5) * wall_cell_size;
 int choice_wall = 1;
-int wall;
+int wall = 0;
 
 const int field_color_cell_size = 32;
 const int window_color_height = 256;
@@ -434,8 +434,8 @@ void draw_main_menu(sf::RenderWindow& window_main)
         case 7:
             window_main.clear(sf::Color(0, 0, 0));
             text_menu_items.at(8).move(menu_position_x - 25, 30);
-            text_menu_items.at(level_color).setFillColor(sf::Color(0, 206,209));
-            text_menu_items.at(8).setFillColor(sf::Color(255, 0, 0));
+            text_menu_items.at(level_color).setFillColor(sf::Color(0, 255,255));
+            text_menu_items.at(8).setFillColor(sf::Color(0, 255, 0));
             window_main.draw(text_menu_items.at(8));
             break;
     }
@@ -489,7 +489,7 @@ void draw_main_menu(sf::RenderWindow& window_main)
     if(menu_type == 7){
         float menu_position_y = 140;
         for (int i = 0; i < level_menu_items.size() - 1; i++) {
-            text_menu_items.at(i).move(menu_position_x, menu_position_y);
+            text_menu_items.at(i).move(menu_position_x, menu_position_y - 20);
             menu_position_y += 60;
             window_main.draw(text_menu_items.at(i));
         }
