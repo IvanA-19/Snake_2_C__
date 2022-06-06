@@ -3,7 +3,6 @@
 #include <cstdlib> //стандартная библиотека
 #include <vector> //для использования std::vector
 #include <windows.h>
-#include <cstring>
 
 using namespace std; //стандартное пространство имен
 
@@ -15,7 +14,7 @@ const int skin_count = 5; // количество скинов
 const int skin_choice_height = (skin_length + 4) * skin_cell_size;
 const int skin_choice_width = (skin_count + 6) * skin_cell_size;
 int choice = 1;
-int skin;
+int skin = 0;
 
 const int wall_cell_size = 32;
 const int wall_length = 2;
@@ -23,7 +22,7 @@ const int wall_count = 4; // количество скинов
 const int wall_choice_height = (wall_length + 3) * wall_cell_size;
 const int wall_choice_width = (wall_count + 5) * wall_cell_size;
 int choice_wall = 1;
-int wall;
+int wall = 0;
 
 const int field_color_cell_size = 32;
 const int window_color_height = 256;
@@ -92,6 +91,7 @@ bool immortality = false; // переменная, отвечающая за б�
 bool win_game = false;
 bool new_game = true;
 
+bool set_op = false;
 bool op_main = false;
 
 //структура с характеристиками змейкм
@@ -109,19 +109,27 @@ vector <GameState> game_last_states; //массив с сохранением с
 bool rall_back = false; //откат назад
 
 sf::Font font_menu;
+
 vector <sf::Text> text_menu_items;
+
 vector <string> lose_menu_items{"Your score: ", "Restart", "Exit to main menu", "GAME OVER"};
-vector<string> menu_items = {"Start new game", "Level", "Settings", "Quit", "SNAKE"};
-vector <string> settings_menu_items{"Type of control", "Field color", "Snake skin", "Walls", "Difficulty level", "Volume", "Back to main menu", "Game settings"};
+
+vector<string> menu_items = {"Start new game", "Level", "Settings", "Quit", "SNAKE", "By Vanyok77797", "Version 2.0.1"};
+
+vector <string> settings_menu_items{"Type of control", "Field color", "Snake skin", "Walls",
+                                    "Difficulty level", "Volume", "Back to main menu", "Game settings"};
+
 vector<string> control_menu_items = {"Cursors", "W, A, S, D", "Back to settings", "Type of game control"};
-vector<string> difficulty_menu_items = {"Standart", "Yeasy", "Medium", "Hard", "Crazy", "Impossible", "Back to settings", "Difficulty level"};
+
+vector<string> difficulty_menu_items = {"Standart", "Yeasy", "Medium", "Hard", "Crazy", "Impossible",
+                                        "Back to settings", "Difficulty level"};
+
 vector <string> pause_menu_items = {"Score: ", "Resume", "Exit to main menu", "Pause"};
+
 vector <string> volume_menu_items = {"Volume: ", "Exit to main menu", "Volume settings"};
+
 vector <string> level_menu_items = {"Level 1", "Level 2", "Level 3", "Level 4", "Level 5",
                                     "Level 6" , "Level 7", "Back to main menu", "Choose level"};
-
-bool set_op = false;
-
 int color_menu = 0;
 int menu_type = 0;
 int lose_color = 1;
@@ -184,7 +192,7 @@ void set_fonts()
     font_menu.loadFromFile("fonts/BigOldBoldy-dEjR.ttf");
     switch (menu_type) {
         case 0:
-            for (int i = 0; i < menu_items.size() - 1; i++) {
+            for (int i = 0; i < menu_items.size() - 3; i++) {
                 text_menu_items.emplace_back(sf::Text());
                 text_menu_items.back().setString(menu_items.at(i));
                 text_menu_items.back().setFont(font_menu);
@@ -194,6 +202,14 @@ void set_fonts()
             text_menu_items.back().setString(menu_items.at(4));
             text_menu_items.back().setFont(font_menu);
             text_menu_items.back().setCharacterSize(70);
+            text_menu_items.emplace_back(sf::Text());
+            text_menu_items.back().setString(menu_items.at(5));
+            text_menu_items.back().setFont(font_menu);
+            text_menu_items.back().setCharacterSize(15);
+            text_menu_items.emplace_back(sf::Text());
+            text_menu_items.back().setString(menu_items.at(6));
+            text_menu_items.back().setFont(font_menu);
+            text_menu_items.back().setCharacterSize(15);
             break;
         case 1:
             for (int i = 0; i < lose_menu_items.size() - 1; i++) {
@@ -381,10 +397,19 @@ void draw_main_menu(sf::RenderWindow& window_main)
     switch(menu_type){
         case 0:
             window_main.clear(sf::Color(0, 0, 0));
-            text_menu_items.at(4).move(menu_position_x + 100, 20);
+            text_menu_items.at(4).move(menu_position_x + 106, 20);
             text_menu_items.at(4).setFillColor(sf::Color(0, 255,0));
             window_main.draw(text_menu_items.at(4));
             text_menu_items.at(color_menu).setFillColor(sf::Color(255, 255,0));
+
+            text_menu_items.at(5).move(menu_position_x + 178, 550);
+            text_menu_items.at(5).setFillColor(sf::Color(0, 255,127));
+            window_main.draw(text_menu_items.at(5));
+
+            text_menu_items.at(6).move(menu_position_x + 178, 575);
+            text_menu_items.at(6).setFillColor(sf::Color(0, 255,127));
+            window_main.draw(text_menu_items.at(6));
+
             break;
         case 1:
             window_main.clear(sf::Color(0, 0, 0));
@@ -434,14 +459,14 @@ void draw_main_menu(sf::RenderWindow& window_main)
         case 7:
             window_main.clear(sf::Color(0, 0, 0));
             text_menu_items.at(8).move(menu_position_x - 25, 30);
-            text_menu_items.at(level_color).setFillColor(sf::Color(0, 206,209));
-            text_menu_items.at(8).setFillColor(sf::Color(255, 0, 0));
+            text_menu_items.at(level_color).setFillColor(sf::Color(0, 255,255));
+            text_menu_items.at(8).setFillColor(sf::Color(0, 255, 0));
             window_main.draw(text_menu_items.at(8));
             break;
     }
 
     if(menu_type == 0){
-        for (int i = 0; i < menu_items.size() - 1; i++) {
+        for (int i = 0; i < menu_items.size() - 3; i++) {
             text_menu_items.at(i).move(menu_position_x, menu_position_y);
             menu_position_y += 60;
             window_main.draw(text_menu_items.at(i));
@@ -449,7 +474,7 @@ void draw_main_menu(sf::RenderWindow& window_main)
     }
 
     if(menu_type == 1 || menu_type == 3) {
-        for (int i = 0; i < menu_items.size() - 2; i++) {
+        for (int i = 0; i < menu_items.size() - 4; i++) {
             text_menu_items.at(i).move(menu_position_x, menu_position_y);
             menu_position_y += 60;
             window_main.draw(text_menu_items.at(i));
@@ -472,7 +497,7 @@ void draw_main_menu(sf::RenderWindow& window_main)
         }
     }
     else if(menu_type == 5){
-        for (int i = 0; i < menu_items.size() - 2; i++) {
+        for (int i = 0; i < menu_items.size() - 4; i++) {
             text_menu_items.at(i).move(pause_menu_position_x, pause_menu_position_y);
             pause_menu_position_y += 60;
             window_main.draw(text_menu_items.at(i));
@@ -489,7 +514,7 @@ void draw_main_menu(sf::RenderWindow& window_main)
     if(menu_type == 7){
         float menu_position_y = 140;
         for (int i = 0; i < level_menu_items.size() - 1; i++) {
-            text_menu_items.at(i).move(menu_position_x, menu_position_y);
+            text_menu_items.at(i).move(menu_position_x, menu_position_y - 20);
             menu_position_y += 60;
             window_main.draw(text_menu_items.at(i));
         }
