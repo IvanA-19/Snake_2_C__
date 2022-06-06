@@ -36,6 +36,7 @@ bool pause_menu = false;
 bool control_pause = false;
 bool difficulty_pause = false;
 bool game_level_pause = false;
+bool help_pause = false;
 
 constexpr auto FIELD_CELL_TYPE_NONE = 0; //пустая клетка
 constexpr auto FIELD_CELL_TYPE_APPLE = -1; //яблоко
@@ -91,6 +92,7 @@ bool immortality = false; // переменная, отвечающая за б�
 bool win_game = false;
 bool new_game = true;
 
+bool op_help = false;
 bool set_op = false;
 bool op_main = false;
 
@@ -114,7 +116,7 @@ vector <sf::Text> text_menu_items;
 
 vector <string> lose_menu_items{"Your score: ", "Restart", "Exit to main menu", "GAME OVER"};
 
-vector<string> menu_items = {"Start new game", "Level", "Settings", "Quit", "SNAKE", "By Vanyok77797", "Version 2.0.1"};
+vector<string> menu_items = {"Start new game", "Level", "Settings", "Help", "Quit", "SNAKE", "By Vanyok77797", "Version 3.0.0"};
 
 vector <string> settings_menu_items{"Type of control", "Field color", "Snake skin", "Walls",
                                     "Difficulty level", "Volume", "Back to main menu", "Game settings"};
@@ -130,6 +132,12 @@ vector <string> volume_menu_items = {"Volume: ", "Exit to main menu", "Volume se
 
 vector <string> level_menu_items = {"Level 1", "Level 2", "Level 3", "Level 4", "Level 5",
                                     "Level 6" , "Level 7", "Back to main menu", "Choose level"};
+
+vector<string> help_menu_items = {"Apples: ", "\t*Green - random trap", "\t*Gold - random bonus",
+                                  "\t*Red - food for snake", "Heart - removes bad effect",
+                                  "Space - game pause", "Tab to turn off the music",
+                                  "X to turn on the music", "Back to main menu", "Help"};
+
 int color_menu = 0;
 int menu_type = 0;
 int lose_color = 1;
@@ -164,7 +172,11 @@ sf::SoundBuffer enter_buffer;
 sf::Sound heart_sound;
 sf::SoundBuffer heart_buffer;
 
+sf::Music game_music;
+
 void set_sounds(){
+    game_music.openFromFile("sounds/music_game.ogg");
+
     apple_buffer.loadFromFile("sounds/apple_2.wav");
     apple_sound.setBuffer(apple_buffer);
 
@@ -199,15 +211,15 @@ void set_fonts()
                 text_menu_items.back().setCharacterSize(40);
             }
             text_menu_items.emplace_back(sf::Text());
-            text_menu_items.back().setString(menu_items.at(4));
+            text_menu_items.back().setString(menu_items.at(5));
             text_menu_items.back().setFont(font_menu);
             text_menu_items.back().setCharacterSize(70);
             text_menu_items.emplace_back(sf::Text());
-            text_menu_items.back().setString(menu_items.at(5));
+            text_menu_items.back().setString(menu_items.at(6));
             text_menu_items.back().setFont(font_menu);
             text_menu_items.back().setCharacterSize(15);
             text_menu_items.emplace_back(sf::Text());
-            text_menu_items.back().setString(menu_items.at(6));
+            text_menu_items.back().setString(menu_items.at(7));
             text_menu_items.back().setFont(font_menu);
             text_menu_items.back().setCharacterSize(15);
             break;
@@ -310,6 +322,21 @@ void set_fonts()
             text_menu_items.back().setFont(font_menu);
             text_menu_items.back().setCharacterSize(60);
             break;
+        case 8:
+            for(int i = 0; i < help_menu_items.size() - 1; i++){
+                text_menu_items.emplace_back(sf::Text());
+                text_menu_items.back().setString(help_menu_items.at(i));
+                text_menu_items.back().setFont(font_menu);
+                text_menu_items.back().setCharacterSize(25);
+                if(i == 0 || i == 8){
+                    text_menu_items.back().setCharacterSize(32);
+                }
+            }
+            text_menu_items.emplace_back(sf::Text());
+            text_menu_items.back().setString(help_menu_items.at(9));
+            text_menu_items.back().setFont(font_menu);
+            text_menu_items.back().setCharacterSize(60);
+            break;
     }
 }
 
@@ -328,7 +355,7 @@ void menu_control(sf::RenderWindow& window_main) //выбор цвета фон�
                 case sf::Keyboard::Down:
                     menu_sound.play();
                     color_menu++;
-                    if(color_menu == 4){
+                    if(color_menu == 5){
                         color_menu = 0;
                     }
                     pause_menu = true;
@@ -337,17 +364,17 @@ void menu_control(sf::RenderWindow& window_main) //выбор цвета фон�
                     menu_sound.play();
                     color_menu--;
                     if(color_menu == -1){
-                        color_menu = 3;
+                        color_menu = 4;
                     }
                     pause_menu = true;
                     break;
                 case sf::Keyboard::End:
-                    if(color_menu == 2){
+                    if(color_menu == 4){
                         immortality = true;
                     }
                     break;
                 case sf::Keyboard::Home:
-                    if(color_menu == 2){
+                    if(color_menu == 4){
                         immortality = false;
                     }
                     break;
@@ -364,6 +391,10 @@ void menu_control(sf::RenderWindow& window_main) //выбор цвета фон�
                             set_op = true;
                             break;
                         case 3:
+                            menu_type = 8;
+                            op_help = true;
+                            break;
+                        case 4:
                             exit_game = true;
                             break;
                     }
@@ -397,18 +428,18 @@ void draw_main_menu(sf::RenderWindow& window_main)
     switch(menu_type){
         case 0:
             window_main.clear(sf::Color(0, 0, 0));
-            text_menu_items.at(4).move(menu_position_x + 106, 20);
-            text_menu_items.at(4).setFillColor(sf::Color(0, 255,0));
-            window_main.draw(text_menu_items.at(4));
+            text_menu_items.at(5).move(menu_position_x + 106, 20);
+            text_menu_items.at(5).setFillColor(sf::Color(0, 255,0));
+            window_main.draw(text_menu_items.at(5));
             text_menu_items.at(color_menu).setFillColor(sf::Color(255, 255,0));
 
-            text_menu_items.at(5).move(menu_position_x + 178, 550);
-            text_menu_items.at(5).setFillColor(sf::Color(0, 255,127));
-            window_main.draw(text_menu_items.at(5));
-
-            text_menu_items.at(6).move(menu_position_x + 178, 575);
+            text_menu_items.at(6).move(menu_position_x + 178, 550);
             text_menu_items.at(6).setFillColor(sf::Color(0, 255,127));
             window_main.draw(text_menu_items.at(6));
+
+            text_menu_items.at(7).move(menu_position_x + 178, 575);
+            text_menu_items.at(7).setFillColor(sf::Color(0, 255,127));
+            window_main.draw(text_menu_items.at(7));
 
             break;
         case 1:
@@ -463,18 +494,42 @@ void draw_main_menu(sf::RenderWindow& window_main)
             text_menu_items.at(8).setFillColor(sf::Color(0, 255, 0));
             window_main.draw(text_menu_items.at(8));
             break;
+        case 8:
+            window_main.clear(sf::Color(0, 0, 0));
+            text_menu_items.at(9).move(menu_position_x + 175, 25);
+            text_menu_items.at(9).setFillColor(sf::Color(0, 255,255));
+            text_menu_items.at(9).setFillColor(sf::Color(148, 0, 211));
+            text_menu_items.at(0).setFillColor(sf::Color(30, 144, 255));
+            text_menu_items.at(1).setFillColor(sf::Color(0, 255, 0));
+            text_menu_items.at(2).setFillColor(sf::Color(255, 215, 0));
+            text_menu_items.at(3).setFillColor(sf::Color(255, 0, 0));
+            text_menu_items.at(4).setFillColor(sf::Color(199, 21, 133));
+            text_menu_items.at(5).setFillColor(sf::Color(123, 104, 238));
+            text_menu_items.at(6).setFillColor(sf::Color(0, 255, 127));
+            text_menu_items.at(7).setFillColor(sf::Color(0, 255, 127));
+            text_menu_items.at(8).setFillColor(sf::Color(0, 255, 255));
+            window_main.draw(text_menu_items.at(9));
+            break;
+    }
+
+    if(menu_type == 8){
+        for (int i = 0; i < help_menu_items.size() - 1; i++) {
+            text_menu_items.at(i).move(menu_position_x, menu_position_y - 100);
+            menu_position_y += 50;
+            window_main.draw(text_menu_items.at(i));
+        }
     }
 
     if(menu_type == 0){
         for (int i = 0; i < menu_items.size() - 3; i++) {
-            text_menu_items.at(i).move(menu_position_x, menu_position_y);
+            text_menu_items.at(i).move(menu_position_x, menu_position_y - 50);
             menu_position_y += 60;
             window_main.draw(text_menu_items.at(i));
         }
     }
 
     if(menu_type == 1 || menu_type == 3) {
-        for (int i = 0; i < menu_items.size() - 4; i++) {
+        for (int i = 0; i < menu_items.size() - 5; i++) {
             text_menu_items.at(i).move(menu_position_x, menu_position_y);
             menu_position_y += 60;
             window_main.draw(text_menu_items.at(i));
@@ -497,7 +552,7 @@ void draw_main_menu(sf::RenderWindow& window_main)
         }
     }
     else if(menu_type == 5){
-        for (int i = 0; i < menu_items.size() - 4; i++) {
+        for (int i = 0; i < menu_items.size() - 5; i++) {
             text_menu_items.at(i).move(pause_menu_position_x, pause_menu_position_y);
             pause_menu_position_y += 60;
             window_main.draw(text_menu_items.at(i));
@@ -567,6 +622,8 @@ void control_menu_control(sf::RenderWindow &window_main)
     }
 }
 
+
+
 void open_control_menu()
 {
     sf::RenderWindow window_main(sf::VideoMode(main_menu_width, main_menu_height), "Type of control", sf::Style::Close);
@@ -611,6 +668,41 @@ void open_main_menu()
             draw_main_menu(window_main);
             text_menu_items.clear();
             pause_menu = false;
+            window_main.display();
+        }
+    }
+}
+
+
+void help_menu_control(sf::RenderWindow &window_main)
+{
+    sf::Event event;
+
+    while (window_main.pollEvent(event)) {
+        if (event.type == sf::Event::KeyPressed) {
+            if (event.key.code == sf::Keyboard::Enter) {
+                menu_type = 0;
+                op_help = true;
+                window_main.close();
+            }
+        }
+    }
+}
+
+
+
+void open_help_menu()
+{
+    sf::RenderWindow window_main(sf::VideoMode( main_menu_width, main_menu_height), "Main_menu", sf::Style::Close);
+    // открытие окна
+    help_pause = true;
+    while (window_main.isOpen()) {
+        help_menu_control(window_main);
+        if(help_pause){
+            set_fonts();
+            draw_main_menu(window_main);
+            text_menu_items.clear();
+            help_pause = false;
             window_main.display();
         }
     }
@@ -740,7 +832,6 @@ void chose_window_color(sf::RenderWindow& window_2) //выбор цвета фо
         }
     }
 }
-
 
 void set_window_color()
 {
@@ -1111,7 +1202,6 @@ void open_difficulty_menu()
     }
 }
 
-
 void level_menu_control(sf::RenderWindow &window_main)
 {
     sf::Event event;
@@ -1196,6 +1286,7 @@ void open_level_menu()
 }
 
 void set_volume_level(){
+    game_music.setVolume(25);
     apple_sound.setVolume(float(volume_level));
     menu_sound.setVolume(float(volume_level));
     game_over_sound.setVolume(float(volume_level));
@@ -1916,9 +2007,12 @@ void pause_menu_control(sf::RenderWindow &window_pause, sf::RenderWindow& window
                     switch(pause_color){
                         case 1:
                             menu_type = 0;
+                            game_music.setLoop(true);
+                            game_music.play();
                             game_paused = false;
                             break;
                         case 2:
+                            game_music.stop();
                             menu_type = 0;
                             window.close();
                             pause_menu = 0;
@@ -2294,6 +2388,13 @@ void game_control(bool& invert_control, sf::RenderWindow& window)
                     menu_type = 5;
                     game_paused = true; // установка игры на паузу
                     break;
+                case sf::Keyboard::Tab:
+                    game_music.stop();
+                    break;
+                case sf::Keyboard::X:
+                    game_music.setLoop(true);
+                    game_music.play();
+                    break;
                 }
             }
         }
@@ -2365,6 +2466,13 @@ void game_control(bool& invert_control, sf::RenderWindow& window)
                 case sf::Keyboard::Space:
                     menu_type = 5;
                     game_paused = true; // установка игры на паузу
+                    break;
+                case sf::Keyboard::Tab:
+                    game_music.stop();
+                    break;
+                case sf::Keyboard::X:
+                    game_music.setLoop(true);
+                    game_music.play();
                     break;
                 }
             }
@@ -2446,6 +2554,16 @@ int main() // main
             continue;
         }
 
+        if(menu_type == 8){
+            open_help_menu();
+            color_menu = 0;
+        }
+
+        if(op_help){
+            op_help = false;
+            continue;
+        }
+
         if(exit_game){
             break;
         }
@@ -2454,6 +2572,9 @@ int main() // main
         // скорость по умолчанию
 
         sf::RenderWindow window(sf::VideoMode(window_width, window_height), "snake", sf::Style::Close); // открытие окна
+
+        game_music.setLoop(true);
+        game_music.play();
 
         while (window.isOpen()) { // пока окно открыто
             game_control(invert_control, window); // подключение управления
@@ -2484,7 +2605,7 @@ int main() // main
 
             if (game_over) { // если не откат и конец игры
                 if (!rall_back) {
-                    window.clear(sf::Color(255, 0, 0));
+                    game_music.stop();
                     sf::sleep(sf::seconds(1)); // задержка на 1 секунду
                     window.close(); // закрытие окна
                     lose_color = 1;
@@ -2493,11 +2614,13 @@ int main() // main
             }
 
             if (win_game) {
+                game_music.stop();
                 sf::sleep(sf::seconds(1)); // задержка на 1 секунду
                 window.close();
             }
 
             if(game_paused){
+                game_music.pause();
                 open_pause_menu(window);
                 new_game = true;
                 restart = false;
