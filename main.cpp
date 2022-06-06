@@ -114,7 +114,7 @@ vector <sf::Text> text_menu_items;
 
 vector <string> lose_menu_items{"Your score: ", "Restart", "Exit to main menu", "GAME OVER"};
 
-vector<string> menu_items = {"Start new game", "Level", "Settings", "Quit", "SNAKE"};
+vector<string> menu_items = {"Start new game", "Level", "Settings", "Quit", "SNAKE", "By Vanyok77797", "Version 2.0.1"};
 
 vector <string> settings_menu_items{"Type of control", "Field color", "Snake skin", "Walls",
                                     "Difficulty level", "Volume", "Back to main menu", "Game settings"};
@@ -192,7 +192,7 @@ void set_fonts()
     font_menu.loadFromFile("fonts/BigOldBoldy-dEjR.ttf");
     switch (menu_type) {
         case 0:
-            for (int i = 0; i < menu_items.size() - 1; i++) {
+            for (int i = 0; i < menu_items.size() - 3; i++) {
                 text_menu_items.emplace_back(sf::Text());
                 text_menu_items.back().setString(menu_items.at(i));
                 text_menu_items.back().setFont(font_menu);
@@ -202,6 +202,14 @@ void set_fonts()
             text_menu_items.back().setString(menu_items.at(4));
             text_menu_items.back().setFont(font_menu);
             text_menu_items.back().setCharacterSize(70);
+            text_menu_items.emplace_back(sf::Text());
+            text_menu_items.back().setString(menu_items.at(5));
+            text_menu_items.back().setFont(font_menu);
+            text_menu_items.back().setCharacterSize(15);
+            text_menu_items.emplace_back(sf::Text());
+            text_menu_items.back().setString(menu_items.at(6));
+            text_menu_items.back().setFont(font_menu);
+            text_menu_items.back().setCharacterSize(15);
             break;
         case 1:
             for (int i = 0; i < lose_menu_items.size() - 1; i++) {
@@ -389,10 +397,19 @@ void draw_main_menu(sf::RenderWindow& window_main)
     switch(menu_type){
         case 0:
             window_main.clear(sf::Color(0, 0, 0));
-            text_menu_items.at(4).move(menu_position_x + 100, 20);
+            text_menu_items.at(4).move(menu_position_x + 106, 20);
             text_menu_items.at(4).setFillColor(sf::Color(0, 255,0));
             window_main.draw(text_menu_items.at(4));
             text_menu_items.at(color_menu).setFillColor(sf::Color(255, 255,0));
+
+            text_menu_items.at(5).move(menu_position_x + 178, 550);
+            text_menu_items.at(5).setFillColor(sf::Color(0, 255,127));
+            window_main.draw(text_menu_items.at(5));
+
+            text_menu_items.at(6).move(menu_position_x + 178, 575);
+            text_menu_items.at(6).setFillColor(sf::Color(0, 255,127));
+            window_main.draw(text_menu_items.at(6));
+
             break;
         case 1:
             window_main.clear(sf::Color(0, 0, 0));
@@ -449,7 +466,7 @@ void draw_main_menu(sf::RenderWindow& window_main)
     }
 
     if(menu_type == 0){
-        for (int i = 0; i < menu_items.size() - 1; i++) {
+        for (int i = 0; i < menu_items.size() - 3; i++) {
             text_menu_items.at(i).move(menu_position_x, menu_position_y);
             menu_position_y += 60;
             window_main.draw(text_menu_items.at(i));
@@ -457,7 +474,7 @@ void draw_main_menu(sf::RenderWindow& window_main)
     }
 
     if(menu_type == 1 || menu_type == 3) {
-        for (int i = 0; i < menu_items.size() - 2; i++) {
+        for (int i = 0; i < menu_items.size() - 4; i++) {
             text_menu_items.at(i).move(menu_position_x, menu_position_y);
             menu_position_y += 60;
             window_main.draw(text_menu_items.at(i));
@@ -480,7 +497,7 @@ void draw_main_menu(sf::RenderWindow& window_main)
         }
     }
     else if(menu_type == 5){
-        for (int i = 0; i < menu_items.size() - 2; i++) {
+        for (int i = 0; i < menu_items.size() - 4; i++) {
             text_menu_items.at(i).move(pause_menu_position_x, pause_menu_position_y);
             pause_menu_position_y += 60;
             window_main.draw(text_menu_items.at(i));
