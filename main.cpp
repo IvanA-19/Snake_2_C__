@@ -19,9 +19,9 @@ int skin;
 
 const int wall_cell_size = 32;
 const int wall_length = 2;
-const int wall_count = 3; // количество скинов
+const int wall_count = 4; // количество скинов
 const int wall_choice_height = (wall_length + 3) * wall_cell_size;
-const int wall_choice_width = (wall_count + 4) * wall_cell_size;
+const int wall_choice_width = (wall_count + 5) * wall_cell_size;
 int choice_wall = 1;
 int wall;
 
@@ -745,7 +745,7 @@ void check_event_2(sf::RenderWindow& window_wall)
             switch (event.key.code) {
             case sf::Keyboard::Right:
                 menu_sound.play();
-                if (choice_wall != 5) { //изменение количества выборов скина
+                if (choice_wall != 7) { //изменение количества выборов скина
                     choice_wall += 2;
                 }
                 else {
@@ -772,6 +772,10 @@ void check_event_2(sf::RenderWindow& window_wall)
                     break;
                 case 5:
                     wall = 2;
+                    window_wall.close();
+                    break;
+                case 7:
+                    wall = 3;
                     window_wall.close();
                     break;
                 }
@@ -812,6 +816,12 @@ void draw_wall_choice(sf::RenderWindow& window_wall)
                         break;
                     case 5:
                         wall_texture.loadFromFile("images/wall_3.png");
+                        wall.setTexture(wall_texture);
+                        wall.setPosition(float(j * wall_cell_size), float(i * wall_cell_size));
+                        window_wall.draw(wall);
+                        break;
+                    case 7:
+                        wall_texture.loadFromFile("images/cactus_wall.png");
                         wall.setTexture(wall_texture);
                         wall.setPosition(float(j * wall_cell_size), float(i * wall_cell_size));
                         window_wall.draw(wall);
@@ -1379,7 +1389,7 @@ void clear_field()
 
 
     switch(game_level) {
-        case 1:
+        case 0:
             for (int i = 0; i < field_size_x; i++) {
                 if (i < 10 || field_size_x - i - 1 < 10) {
                     game_state.field[0][i] = FIELD_CELL_TYPE_WALL;
@@ -1393,7 +1403,7 @@ void clear_field()
                 }
             }
             break;
-        case 2:
+        case 1:
             for (int i = 0; i < field_size_x; i++) {
                 game_state.field[0][i] = FIELD_CELL_TYPE_WALL;
                 game_state.field[field_size_y - 1][i] = FIELD_CELL_TYPE_WALL; //генерация горизонтальных сте
@@ -1415,7 +1425,191 @@ void clear_field()
                     game_state.field[j][field_size_x - 11] = FIELD_CELL_TYPE_WALL; // генерация вертикальных стен
                 }
             }
+            break;
+        case 2:
+            for (int i = 0; i < field_size_y - 1; i++) {
+                if(i == 5 || i == 6) {
+                    game_state.field[i][6] = FIELD_CELL_TYPE_WALL;
+                    game_state.field[i][7] = FIELD_CELL_TYPE_WALL;
+                }
+                if(i == 18 || i == 19){
+                    game_state.field[i][6] = FIELD_CELL_TYPE_WALL;
+                    game_state.field[i][7] = FIELD_CELL_TYPE_WALL;
+                }
+                if (i > 0 && i < 8 || i > 16){
+                    game_state.field[i][17] = FIELD_CELL_TYPE_WALL;
+                    game_state.field[i][18] = FIELD_CELL_TYPE_WALL;
+                }
+            }
+            for(int j = 31; j < field_size_x - 1; j++){
+                game_state.field[8][j] = FIELD_CELL_TYPE_WALL;
+                game_state.field[9][j] = FIELD_CELL_TYPE_WALL;
+                game_state.field[15][j] = FIELD_CELL_TYPE_WALL;
+                game_state.field[16][j] = FIELD_CELL_TYPE_WALL;
+            }
+            for(int i = 0; i < field_size_x; i++){
+                game_state.field[0][i] = FIELD_CELL_TYPE_WALL;
+                game_state.field[field_size_y - 1][i] = FIELD_CELL_TYPE_WALL;
+            }
+            for (int j = 1; j < field_size_y - 1; j++) {
+                game_state.field[j][0] = FIELD_CELL_TYPE_WALL; // генерация уголка
+                game_state.field[j][field_size_x - 1] = FIELD_CELL_TYPE_WALL; // генерация вертикальных стен
+            }
+            break;
 
+        case 3:
+            for (int i = 0; i < field_size_x; i++) {
+                if(i < 15 || i > 24) {
+                    game_state.field[0][i] = FIELD_CELL_TYPE_WALL;
+                    game_state.field[field_size_y - 1][i] = FIELD_CELL_TYPE_WALL;
+                }
+                if(i > 14 && i < 25){
+                    game_state.field[7][i] = FIELD_CELL_TYPE_WALL;
+                }
+                if(i > 0 && i < 8 || i == 38){
+                    game_state.field[8][i] = FIELD_CELL_TYPE_WALL;
+                    game_state.field[16][i] = FIELD_CELL_TYPE_WALL;
+                }
+            }
+            for (int j = 1; j < field_size_y - 1; j++) {
+                if(j < 9 || j > 15) {
+                    game_state.field[j][0] = FIELD_CELL_TYPE_WALL;
+                    game_state.field[j][field_size_x - 1] = FIELD_CELL_TYPE_WALL;
+                }
+                if(j > 7 && j < 17){
+                    game_state.field[j][8] = FIELD_CELL_TYPE_WALL;
+                }
+                if(j < 8 || j == 23){
+                    game_state.field[j][14] = FIELD_CELL_TYPE_WALL;
+                    game_state.field[j][25] = FIELD_CELL_TYPE_WALL;
+                }
+            }
+            break;
+        case 4:
+            for (int i = 0; i < field_size_x; i++) {
+                if(i < 17 || i > 22) {
+                    game_state.field[0][i] = FIELD_CELL_TYPE_WALL;
+                    game_state.field[field_size_y - 1][i] = FIELD_CELL_TYPE_WALL;
+                }
+                if(i > 4 && i < 16 || i > 23 && i < 35){
+                    game_state.field[5][i] = FIELD_CELL_TYPE_WALL;
+                    game_state.field[19][i] = FIELD_CELL_TYPE_WALL;
+                }
+                if(i == 6 || i == 33){
+                    game_state.field[4][i] = FIELD_CELL_TYPE_WALL;
+                    game_state.field[6][i] = FIELD_CELL_TYPE_WALL;
+                    game_state.field[18][i] = FIELD_CELL_TYPE_WALL;
+                    game_state.field[20][i] = FIELD_CELL_TYPE_WALL;
+                }
+                if(i == 9 || i == 11 || i == 28 || i == 30){
+                    game_state.field[12][i] = FIELD_CELL_TYPE_WALL;
+                }
+            }
+            for (int j = 1; j < field_size_y - 1; j++) {
+                if(j < 10 || j > 14) {
+                    game_state.field[j][0] = FIELD_CELL_TYPE_WALL;
+                    game_state.field[j][field_size_x - 1] = FIELD_CELL_TYPE_WALL;
+                }
+                if(j < 10 || j > 14){
+                    game_state.field[j][5] = FIELD_CELL_TYPE_WALL;
+                    game_state.field[j][34] = FIELD_CELL_TYPE_WALL;
+                }
+                if(j > 4 && j < 10 || j < 20 && j > 14){
+                    game_state.field[j][16] = FIELD_CELL_TYPE_WALL;
+                    game_state.field[j][23] = FIELD_CELL_TYPE_WALL;
+                }
+                if(j > 10 && j < 14){
+                    game_state.field[j][10] = FIELD_CELL_TYPE_WALL;
+                    game_state.field[j][29] = FIELD_CELL_TYPE_WALL;
+                }
+            }
+            break;
+        case 5:
+            for (int i = 0; i < field_size_x; i++) {
+                game_state.field[0][i] = FIELD_CELL_TYPE_WALL;
+                game_state.field[field_size_y - 1][i] = FIELD_CELL_TYPE_WALL;
+                if(i > 3 && i < 18 || i > 21 && i < 36){
+                    game_state.field[3][i] = FIELD_CELL_TYPE_WALL;
+                    game_state.field[21][i] = FIELD_CELL_TYPE_WALL;
+                }
+                if(i > 6 && i < 34){
+                    game_state.field[6][i] = FIELD_CELL_TYPE_WALL;
+                    game_state.field[18][i] = FIELD_CELL_TYPE_WALL;
+                }
+                if(i > 9 && i < 18 || i > 21 && i < 30){
+                    game_state.field[9][i] = FIELD_CELL_TYPE_WALL;
+                    game_state.field[15][i] = FIELD_CELL_TYPE_WALL;
+                }
+            }
+            for (int j = 1; j < field_size_y - 1; j++) {
+                if(j < 11 || j > 13) {
+                    game_state.field[j][0] = FIELD_CELL_TYPE_WALL;
+                    game_state.field[j][field_size_x - 1] = FIELD_CELL_TYPE_WALL;
+                }
+                if(j > 2 && j < 22){
+                    game_state.field[j][3] = FIELD_CELL_TYPE_WALL;
+                    game_state.field[j][36] = FIELD_CELL_TYPE_WALL;
+                }
+                if(j > 5 && j < 11 || j > 13 && j < 19){
+                    game_state.field[j][6] = FIELD_CELL_TYPE_WALL;
+                    game_state.field[j][33] = FIELD_CELL_TYPE_WALL;
+                }
+                if(j > 8 && j < 16){
+                    game_state.field[j][9] = FIELD_CELL_TYPE_WALL;
+                    game_state.field[j][30] = FIELD_CELL_TYPE_WALL;
+                }
+            }
+            break;
+        case 6:
+            for(int i = 0; i < field_size_x; i++){
+                game_state.field[0][i] = FIELD_CELL_TYPE_WALL;
+                game_state.field[field_size_y - 1][i] = FIELD_CELL_TYPE_WALL;
+                if(i > 3 && i < 16){
+                    game_state.field[15][i] = FIELD_CELL_TYPE_WALL;
+                    game_state.field[9][i] = FIELD_CELL_TYPE_WALL;
+                }
+                if(i > 5 && i < 14){
+                    game_state.field[18][i] = FIELD_CELL_TYPE_WALL;
+                    game_state.field[6][i] = FIELD_CELL_TYPE_WALL;
+                }
+                if(i > 3 && i < 13){
+                    game_state.field[21][i] = FIELD_CELL_TYPE_WALL;
+                    game_state.field[3][i] = FIELD_CELL_TYPE_WALL;
+                }
+                if(i > 16 && i < 37){
+                    game_state.field[9][i] = FIELD_CELL_TYPE_WALL;
+                    game_state.field[15][i] = FIELD_CELL_TYPE_WALL;
+                }
+                if(i > 18 && i < 37){
+                    game_state.field[3][i] = FIELD_CELL_TYPE_WALL;
+                    game_state.field[21][i] = FIELD_CELL_TYPE_WALL;
+                }
+                if(i > 19 && i < 34){
+                    game_state.field[6][i] = FIELD_CELL_TYPE_WALL;
+                    game_state.field[18][i] = FIELD_CELL_TYPE_WALL;
+                }
+            }
+            for (int j = 1; j < field_size_y - 1; j++) {
+                if(j < 11 || j > 13) {
+                    game_state.field[j][0] = FIELD_CELL_TYPE_WALL;
+                    game_state.field[j][field_size_x - 1] = FIELD_CELL_TYPE_WALL;
+                }
+                if(j > 13 && j < 22 || j > 2 && j < 11){
+                    game_state.field[j][3] = FIELD_CELL_TYPE_WALL;
+                }
+                if(j > 13 || j < 11){
+                    game_state.field[j][16] = FIELD_CELL_TYPE_WALL;
+                }
+                if(j > 18 && j < 22 || j > 2 && j < 7){
+                    game_state.field[j][13] = FIELD_CELL_TYPE_WALL;
+                }
+                if(j > 2 && j < 7 || j > 17 && j < 22){
+                    game_state.field[j][19] = FIELD_CELL_TYPE_WALL;
+                }
+                if(j > 2 && j < 11 || j > 13 && j < 21){
+                    game_state.field[j][36] = FIELD_CELL_TYPE_WALL;
+                }
+            }
             break;
     }
 
@@ -1448,7 +1642,7 @@ void draw_field(sf::RenderWindow& window)
         snake_head.setTexture(snake_head_texture); //установка текстуры
         break;
     case 2:
-        snake_texture.loadFromFile("images/snake_2.png"); //загрузка элеимента змейки
+        snake_texture.loadFromFile("images/snake_2.png"); //загрузка элемента змейки
         snake.setTexture(snake_texture); //установка текстуры
 
         snake_head_texture.loadFromFile("images/head_2.png"); //загрузка ищображения
@@ -1498,6 +1692,9 @@ void draw_field(sf::RenderWindow& window)
         break;
     case 2:
         wall_texture.loadFromFile("images/wall_3.png"); //загрузка изображения
+        break;
+    case 3:
+        wall_texture.loadFromFile("images/cactus_wall.png");
         break;
     default:
         wall_texture.loadFromFile("images/wall.png");
