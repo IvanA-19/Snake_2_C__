@@ -54,8 +54,8 @@ constexpr auto SNAKE_DIRECTION_LEFT = 3; //влево
 
 //размеры поля
 
-const int field_size_x = 40; //количество клеток по длине
-const int field_size_y = 25; //количество клеток по высоте
+const int field_size_x = 34; //количество клеток по длине // 25 * 40
+const int field_size_y = 19; //количество клеток по высоте
 const int cell_size = 32; //размер клетки
 const int window_width = field_size_x * cell_size; //длина поля
 const int window_height = field_size_y * cell_size; //высота поля
@@ -116,7 +116,8 @@ vector <sf::Text> text_menu_items;
 
 vector <string> lose_menu_items{"Your score: ", "Restart", "Exit to main menu", "GAME OVER"};
 
-vector<string> menu_items = {"Start new game", "Level", "Settings", "Help", "Quit", "SNAKE", "By Vanyok77797", "Version 3.0.0"};
+vector<string> menu_items = {"Start new game", "Level", "Settings", "Help", "Quit", "SNAKE", "By Vanyok77797",
+                             "Version 1.9.7"};
 
 vector <string> settings_menu_items{"Type of control", "Field color", "Snake skin", "Walls",
                                     "Difficulty level", "Volume", "Back to main menu", "Game settings"};
@@ -130,13 +131,12 @@ vector <string> pause_menu_items = {"Score: ", "Resume", "Exit to main menu", "P
 
 vector <string> volume_menu_items = {"Volume: ", "Exit to main menu", "Volume settings"};
 
-vector <string> level_menu_items = {"Level 1", "Level 2", "Level 3", "Level 4", "Level 5",
-                                    "Level 6" , "Level 7", "Back to main menu", "Choose level"};
+vector <string> level_menu_items = {"Level 1", "Level 2", "Level 3", "Level 4", "Back to main menu", "Choose level"};
 
 vector<string> help_menu_items = {"Apples: ", "\t*Green - random trap", "\t*Gold - random bonus",
                                   "\t*Red - food for snake", "Heart - removes bad effect",
                                   "Space - game pause", "Tab - to turn off the music",
-                                  "X - to turn on the music", "Back to main menu", "Help"};
+                                  "X - to turn on the music", "Enter to close help", "Help"};
 
 int color_menu = 0;
 int menu_type = 0;
@@ -318,7 +318,7 @@ void set_fonts()
                 text_menu_items.back().setCharacterSize(40);
             }
             text_menu_items.emplace_back(sf::Text());
-            text_menu_items.back().setString(level_menu_items.at(8));
+            text_menu_items.back().setString(level_menu_items.at(5));
             text_menu_items.back().setFont(font_menu);
             text_menu_items.back().setCharacterSize(60);
             break;
@@ -489,10 +489,10 @@ void draw_main_menu(sf::RenderWindow& window_main)
             break;
         case 7:
             window_main.clear(sf::Color(0, 0, 0));
-            text_menu_items.at(8).move(menu_position_x - 25, 30);
+            text_menu_items.at(5).move(menu_position_x - 25, 30);
             text_menu_items.at(level_color).setFillColor(sf::Color(0, 255,255));
-            text_menu_items.at(8).setFillColor(sf::Color(0, 255, 0));
-            window_main.draw(text_menu_items.at(8));
+            text_menu_items.at(5).setFillColor(sf::Color(0, 255, 0));
+            window_main.draw(text_menu_items.at(5));
             break;
         case 8:
             window_main.clear(sf::Color(0, 0, 0));
@@ -569,7 +569,7 @@ void draw_main_menu(sf::RenderWindow& window_main)
     if(menu_type == 7){
         float menu_position_y = 140;
         for (int i = 0; i < level_menu_items.size() - 1; i++) {
-            text_menu_items.at(i).move(menu_position_x, menu_position_y - 20);
+            text_menu_items.at(i).move(menu_position_x, menu_position_y + 60);
             menu_position_y += 60;
             window_main.draw(text_menu_items.at(i));
         }
@@ -673,7 +673,6 @@ void open_main_menu()
     }
 }
 
-
 void help_menu_control(sf::RenderWindow &window_main)
 {
     sf::Event event;
@@ -688,8 +687,6 @@ void help_menu_control(sf::RenderWindow &window_main)
         }
     }
 }
-
-
 
 void open_help_menu()
 {
@@ -716,117 +713,117 @@ void chose_window_color(sf::RenderWindow& window_2) //выбор цвета фо
     {
         if (event.type == sf::Event::KeyPressed) {
             switch (event.key.code) {
-            case sf::Keyboard::Up:
-                menu_sound.play();
-                if (color != 7) {
-                    color++;
-                }
-                else {
-                    color = 1;
-                }
-                switch (color) {
-                case 2:
-                    x = 152; y = 251; z = 152;
-                    color_pause = false;
-                    window_2.clear(sf::Color(x, y, z));
-                    r = x; g = y; b = z;
+                case sf::Keyboard::Up:
+                    menu_sound.play();
+                    if (color != 7) {
+                        color++;
+                    }
+                    else {
+                        color = 1;
+                    }
+                    switch (color) {
+                        case 2:
+                            x = 152; y = 251; z = 152;
+                            color_pause = false;
+                            window_2.clear(sf::Color(x, y, z));
+                            r = x; g = y; b = z;
+                            break;
+                        case 3:
+                            x = 0; y = 255; z = 153;
+                            color_pause = false;
+                            window_2.clear(sf::Color(x, y, z));
+                            r = x; g = y; b = z;
+                            break;
+                        case 4:
+                            x = 147; y = 112; z = 219;
+                            color_pause = false;
+                            window_2.clear(sf::Color(x, y, z));
+                            r = x; g = y; b = z;
+                            break;
+                        case 5:
+                            x = 240; y = 128; z = 128;
+                            color_pause = false;
+                            window_2.clear(sf::Color(x, y, z));
+                            r = x; g = y; b = z;
+                            break;
+                        case 6:
+                            x = 240; y = 230; z = 140;
+                            color_pause = false;
+                            window_2.clear(sf::Color(x, y, z));
+                            r = x; g = y; b = z;
+                            break;
+                        case 7:
+                            x = 60; y = 179; z = 113;
+                            color_pause = false;
+                            window_2.clear(sf::Color(x, y, z));
+                            r = x; g = y; b = z;
+                            break;
+                        default:
+                            x = 127; y = 255; z = 212;
+                            color_pause = false;
+                            window_2.clear(sf::Color(x, y, z));
+                            r = x; g = y; b = z;
+                    }
                     break;
-                case 3:
-                    x = 0; y = 255; z = 153;
-                    color_pause = false;
-                    window_2.clear(sf::Color(x, y, z));
-                    r = x; g = y; b = z;
-                    break;
-                case 4:
-                    x = 147; y = 112; z = 219;
-                    color_pause = false;
-                    window_2.clear(sf::Color(x, y, z));
-                    r = x; g = y; b = z;
-                    break;
-                case 5:
-                    x = 240; y = 128; z = 128;
-                    color_pause = false;
-                    window_2.clear(sf::Color(x, y, z));
-                    r = x; g = y; b = z;
-                    break;
-                case 6:
-                    x = 240; y = 230; z = 140;
-                    color_pause = false;
-                    window_2.clear(sf::Color(x, y, z));
-                    r = x; g = y; b = z;
-                    break;
-                case 7:
-                    x = 60; y = 179; z = 113;
-                    color_pause = false;
-                    window_2.clear(sf::Color(x, y, z));
-                    r = x; g = y; b = z;
-                    break;
-                default:
-                    x = 127; y = 255; z = 212;
-                    color_pause = false;
-                    window_2.clear(sf::Color(x, y, z));
-                    r = x; g = y; b = z;
-                }
-                break;
 
-            case sf::Keyboard::Down:
-                menu_sound.play();
-                if (color != 1) {
-                    color--;
-                }
-                else {
-                    color = 7;
-                }
-                switch (color) {
-                case 2:
-                    x = 152; y = 251; z = 152;
-                    color_pause = false;
-                    window_2.clear(sf::Color(x, y, z));
-                    r = x; g = y; b = z;
+                case sf::Keyboard::Down:
+                    menu_sound.play();
+                    if (color != 1) {
+                        color--;
+                    }
+                    else {
+                        color = 7;
+                    }
+                    switch (color) {
+                        case 2:
+                            x = 152; y = 251; z = 152;
+                            color_pause = false;
+                            window_2.clear(sf::Color(x, y, z));
+                            r = x; g = y; b = z;
+                            break;
+                        case 3:
+                            x = 0; y = 255; z = 153;
+                            color_pause = false;
+                            window_2.clear(sf::Color(x, y, z));
+                            r = x; g = y; b = z;
+                            break;
+                        case 4:
+                            x = 147; y = 112; z = 219;
+                            color_pause = false;
+                            window_2.clear(sf::Color(x, y, z));
+                            r = x; g = y; b = z;
+                            break;
+                        case 5:
+                            x = 240; y = 128; z = 128;
+                            color_pause = false;
+                            window_2.clear(sf::Color(x, y, z));
+                            r = x; g = y; b = z;
+                            break;
+                        case 6:
+                            x = 240; y = 230; z = 140;
+                            color_pause = false;
+                            window_2.clear(sf::Color(x, y, z));
+                            r = x; g = y; b = z;
+                            break;
+                        case 7:
+                            x = 60; y = 179; z = 113;
+                            color_pause = false;
+                            window_2.clear(sf::Color(x, y, z));
+                            r = x; g = y; b = z;
+                            break;
+                        default:
+                            x = 127; y = 255; z = 212;
+                            color_pause = false;
+                            window_2.clear(sf::Color(x, y, z));
+                            r = x; g = y; b = z;
+                    }
                     break;
-                case 3:
-                    x = 0; y = 255; z = 153;
-                    color_pause = false;
-                    window_2.clear(sf::Color(x, y, z));
-                    r = x; g = y; b = z;
-                    break;
-                case 4:
-                    x = 147; y = 112; z = 219;
-                    color_pause = false;
-                    window_2.clear(sf::Color(x, y, z));
-                    r = x; g = y; b = z;
-                    break;
-                case 5:
-                    x = 240; y = 128; z = 128;
-                    color_pause = false;
-                    window_2.clear(sf::Color(x, y, z));
-                    r = x; g = y; b = z;
-                    break;
-                case 6:
-                    x = 240; y = 230; z = 140;
-                    color_pause = false;
-                    window_2.clear(sf::Color(x, y, z));
-                    r = x; g = y; b = z;
-                    break;
-                case 7:
-                    x = 60; y = 179; z = 113;
-                    color_pause = false;
-                    window_2.clear(sf::Color(x, y, z));
-                    r = x; g = y; b = z;
-                    break;
-                default:
-                    x = 127; y = 255; z = 212;
-                    color_pause = false;
-                    window_2.clear(sf::Color(x, y, z));
-                    r = x; g = y; b = z;
-                }
-                break;
 
 
-            case sf::Keyboard::Enter:
-                enter_sound.play();
-                window_2.close();
-                break;
+                case sf::Keyboard::Enter:
+                    enter_sound.play();
+                    window_2.close();
+                    break;
             }
 
         }
@@ -859,42 +856,42 @@ void check_event_2(sf::RenderWindow& window_wall)
     {
         if (event.type == sf::Event::KeyPressed) {
             switch (event.key.code) {
-            case sf::Keyboard::Right:
-                menu_sound.play();
-                if (choice_wall != 7) { //изменение количества выборов скина
-                    choice_wall += 2;
-                }
-                else {
-                    choice_wall = 1;
-                }
-                break;
+                case sf::Keyboard::Right:
+                    menu_sound.play();
+                    if (choice_wall != 7) { //изменение количества выборов скина
+                        choice_wall += 2;
+                    }
+                    else {
+                        choice_wall = 1;
+                    }
+                    break;
 
-            case sf::Keyboard::Left:
-                menu_sound.play();
-                if (choice_wall != 1) {
-                    choice_wall -= 2;
-                }
-                break;
-            case sf::Keyboard::Enter:
-                enter_sound.play();
-                switch (choice_wall) {
-                case 1:
-                    wall = 0;
-                    window_wall.close();
+                case sf::Keyboard::Left:
+                    menu_sound.play();
+                    if (choice_wall != 1) {
+                        choice_wall -= 2;
+                    }
                     break;
-                case 3:
-                    wall = 1;
-                    window_wall.close();
-                    break;
-                case 5:
-                    wall = 2;
-                    window_wall.close();
-                    break;
-                case 7:
-                    wall = 3;
-                    window_wall.close();
-                    break;
-                }
+                case sf::Keyboard::Enter:
+                    enter_sound.play();
+                    switch (choice_wall) {
+                        case 1:
+                            wall = 0;
+                            window_wall.close();
+                            break;
+                        case 3:
+                            wall = 1;
+                            window_wall.close();
+                            break;
+                        case 5:
+                            wall = 2;
+                            window_wall.close();
+                            break;
+                        case 7:
+                            wall = 3;
+                            window_wall.close();
+                            break;
+                    }
             }
         }
     }
@@ -916,8 +913,8 @@ void draw_wall_choice(sf::RenderWindow& window_wall)
     sf::Sprite wall;
     for (int i = 0; i < skin_length + 2; i++) {
         for (int j = 0; j < skin_count + 5; j++) {
-                if (i != 0 && i != 5) {
-                    switch (j) {
+            if (i != 0 && i != 5) {
+                switch (j) {
                     case 1:
                         wall_texture.loadFromFile("images/wall.png");
                         wall.setTexture(wall_texture);
@@ -973,43 +970,43 @@ void check_event(sf::RenderWindow& window_1)
     {
         if (event.type == sf::Event::KeyPressed) {
             switch (event.key.code) {
-            case sf::Keyboard::Right:
-                menu_sound.play();
-                if (choice != 9) { //изменение количества выборов скина
-                    choice += 2;
-                }
-                else {
-                    choice = 1;
-                }
-                break;
+                case sf::Keyboard::Right:
+                    menu_sound.play();
+                    if (choice != 9) { //изменение количества выборов скина
+                        choice += 2;
+                    }
+                    else {
+                        choice = 1;
+                    }
+                    break;
 
-            case sf::Keyboard::Left:
-                menu_sound.play();
-                if (choice != 1) {
-                    choice -= 2;
-                }
-                break;
-            case sf::Keyboard::Enter:
-                enter_sound.play();
-                switch (choice) {
-                case 1:
-                    skin = 0;
+                case sf::Keyboard::Left:
+                    menu_sound.play();
+                    if (choice != 1) {
+                        choice -= 2;
+                    }
                     break;
-                case 3:
-                    skin = 1;
+                case sf::Keyboard::Enter:
+                    enter_sound.play();
+                    switch (choice) {
+                        case 1:
+                            skin = 0;
+                            break;
+                        case 3:
+                            skin = 1;
+                            break;
+                        case 5:
+                            skin = 2;
+                            break;
+                        case 7:
+                            skin = 3;
+                            break;
+                        case 9:
+                            skin = 4;
+                            break;
+                    }
+                    window_1.close();
                     break;
-                case 5:
-                    skin = 2;
-                    break;
-                case 7:
-                    skin = 3;
-                    break;
-                case 9:
-                    skin = 4;
-                    break;
-                }
-                window_1.close();
-                break;
             }
         }
     }
@@ -1032,75 +1029,75 @@ void draw_skin_choice(sf::RenderWindow& window_1)
     for (int i = 0; i < skin_length + 5; i++) {
         for (int j = 0; j < skin_count + 5; j++) {
             switch (i) {
-            case 1:
-                switch (j) {
                 case 1:
-                    skin_texture.loadFromFile("images/head.png");
-                    skin.setTexture(skin_texture);
-                    skin.setPosition(float(j * skin_cell_size), float(i * skin_cell_size));
-                    window_1.draw(skin);
-                    break;
-                case 3:
-                    skin_texture.loadFromFile("images/head_1.png");
-                    skin.setTexture(skin_texture);
-                    skin.setPosition(float(j * skin_cell_size), float(i * skin_cell_size));
-                    window_1.draw(skin);
-                    break;
-                case 5:
-                    skin_texture.loadFromFile("images/head_2.png");
-                    skin.setTexture(skin_texture);
-                    skin.setPosition(float(j * skin_cell_size), float(i * skin_cell_size));
-                    window_1.draw(skin);
-                    break;
-                case 7:
-                    skin_texture.loadFromFile("images/head_3.png");
-                    skin.setTexture(skin_texture);
-                    skin.setPosition(float(j * skin_cell_size), float(i * skin_cell_size));
-                    window_1.draw(skin);
-                    break;
-                case 9:
-                    skin_texture.loadFromFile("images/head_4.png");
-                    skin.setTexture(skin_texture);
-                    skin.setPosition(float(j * skin_cell_size), float(i * skin_cell_size));
-                    window_1.draw(skin);
-                    break;
-                }
-                break;
-            default:
-                if (i != 0 && i != 5) {
                     switch (j) {
-                    case 1:
-                        skin_texture.loadFromFile("images/snake.png");
-                        skin.setTexture(skin_texture);
-                        skin.setPosition(float(j * skin_cell_size), float(i * skin_cell_size));
-                        window_1.draw(skin);
-                        break;
-                    case 3:
-                        skin_texture.loadFromFile("images/snake_1.png");
-                        skin.setTexture(skin_texture);
-                        skin.setPosition(float(j * skin_cell_size), float(i * skin_cell_size));
-                        window_1.draw(skin);
-                        break;
-                    case 5:
-                        skin_texture.loadFromFile("images/snake_2.png");
-                        skin.setTexture(skin_texture);
-                        skin.setPosition(float(j * skin_cell_size), float(i * skin_cell_size));
-                        window_1.draw(skin);
-                        break;
-                    case 7:
-                        skin_texture.loadFromFile("images/snake_3.png");
-                        skin.setTexture(skin_texture);
-                        skin.setPosition(float(j * skin_cell_size), float(i * skin_cell_size));
-                        window_1.draw(skin);
-                        break;
-                    case 9:
-                        skin_texture.loadFromFile("images/snake_4.png");
-                        skin.setTexture(skin_texture);
-                        skin.setPosition(float(j * skin_cell_size), float(i * skin_cell_size));
-                        window_1.draw(skin);
-                        break;
+                        case 1:
+                            skin_texture.loadFromFile("images/head.png");
+                            skin.setTexture(skin_texture);
+                            skin.setPosition(float(j * skin_cell_size), float(i * skin_cell_size));
+                            window_1.draw(skin);
+                            break;
+                        case 3:
+                            skin_texture.loadFromFile("images/head_1.png");
+                            skin.setTexture(skin_texture);
+                            skin.setPosition(float(j * skin_cell_size), float(i * skin_cell_size));
+                            window_1.draw(skin);
+                            break;
+                        case 5:
+                            skin_texture.loadFromFile("images/head_2.png");
+                            skin.setTexture(skin_texture);
+                            skin.setPosition(float(j * skin_cell_size), float(i * skin_cell_size));
+                            window_1.draw(skin);
+                            break;
+                        case 7:
+                            skin_texture.loadFromFile("images/head_3.png");
+                            skin.setTexture(skin_texture);
+                            skin.setPosition(float(j * skin_cell_size), float(i * skin_cell_size));
+                            window_1.draw(skin);
+                            break;
+                        case 9:
+                            skin_texture.loadFromFile("images/head_4.png");
+                            skin.setTexture(skin_texture);
+                            skin.setPosition(float(j * skin_cell_size), float(i * skin_cell_size));
+                            window_1.draw(skin);
+                            break;
                     }
-                }
+                    break;
+                default:
+                    if (i != 0 && i != 5) {
+                        switch (j) {
+                            case 1:
+                                skin_texture.loadFromFile("images/snake.png");
+                                skin.setTexture(skin_texture);
+                                skin.setPosition(float(j * skin_cell_size), float(i * skin_cell_size));
+                                window_1.draw(skin);
+                                break;
+                            case 3:
+                                skin_texture.loadFromFile("images/snake_1.png");
+                                skin.setTexture(skin_texture);
+                                skin.setPosition(float(j * skin_cell_size), float(i * skin_cell_size));
+                                window_1.draw(skin);
+                                break;
+                            case 5:
+                                skin_texture.loadFromFile("images/snake_2.png");
+                                skin.setTexture(skin_texture);
+                                skin.setPosition(float(j * skin_cell_size), float(i * skin_cell_size));
+                                window_1.draw(skin);
+                                break;
+                            case 7:
+                                skin_texture.loadFromFile("images/snake_3.png");
+                                skin.setTexture(skin_texture);
+                                skin.setPosition(float(j * skin_cell_size), float(i * skin_cell_size));
+                                window_1.draw(skin);
+                                break;
+                            case 9:
+                                skin_texture.loadFromFile("images/snake_4.png");
+                                skin.setTexture(skin_texture);
+                                skin.setPosition(float(j * skin_cell_size), float(i * skin_cell_size));
+                                window_1.draw(skin);
+                                break;
+                        }
+                    }
             }
 
         }
@@ -1230,18 +1227,6 @@ void level_menu_control(sf::RenderWindow &window_main)
                             menu_type = 0;
                             break;
                         case 4:
-                            game_level = 4;
-                            menu_type = 0;
-                            break;
-                        case 5:
-                            game_level = 5;
-                            menu_type = 0;
-                            break;
-                        case 6:
-                            game_level = 6;
-                            menu_type = 0;
-                            break;
-                        case 7:
                             op_main = true;
                             menu_type = 0;
                             break;
@@ -1251,7 +1236,7 @@ void level_menu_control(sf::RenderWindow &window_main)
                 case sf::Keyboard::Down:
                     menu_sound.play();
                     level_color++;
-                    if(level_color == 8){
+                    if(level_color == 5){
                         level_color = 0;
                     }
                     game_level_pause = true;
@@ -1260,7 +1245,7 @@ void level_menu_control(sf::RenderWindow &window_main)
                     menu_sound.play();
                     level_color--;
                     if(level_color == -1){
-                        level_color = 7;
+                        level_color = 4;
                     }
                     game_level_pause = true;
                     break;
@@ -1451,7 +1436,7 @@ int get_random_empty_cell()
             }
         }
     }
-     // не осталсь пустых клеток
+    // не осталсь пустых клеток
     return -1;
 }
 
@@ -1513,7 +1498,7 @@ void clear_field()
                 }
             }
             for (int j = 1; j < field_size_y - 1; j++) {
-                if (j < 8 || field_size_y - j - 1 < 8) {
+                if (j < 6 || field_size_y - j - 1 < 6) {
                     game_state.field[j][0] = FIELD_CELL_TYPE_WALL; // генерация уголка
                     game_state.field[j][field_size_x - 1] = FIELD_CELL_TYPE_WALL; // генерация вертикальных стен
                 }
@@ -1529,39 +1514,39 @@ void clear_field()
                 game_state.field[j][field_size_x - 1] = FIELD_CELL_TYPE_WALL; // генерация вертикальных стен
             }
 
-            for (int i = 0; i < field_size_x - 10; i++) {
-                if (i > 9 && i < 17 || i > 22) {
-                    game_state.field[5][i] = FIELD_CELL_TYPE_WALL;
-                    game_state.field[field_size_y - 6][i] = FIELD_CELL_TYPE_WALL; //генерация горизонтальных стен
+            for (int i = 0; i < field_size_x - 7; i++) {
+                if (i > 6 && i < 14 || i > 19) {
+                    game_state.field[4][i] = FIELD_CELL_TYPE_WALL;
+                    game_state.field[field_size_y - 5][i] = FIELD_CELL_TYPE_WALL; //генерация горизонтальных стен
                 }
             }
-            for (int j = 1; j < field_size_y - 6; j++) {
-                if (j > 5 && j < 10 || j > 14 && j < 30) {
-                    game_state.field[j][10] = FIELD_CELL_TYPE_WALL; // генерация уголка
-                    game_state.field[j][field_size_x - 11] = FIELD_CELL_TYPE_WALL; // генерация вертикальных стен
+            for (int j = 1; j < field_size_y - 4; j++) {
+                if (j > 4 && j < 7 || j > 11) {
+                    game_state.field[j][7] = FIELD_CELL_TYPE_WALL; // генерация уголка
+                    game_state.field[j][field_size_x - 8] = FIELD_CELL_TYPE_WALL; // генерация вертикальных стен
                 }
             }
             break;
         case 2:
             for (int i = 0; i < field_size_y - 1; i++) {
-                if(i == 5 || i == 6) {
+                if(i == 4 || i == 5) {
+                    game_state.field[i][5] = FIELD_CELL_TYPE_WALL;
                     game_state.field[i][6] = FIELD_CELL_TYPE_WALL;
-                    game_state.field[i][7] = FIELD_CELL_TYPE_WALL;
                 }
-                if(i == 18 || i == 19){
+                if(i == 13 || i == 14){
+                    game_state.field[i][5] = FIELD_CELL_TYPE_WALL;
                     game_state.field[i][6] = FIELD_CELL_TYPE_WALL;
-                    game_state.field[i][7] = FIELD_CELL_TYPE_WALL;
                 }
-                if (i > 0 && i < 8 || i > 16){
-                    game_state.field[i][17] = FIELD_CELL_TYPE_WALL;
-                    game_state.field[i][18] = FIELD_CELL_TYPE_WALL;
+                if (i > 0 && i < 6 || i > 12){
+                    game_state.field[i][15] = FIELD_CELL_TYPE_WALL;
+                    game_state.field[i][16] = FIELD_CELL_TYPE_WALL;
                 }
             }
-            for(int j = 31; j < field_size_x - 1; j++){
-                game_state.field[8][j] = FIELD_CELL_TYPE_WALL;
-                game_state.field[9][j] = FIELD_CELL_TYPE_WALL;
-                game_state.field[15][j] = FIELD_CELL_TYPE_WALL;
-                game_state.field[16][j] = FIELD_CELL_TYPE_WALL;
+            for(int j = 25; j < field_size_x - 1; j++){
+                game_state.field[5][j] = FIELD_CELL_TYPE_WALL;
+                game_state.field[6][j] = FIELD_CELL_TYPE_WALL;
+                game_state.field[12][j] = FIELD_CELL_TYPE_WALL;
+                game_state.field[13][j] = FIELD_CELL_TYPE_WALL;
             }
             for(int i = 0; i < field_size_x; i++){
                 game_state.field[0][i] = FIELD_CELL_TYPE_WALL;
@@ -1575,155 +1560,29 @@ void clear_field()
 
         case 3:
             for (int i = 0; i < field_size_x; i++) {
-                if(i < 15 || i > 24) {
+                if(i < 12 || i > 21) {
                     game_state.field[0][i] = FIELD_CELL_TYPE_WALL;
                     game_state.field[field_size_y - 1][i] = FIELD_CELL_TYPE_WALL;
                 }
-                if(i > 14 && i < 25){
-                    game_state.field[7][i] = FIELD_CELL_TYPE_WALL;
-                }
-                if(i > 0 && i < 8 || i == 38){
-                    game_state.field[8][i] = FIELD_CELL_TYPE_WALL;
-                    game_state.field[16][i] = FIELD_CELL_TYPE_WALL;
-                }
-            }
-            for (int j = 1; j < field_size_y - 1; j++) {
-                if(j < 9 || j > 15) {
-                    game_state.field[j][0] = FIELD_CELL_TYPE_WALL;
-                    game_state.field[j][field_size_x - 1] = FIELD_CELL_TYPE_WALL;
-                }
-                if(j > 7 && j < 17){
-                    game_state.field[j][8] = FIELD_CELL_TYPE_WALL;
-                }
-                if(j < 8 || j == 23){
-                    game_state.field[j][14] = FIELD_CELL_TYPE_WALL;
-                    game_state.field[j][25] = FIELD_CELL_TYPE_WALL;
-                }
-            }
-            break;
-        case 4:
-            for (int i = 0; i < field_size_x; i++) {
-                if(i < 17 || i > 22) {
-                    game_state.field[0][i] = FIELD_CELL_TYPE_WALL;
-                    game_state.field[field_size_y - 1][i] = FIELD_CELL_TYPE_WALL;
-                }
-                if(i > 4 && i < 16 || i > 23 && i < 35){
+                if(i > 11 && i < 22){
                     game_state.field[5][i] = FIELD_CELL_TYPE_WALL;
-                    game_state.field[19][i] = FIELD_CELL_TYPE_WALL;
                 }
-                if(i == 6 || i == 33){
-                    game_state.field[4][i] = FIELD_CELL_TYPE_WALL;
-                    game_state.field[6][i] = FIELD_CELL_TYPE_WALL;
-                    game_state.field[18][i] = FIELD_CELL_TYPE_WALL;
-                    game_state.field[20][i] = FIELD_CELL_TYPE_WALL;
-                }
-                if(i == 9 || i == 11 || i == 28 || i == 30){
-                    game_state.field[12][i] = FIELD_CELL_TYPE_WALL;
+                if(i > 0 && i < 6 || i == 32){
+                    game_state.field[5][i] = FIELD_CELL_TYPE_WALL;
+                    game_state.field[13][i] = FIELD_CELL_TYPE_WALL;
                 }
             }
             for (int j = 1; j < field_size_y - 1; j++) {
-                if(j < 10 || j > 14) {
+                if(j < 6 || j > 12) {
                     game_state.field[j][0] = FIELD_CELL_TYPE_WALL;
                     game_state.field[j][field_size_x - 1] = FIELD_CELL_TYPE_WALL;
                 }
-                if(j < 10 || j > 14){
-                    game_state.field[j][5] = FIELD_CELL_TYPE_WALL;
-                    game_state.field[j][34] = FIELD_CELL_TYPE_WALL;
-                }
-                if(j > 4 && j < 10 || j < 20 && j > 14){
-                    game_state.field[j][16] = FIELD_CELL_TYPE_WALL;
-                    game_state.field[j][23] = FIELD_CELL_TYPE_WALL;
-                }
-                if(j > 10 && j < 14){
-                    game_state.field[j][10] = FIELD_CELL_TYPE_WALL;
-                    game_state.field[j][29] = FIELD_CELL_TYPE_WALL;
-                }
-            }
-            break;
-        case 5:
-            for (int i = 0; i < field_size_x; i++) {
-                game_state.field[0][i] = FIELD_CELL_TYPE_WALL;
-                game_state.field[field_size_y - 1][i] = FIELD_CELL_TYPE_WALL;
-                if(i > 3 && i < 18 || i > 21 && i < 36){
-                    game_state.field[3][i] = FIELD_CELL_TYPE_WALL;
-                    game_state.field[21][i] = FIELD_CELL_TYPE_WALL;
-                }
-                if(i > 6 && i < 34){
-                    game_state.field[6][i] = FIELD_CELL_TYPE_WALL;
-                    game_state.field[18][i] = FIELD_CELL_TYPE_WALL;
-                }
-                if(i > 9 && i < 18 || i > 21 && i < 30){
-                    game_state.field[9][i] = FIELD_CELL_TYPE_WALL;
-                    game_state.field[15][i] = FIELD_CELL_TYPE_WALL;
-                }
-            }
-            for (int j = 1; j < field_size_y - 1; j++) {
-                if(j < 11 || j > 13) {
-                    game_state.field[j][0] = FIELD_CELL_TYPE_WALL;
-                    game_state.field[j][field_size_x - 1] = FIELD_CELL_TYPE_WALL;
-                }
-                if(j > 2 && j < 22){
-                    game_state.field[j][3] = FIELD_CELL_TYPE_WALL;
-                    game_state.field[j][36] = FIELD_CELL_TYPE_WALL;
-                }
-                if(j > 5 && j < 11 || j > 13 && j < 19){
+                if(j > 4 && j < 14){
                     game_state.field[j][6] = FIELD_CELL_TYPE_WALL;
-                    game_state.field[j][33] = FIELD_CELL_TYPE_WALL;
                 }
-                if(j > 8 && j < 16){
-                    game_state.field[j][9] = FIELD_CELL_TYPE_WALL;
-                    game_state.field[j][30] = FIELD_CELL_TYPE_WALL;
-                }
-            }
-            break;
-        case 6:
-            for(int i = 0; i < field_size_x; i++){
-                game_state.field[0][i] = FIELD_CELL_TYPE_WALL;
-                game_state.field[field_size_y - 1][i] = FIELD_CELL_TYPE_WALL;
-                if(i > 3 && i < 16){
-                    game_state.field[15][i] = FIELD_CELL_TYPE_WALL;
-                    game_state.field[9][i] = FIELD_CELL_TYPE_WALL;
-                }
-                if(i > 5 && i < 14){
-                    game_state.field[18][i] = FIELD_CELL_TYPE_WALL;
-                    game_state.field[6][i] = FIELD_CELL_TYPE_WALL;
-                }
-                if(i > 3 && i < 13){
-                    game_state.field[21][i] = FIELD_CELL_TYPE_WALL;
-                    game_state.field[3][i] = FIELD_CELL_TYPE_WALL;
-                }
-                if(i > 16 && i < 37){
-                    game_state.field[9][i] = FIELD_CELL_TYPE_WALL;
-                    game_state.field[15][i] = FIELD_CELL_TYPE_WALL;
-                }
-                if(i > 18 && i < 37){
-                    game_state.field[3][i] = FIELD_CELL_TYPE_WALL;
-                    game_state.field[21][i] = FIELD_CELL_TYPE_WALL;
-                }
-                if(i > 19 && i < 34){
-                    game_state.field[6][i] = FIELD_CELL_TYPE_WALL;
-                    game_state.field[18][i] = FIELD_CELL_TYPE_WALL;
-                }
-            }
-            for (int j = 1; j < field_size_y - 1; j++) {
-                if(j < 11 || j > 13) {
-                    game_state.field[j][0] = FIELD_CELL_TYPE_WALL;
-                    game_state.field[j][field_size_x - 1] = FIELD_CELL_TYPE_WALL;
-                }
-                if(j > 13 && j < 22 || j > 2 && j < 11){
-                    game_state.field[j][3] = FIELD_CELL_TYPE_WALL;
-                }
-                if(j > 13 || j < 11){
-                    game_state.field[j][16] = FIELD_CELL_TYPE_WALL;
-                }
-                if(j > 18 && j < 22 || j > 2 && j < 7){
-                    game_state.field[j][13] = FIELD_CELL_TYPE_WALL;
-                }
-                if(j > 2 && j < 7 || j > 17 && j < 22){
-                    game_state.field[j][19] = FIELD_CELL_TYPE_WALL;
-                }
-                if(j > 2 && j < 11 || j > 13 && j < 21){
-                    game_state.field[j][36] = FIELD_CELL_TYPE_WALL;
+                if(j < 6 || j == 17){
+                    game_state.field[j][11] = FIELD_CELL_TYPE_WALL;
+                    game_state.field[j][22] = FIELD_CELL_TYPE_WALL;
                 }
             }
             break;
@@ -1750,40 +1609,40 @@ void draw_field(sf::RenderWindow& window)
     sf::Sprite snake_head; //спрайт
 
     switch (skin) {
-    case 1:
-        snake_texture.loadFromFile("images/snake_1.png"); //загрузка элеимента змейки
-        snake.setTexture(snake_texture); //установка текстуры
+        case 1:
+            snake_texture.loadFromFile("images/snake_1.png"); //загрузка элеимента змейки
+            snake.setTexture(snake_texture); //установка текстуры
 
-        snake_head_texture.loadFromFile("images/head_1.png"); //загрузка ищображения
-        snake_head.setTexture(snake_head_texture); //установка текстуры
-        break;
-    case 2:
-        snake_texture.loadFromFile("images/snake_2.png"); //загрузка элемента змейки
-        snake.setTexture(snake_texture); //установка текстуры
+            snake_head_texture.loadFromFile("images/head_1.png"); //загрузка ищображения
+            snake_head.setTexture(snake_head_texture); //установка текстуры
+            break;
+        case 2:
+            snake_texture.loadFromFile("images/snake_2.png"); //загрузка элемента змейки
+            snake.setTexture(snake_texture); //установка текстуры
 
-        snake_head_texture.loadFromFile("images/head_2.png"); //загрузка ищображения
-        snake_head.setTexture(snake_head_texture); //установка текстуры
-        break;
-    case 3:
-        snake_texture.loadFromFile("images/snake_3.png"); //загрузка элеимента змейки
-        snake.setTexture(snake_texture); //установка текстуры
+            snake_head_texture.loadFromFile("images/head_2.png"); //загрузка ищображения
+            snake_head.setTexture(snake_head_texture); //установка текстуры
+            break;
+        case 3:
+            snake_texture.loadFromFile("images/snake_3.png"); //загрузка элеимента змейки
+            snake.setTexture(snake_texture); //установка текстуры
 
-        snake_head_texture.loadFromFile("images/head_3.png"); //загрузка ищображения
-        snake_head.setTexture(snake_head_texture); //установка текстуры
-        break;
-    case 4:
-        snake_texture.loadFromFile("images/snake_4.png"); //загрузка элеимента змейки
-        snake.setTexture(snake_texture); //установка текстуры
+            snake_head_texture.loadFromFile("images/head_3.png"); //загрузка ищображения
+            snake_head.setTexture(snake_head_texture); //установка текстуры
+            break;
+        case 4:
+            snake_texture.loadFromFile("images/snake_4.png"); //загрузка элеимента змейки
+            snake.setTexture(snake_texture); //установка текстуры
 
-        snake_head_texture.loadFromFile("images/head_4.png"); //загрузка ищображения
-        snake_head.setTexture(snake_head_texture); //установка текстуры
-        break;
-    default:
-        snake_texture.loadFromFile("images/snake.png"); //загрузка элеимента змейки
-        snake.setTexture(snake_texture); //установка текстуры
+            snake_head_texture.loadFromFile("images/head_4.png"); //загрузка ищображения
+            snake_head.setTexture(snake_head_texture); //установка текстуры
+            break;
+        default:
+            snake_texture.loadFromFile("images/snake.png"); //загрузка элеимента змейки
+            snake.setTexture(snake_texture); //установка текстуры
 
-        snake_head_texture.loadFromFile("images/head.png"); //загрузка ищображения
-        snake_head.setTexture(snake_head_texture); //установка текстуры
+            snake_head_texture.loadFromFile("images/head.png"); //загрузка ищображения
+            snake_head.setTexture(snake_head_texture); //установка текстуры
     }
 
     sf::Texture apple_texture; //текстура красного яблока
@@ -1803,17 +1662,17 @@ void draw_field(sf::RenderWindow& window)
 
     sf::Texture wall_texture; //текстура стены // // // // // //
     switch (wall) {
-    case 1:
-        wall_texture.loadFromFile("images/wall_2.png"); //загрузка изображения
-        break;
-    case 2:
-        wall_texture.loadFromFile("images/wall_3.png"); //загрузка изображения
-        break;
-    case 3:
-        wall_texture.loadFromFile("images/cactus_wall.png");
-        break;
-    default:
-        wall_texture.loadFromFile("images/wall.png");
+        case 1:
+            wall_texture.loadFromFile("images/wall_2.png"); //загрузка изображения
+            break;
+        case 2:
+            wall_texture.loadFromFile("images/wall_3.png"); //загрузка изображения
+            break;
+        case 3:
+            wall_texture.loadFromFile("images/cactus_wall.png");
+            break;
+        default:
+            wall_texture.loadFromFile("images/wall.png");
     }
 
     sf::Sprite wall; //спрайт
@@ -1827,57 +1686,57 @@ void draw_field(sf::RenderWindow& window)
     for (int j = 0; j < field_size_y; j++) {
         for (int i = 0; i < field_size_x; i++) {
             switch (game_state.field[j][i]) { //проверяем тип текстуры
-            case FIELD_CELL_TYPE_NONE:
-                none.setPosition(float(i * cell_size), float(j * cell_size));
-                window.draw(none); //отрисовка пустой клетки
-                break;
-            case FIELD_CELL_TYPE_APPLE:
-                apple.setPosition(float(i * cell_size), float(j * cell_size));
-                window.draw(apple); //отрисовка красного  яблока
-                break;
-            case FIELD_CELL_TYPE_GREEN_APPLE:
-                apple_green.setPosition(float(i * cell_size), float(j * cell_size));
-                window.draw(apple_green); //отрисовка зеленого яблока
-                break;
-            case FIELD_CELL_TYPE_YELLOW_APPLE:
-                apple_yellow.setPosition(float(i * cell_size), float(j * cell_size));
-                window.draw(apple_yellow); //отрисовка желтого яблока
-                break;
-            case FIELD_CELL_TYPE_WALL:
-                wall.setPosition(float(i * cell_size), float(j * cell_size));
-                window.draw(wall); //отрисовка стены
-                break;
-            case FIELD_CELL_TYPE_HEART:
-                heart.setPosition(float(i * cell_size), float(j * cell_size));
-                window.draw(heart); //отрисовка сердечка
-                break;
-            default:
-                if (game_state.field[j][i] == game_state.snake_length) {
-                    float offset_x = snake_head.getLocalBounds().width / 2; //установка координат головы змейки
-                    float offset_y = snake_head.getLocalBounds().height / 2;
-                    snake_head.setPosition(float(i * cell_size + offset_x), float(j * cell_size + offset_y));
-                    snake_head.setOrigin(offset_x, offset_y);
-                    switch (game_state.snake_direction) { //поворот головы в зависимости от направления
-                    case SNAKE_DIRECTION_RIGHT:
-                        snake_head.setRotation(90);
-                        break;
-                    case SNAKE_DIRECTION_LEFT:
-                        snake_head.setRotation(-90);
-                        break;
-                    case SNAKE_DIRECTION_DOWN:
-                        snake_head.setRotation(180);
-                        break;
-                    case SNAKE_DIRECTION_UP:
-                        snake_head.setRotation(0);
-                        break;
-                    }
+                case FIELD_CELL_TYPE_NONE:
+                    none.setPosition(float(i * cell_size), float(j * cell_size));
+                    window.draw(none); //отрисовка пустой клетки
+                    break;
+                case FIELD_CELL_TYPE_APPLE:
+                    apple.setPosition(float(i * cell_size), float(j * cell_size));
+                    window.draw(apple); //отрисовка красного  яблока
+                    break;
+                case FIELD_CELL_TYPE_GREEN_APPLE:
+                    apple_green.setPosition(float(i * cell_size), float(j * cell_size));
+                    window.draw(apple_green); //отрисовка зеленого яблока
+                    break;
+                case FIELD_CELL_TYPE_YELLOW_APPLE:
+                    apple_yellow.setPosition(float(i * cell_size), float(j * cell_size));
+                    window.draw(apple_yellow); //отрисовка желтого яблока
+                    break;
+                case FIELD_CELL_TYPE_WALL:
+                    wall.setPosition(float(i * cell_size), float(j * cell_size));
+                    window.draw(wall); //отрисовка стены
+                    break;
+                case FIELD_CELL_TYPE_HEART:
+                    heart.setPosition(float(i * cell_size), float(j * cell_size));
+                    window.draw(heart); //отрисовка сердечка
+                    break;
+                default:
+                    if (game_state.field[j][i] == game_state.snake_length) {
+                        float offset_x = snake_head.getLocalBounds().width / 2; //установка координат головы змейки
+                        float offset_y = snake_head.getLocalBounds().height / 2;
+                        snake_head.setPosition(float(i * cell_size + offset_x), float(j * cell_size + offset_y));
+                        snake_head.setOrigin(offset_x, offset_y);
+                        switch (game_state.snake_direction) { //поворот головы в зависимости от направления
+                            case SNAKE_DIRECTION_RIGHT:
+                                snake_head.setRotation(90);
+                                break;
+                            case SNAKE_DIRECTION_LEFT:
+                                snake_head.setRotation(-90);
+                                break;
+                            case SNAKE_DIRECTION_DOWN:
+                                snake_head.setRotation(180);
+                                break;
+                            case SNAKE_DIRECTION_UP:
+                                snake_head.setRotation(0);
+                                break;
+                        }
 
-                    window.draw(snake_head); // отрисовка головы
-                }
-                else {
-                    snake.setPosition(float(i * cell_size), float(j * cell_size));
-                    window.draw(snake); // отрисовка остальной змейки
-                }
+                        window.draw(snake_head); // отрисовка головы
+                    }
+                    else {
+                        snake.setPosition(float(i * cell_size), float(j * cell_size));
+                        window.draw(snake); // отрисовка остальной змейки
+                    }
             }
         }
     }
@@ -1904,40 +1763,40 @@ void random_event()
     int random_trap;
     random_trap = rand() % 4; //генерация случайного числа
     switch (random_trap) {
-    case 0:
-        invert_control = true; // инверсия управления
-        break;
-    case 1:
-        if (speed > 30) {
-            speed = 40; // ускорение
-        }
-        else{
-            switch(speed){
-                case 30:
-                    speed = 20;
-                    break;
-                case 15:
-                    speed = 10;
-                    break;
-                case 10:
-                    speed = 5;
-                    break;
+        case 0:
+            invert_control = true; // инверсия управления
+            break;
+        case 1:
+            if (speed > 30) {
+                speed = 40; // ускорение
             }
-        }
-        break;
-    case 2:
-        if (game_state.score >= 10) {
-            game_state.score -= 10; //уменьшение счета
-        }
-        else {
-            game_state.score = 0;
-        }
-        score_decrease = true; // запоминаем, что счет уменьшен для того, чтобы вернуться в начальное состояние
-        break;
-    case 3:
-        game_state.snake_length += 3; // увеличение длины
-        length_increase = true; //запоминаем, что длина была увеличена
-        break;
+            else{
+                switch(speed){
+                    case 30:
+                        speed = 20;
+                        break;
+                    case 15:
+                        speed = 10;
+                        break;
+                    case 10:
+                        speed = 5;
+                        break;
+                }
+            }
+            break;
+        case 2:
+            if (game_state.score >= 10) {
+                game_state.score -= 10; //уменьшение счета
+            }
+            else {
+                game_state.score = 0;
+            }
+            score_decrease = true; // запоминаем, что счет уменьшен для того, чтобы вернуться в начальное состояние
+            break;
+        case 3:
+            game_state.snake_length += 3; // увеличение длины
+            length_increase = true; //запоминаем, что длина была увеличена
+            break;
     }
 }
 
@@ -1954,24 +1813,24 @@ int random_bonus()
         bonus = rand() % 5;
     }
     switch (bonus) {
-    case 0:
-        game_state.score += 15; // увеличение счета
-        break;
-    case 1:
-        return 1;
-        break;
-    case 2:
-        speed = 130; // замедление
-        break;
-    case 3:
-        if (game_state.snake_length >= 9) {
-            game_state.snake_length -= 5; //уменьшение длины
-        }
-        break;
-    case 4:
-        count_of_lives = 5; // неуязвимость
-        x = 0; y = 220; z = 255; // изменнение цвета поля при неуязвимости
-        break;
+        case 0:
+            game_state.score += 15; // увеличение счета
+            break;
+        case 1:
+            return 1;
+            break;
+        case 2:
+            speed = 130; // замедление
+            break;
+        case 3:
+            if (game_state.snake_length >= 9) {
+                game_state.snake_length -= 5; //уменьшение длины
+            }
+            break;
+        case 4:
+            count_of_lives = 5; // неуязвимость
+            x = 0; y = 220; z = 255; // изменнение цвета поля при неуязвимости
+            break;
     }
 }
 
@@ -2076,140 +1935,140 @@ void make_move()
     //установка направления движения змейкм
 
     switch (game_state.snake_direction) {
-    case SNAKE_DIRECTION_UP:
-        game_state.snake_position_y--;
-        if (game_state.snake_position_y < 0) {
-            game_state.snake_position_y = field_size_y - 1;
-        }
-        break;
-    case SNAKE_DIRECTION_RIGHT:
-        game_state.snake_position_x++;
-        if (game_state.snake_position_x > field_size_x - 1) {
-            game_state.snake_position_x = 0;
-        }
-        break;
-    case SNAKE_DIRECTION_DOWN:
-        game_state.snake_position_y++;
-        if (game_state.snake_position_y > field_size_y - 1) {
-            game_state.snake_position_y = 0;
-        }
-        break;
-    case SNAKE_DIRECTION_LEFT:
-        game_state.snake_position_x--;
-        if (game_state.snake_position_x < 0) {
-            game_state.snake_position_x = field_size_x - 1;
-        }
-        break;
+        case SNAKE_DIRECTION_UP:
+            game_state.snake_position_y--;
+            if (game_state.snake_position_y < 0) {
+                game_state.snake_position_y = field_size_y - 1;
+            }
+            break;
+        case SNAKE_DIRECTION_RIGHT:
+            game_state.snake_position_x++;
+            if (game_state.snake_position_x > field_size_x - 1) {
+                game_state.snake_position_x = 0;
+            }
+            break;
+        case SNAKE_DIRECTION_DOWN:
+            game_state.snake_position_y++;
+            if (game_state.snake_position_y > field_size_y - 1) {
+                game_state.snake_position_y = 0;
+            }
+            break;
+        case SNAKE_DIRECTION_LEFT:
+            game_state.snake_position_x--;
+            if (game_state.snake_position_x < 0) {
+                game_state.snake_position_x = field_size_x - 1;
+            }
+            break;
     }
 
     //если змейка с чем-то провзаимодействовала
 
     if (game_state.field[game_state.snake_position_y][game_state.snake_position_x] != FIELD_CELL_TYPE_NONE) {
         switch (game_state.field[game_state.snake_position_y][game_state.snake_position_x]) {
-        case FIELD_CELL_TYPE_APPLE: // случай - яблоко
-            game_state.last_score++; //предыдущий счет +1
-            apple_sound.play();
-            game_state.score++; //текущий счет +1
-            game_state.snake_length++; // увеличение длины на 1
-            count_of_apples++; // считаем количество съеденных яблок
-            if (count_of_apples == n) { // если их 10 - гененрируем одно зеленое
-                add_green_apple();
-                count_of_apples = 0; // обнуляем количество съеденных до зеленого яблок
-            }
-            count_of_red_apples++; // считаем количество съеденных яблок для генерации сердечечка
-            if (count_of_red_apples == 5) { // если 5 - гененрируем сердечко
-                add_heart();
-            }
-            if (game_state.score != 0 && game_state.score % 15 == 0) { //генерация желтого яблока в случае, если съедено 15 красных
-                add_yellow_apple();
-            }
-            grow_snake(); // увеличение змейки
-            add_apple(); // генерация нового яблока
-            break;
-        case FIELD_CELL_TYPE_GREEN_APPLE: // случай - зеленое яблоко
-            green_apple_sound.play();
-            count_of_red_apples = 0; // подготовка к генерации сердечкка через 5 яблок
-            count_of_apples = 0; // установка в 0 отсчета до следующего зеленого яблока
-            random_event(); // получение случайной ловушки
-            if (count_of_lives == 0 || immortality) { //если не включена неуязвимость или введен код бессмертия
-                x = 50; y = 185; z = 50; //изменение цвета поля
-            }
-            break;
-        case FIELD_CELL_TYPE_YELLOW_APPLE: // случай - желтое яблоко
-            yellow_apple_sound.play();
-            if (random_bonus() == 1) { // получение случайного бонуса
-                for (int m = 0; m < 2; m++) {
-                    add_heart(); // генерация двух сердечек в случае получения 1 в генераторе случайных чисел
+            case FIELD_CELL_TYPE_APPLE: // случай - яблоко
+                game_state.last_score++; //предыдущий счет +1
+                apple_sound.play();
+                game_state.score++; //текущий счет +1
+                game_state.snake_length++; // увеличение длины на 1
+                count_of_apples++; // считаем количество съеденных яблок
+                if (count_of_apples == n) { // если их 10 - гененрируем одно зеленое
+                    add_green_apple();
+                    count_of_apples = 0; // обнуляем количество съеденных до зеленого яблок
                 }
-            }
-            break;
-        case FIELD_CELL_TYPE_HEART: // случай - сердечко
-            heart_sound.play();
-            normal_game(); // восставновление параметров игры
-            if (immortality) {
-                x = r; y = g; z = b;
-            }
-            break;
-        case FIELD_CELL_TYPE_WALL: //случай - стена
-            game_over_sound.play();
-            if (count_of_lives != 0) { //если есть неуязвимость, проверяем, сколько осталось жизней
-                rall_back = true; //откат включен
-                if (!immortality) {//в случае, если не введен код бессмертия
-                    count_of_lives--; // уменьшаем количество жизней
-                    switch (count_of_lives) { //меняем фон
-                    case 4:
-                        x = 255; y = 20; z = 147;
-                        break;
-                    case 3:
-                        x = 255; y = 140; z = 0;
-                        break;
-                    case 2:
-                        x = 139; y = 0; z = 139;
-                        break;
-                    case 1:
-                        x = 255; y = 215; z = 0;
-                        break;
-                    default:
-                        x = r; y = g; z = b;
+                count_of_red_apples++; // считаем количество съеденных яблок для генерации сердечечка
+                if (count_of_red_apples == 5) { // если 5 - гененрируем сердечко
+                    add_heart();
+                }
+                if (game_state.score != 0 && game_state.score % 15 == 0) { //генерация желтого яблока в случае, если съедено 15 красных
+                    add_yellow_apple();
+                }
+                grow_snake(); // увеличение змейки
+                add_apple(); // генерация нового яблока
+                break;
+            case FIELD_CELL_TYPE_GREEN_APPLE: // случай - зеленое яблоко
+                green_apple_sound.play();
+                count_of_red_apples = 0; // подготовка к генерации сердечкка через 5 яблок
+                count_of_apples = 0; // установка в 0 отсчета до следующего зеленого яблока
+                random_event(); // получение случайной ловушки
+                if (count_of_lives == 0 || immortality) { //если не включена неуязвимость или введен код бессмертия
+                    x = 50; y = 185; z = 50; //изменение цвета поля
+                }
+                break;
+            case FIELD_CELL_TYPE_YELLOW_APPLE: // случай - желтое яблоко
+                yellow_apple_sound.play();
+                if (random_bonus() == 1) { // получение случайного бонуса
+                    for (int m = 0; m < 2; m++) {
+                        add_heart(); // генерация двух сердечек в случае получения 1 в генераторе случайных чисел
                     }
                 }
-                else{
-                    count_of_lives = 1;
+                break;
+            case FIELD_CELL_TYPE_HEART: // случай - сердечко
+                heart_sound.play();
+                normal_game(); // восставновление параметров игры
+                if (immortality) {
+                    x = r; y = g; z = b;
                 }
-            }
-            else {
-                game_over = true;// иначе конец игры
-            }
-            break;
-        default: // аналогично, если врезались в себя
-            game_over_sound.play();
-            if (game_state.field[game_state.snake_position_y][game_state.snake_position_x] > 1) {
-                if (count_of_lives != 0) {
-                    rall_back = true;
-                    if (!immortality) {
+                break;
+            case FIELD_CELL_TYPE_WALL: //случай - стена
+                game_over_sound.play();
+                if (count_of_lives != 0) { //если есть неуязвимость, проверяем, сколько осталось жизней
+                    rall_back = true; //откат включен
+                    if (!immortality) {//в случае, если не введен код бессмертия
                         count_of_lives--; // уменьшаем количество жизней
                         switch (count_of_lives) { //меняем фон
-                        case 4:
-                            x = 255; y = 20; z = 147;
-                            break;
-                        case 3:
-                            x = 255; y = 140; z = 0;
-                            break;
-                        case 2:
-                            x = 139; y = 0; z = 139;
-                            break;
-                        case 1:
-                            x = 255; y = 255; z = 0;
-                            break;
-                        default:
-                            x = r; y = g; z = b;
+                            case 4:
+                                x = 255; y = 20; z = 147;
+                                break;
+                            case 3:
+                                x = 255; y = 140; z = 0;
+                                break;
+                            case 2:
+                                x = 139; y = 0; z = 139;
+                                break;
+                            case 1:
+                                x = 255; y = 215; z = 0;
+                                break;
+                            default:
+                                x = r; y = g; z = b;
                         }
+                    }
+                    else{
+                        count_of_lives = 1;
                     }
                 }
                 else {
-                    game_over = true;
+                    game_over = true;// иначе конец игры
                 }
-            }
+                break;
+            default: // аналогично, если врезались в себя
+                game_over_sound.play();
+                if (game_state.field[game_state.snake_position_y][game_state.snake_position_x] > 1) {
+                    if (count_of_lives != 0) {
+                        rall_back = true;
+                        if (!immortality) {
+                            count_of_lives--; // уменьшаем количество жизней
+                            switch (count_of_lives) { //меняем фон
+                                case 4:
+                                    x = 255; y = 20; z = 147;
+                                    break;
+                                case 3:
+                                    x = 255; y = 140; z = 0;
+                                    break;
+                                case 2:
+                                    x = 139; y = 0; z = 139;
+                                    break;
+                                case 1:
+                                    x = 255; y = 255; z = 0;
+                                    break;
+                                default:
+                                    x = r; y = g; z = b;
+                            }
+                        }
+                    }
+                    else {
+                        game_over = true;
+                    }
+                }
         }
     }
 
@@ -2327,74 +2186,74 @@ void game_control(bool& invert_control, sf::RenderWindow& window)
             if (event.type == sf::Event::KeyPressed) {
                 int snake_direction_last = snake_direction_queue.empty() ? game_state.snake_direction : snake_direction_queue.at(0);
                 switch (event.key.code) { // проверка нажатия той или иной клавиши
-                case sf::Keyboard::Up:
-                    if (snake_direction_last != SNAKE_DIRECTION_UP && snake_direction_last != SNAKE_DIRECTION_DOWN && type_of_control != 2) { // проверка направления, чтобы не врезаться в себя в обратную
-                        //сторону. изменение направления движения. для остальных клавиш аналогично
-                        if (snake_direction_queue.size() < 2) {
-                            snake_direction_queue.insert(snake_direction_queue.begin(), SNAKE_DIRECTION_UP);
+                    case sf::Keyboard::Up:
+                        if (snake_direction_last != SNAKE_DIRECTION_UP && snake_direction_last != SNAKE_DIRECTION_DOWN && type_of_control != 2) { // проверка направления, чтобы не врезаться в себя в обратную
+                            //сторону. изменение направления движения. для остальных клавиш аналогично
+                            if (snake_direction_queue.size() < 2) {
+                                snake_direction_queue.insert(snake_direction_queue.begin(), SNAKE_DIRECTION_UP);
+                            }
                         }
-                    }
-                    break;
-                case sf::Keyboard::Right:
-                    if (snake_direction_last != SNAKE_DIRECTION_RIGHT && snake_direction_last != SNAKE_DIRECTION_LEFT && type_of_control != 2) {
-                        if (snake_direction_queue.size() < 2) {
-                            snake_direction_queue.insert(snake_direction_queue.begin(), SNAKE_DIRECTION_RIGHT);
+                        break;
+                    case sf::Keyboard::Right:
+                        if (snake_direction_last != SNAKE_DIRECTION_RIGHT && snake_direction_last != SNAKE_DIRECTION_LEFT && type_of_control != 2) {
+                            if (snake_direction_queue.size() < 2) {
+                                snake_direction_queue.insert(snake_direction_queue.begin(), SNAKE_DIRECTION_RIGHT);
+                            }
                         }
-                    }
-                    break;
-                case sf::Keyboard::Down:
-                    if (snake_direction_last != SNAKE_DIRECTION_DOWN && snake_direction_last != SNAKE_DIRECTION_UP && type_of_control != 2) {
-                        if (snake_direction_queue.size() < 2) {
-                            snake_direction_queue.insert(snake_direction_queue.begin(), SNAKE_DIRECTION_DOWN);
+                        break;
+                    case sf::Keyboard::Down:
+                        if (snake_direction_last != SNAKE_DIRECTION_DOWN && snake_direction_last != SNAKE_DIRECTION_UP && type_of_control != 2) {
+                            if (snake_direction_queue.size() < 2) {
+                                snake_direction_queue.insert(snake_direction_queue.begin(), SNAKE_DIRECTION_DOWN);
+                            }
                         }
-                    }
-                    break;
-                case sf::Keyboard::Left:
-                    if (snake_direction_last != SNAKE_DIRECTION_LEFT && snake_direction_last != SNAKE_DIRECTION_RIGHT && type_of_control != 2) {
-                        if (snake_direction_queue.size() < 2) {
-                            snake_direction_queue.insert(snake_direction_queue.begin(), SNAKE_DIRECTION_LEFT);
+                        break;
+                    case sf::Keyboard::Left:
+                        if (snake_direction_last != SNAKE_DIRECTION_LEFT && snake_direction_last != SNAKE_DIRECTION_RIGHT && type_of_control != 2) {
+                            if (snake_direction_queue.size() < 2) {
+                                snake_direction_queue.insert(snake_direction_queue.begin(), SNAKE_DIRECTION_LEFT);
+                            }
                         }
-                    }
-                    break;
-                case sf::Keyboard::W:
-                    if (snake_direction_last != SNAKE_DIRECTION_UP && snake_direction_last != SNAKE_DIRECTION_DOWN && type_of_control == 2) {
-                        if (snake_direction_queue.size() < 2) {
-                            snake_direction_queue.insert(snake_direction_queue.begin(), SNAKE_DIRECTION_UP);
+                        break;
+                    case sf::Keyboard::W:
+                        if (snake_direction_last != SNAKE_DIRECTION_UP && snake_direction_last != SNAKE_DIRECTION_DOWN && type_of_control == 2) {
+                            if (snake_direction_queue.size() < 2) {
+                                snake_direction_queue.insert(snake_direction_queue.begin(), SNAKE_DIRECTION_UP);
+                            }
                         }
-                    }
-                    break;
-                case sf::Keyboard::D:
-                    if (snake_direction_last != SNAKE_DIRECTION_RIGHT && snake_direction_last != SNAKE_DIRECTION_LEFT && type_of_control == 2) {
-                        if (snake_direction_queue.size() < 2) {
-                            snake_direction_queue.insert(snake_direction_queue.begin(), SNAKE_DIRECTION_RIGHT);
+                        break;
+                    case sf::Keyboard::D:
+                        if (snake_direction_last != SNAKE_DIRECTION_RIGHT && snake_direction_last != SNAKE_DIRECTION_LEFT && type_of_control == 2) {
+                            if (snake_direction_queue.size() < 2) {
+                                snake_direction_queue.insert(snake_direction_queue.begin(), SNAKE_DIRECTION_RIGHT);
+                            }
                         }
-                    }
-                    break;
-                case sf::Keyboard::S:
-                    if (snake_direction_last != SNAKE_DIRECTION_DOWN && snake_direction_last != SNAKE_DIRECTION_UP && type_of_control == 2) {
-                        if (snake_direction_queue.size() < 2) {
-                            snake_direction_queue.insert(snake_direction_queue.begin(), SNAKE_DIRECTION_DOWN);
+                        break;
+                    case sf::Keyboard::S:
+                        if (snake_direction_last != SNAKE_DIRECTION_DOWN && snake_direction_last != SNAKE_DIRECTION_UP && type_of_control == 2) {
+                            if (snake_direction_queue.size() < 2) {
+                                snake_direction_queue.insert(snake_direction_queue.begin(), SNAKE_DIRECTION_DOWN);
+                            }
                         }
-                    }
-                    break;
-                case sf::Keyboard::A:
-                    if (snake_direction_last != SNAKE_DIRECTION_LEFT && snake_direction_last != SNAKE_DIRECTION_RIGHT && type_of_control == 2) {
-                        if (snake_direction_queue.size() < 2) {
-                            snake_direction_queue.insert(snake_direction_queue.begin(), SNAKE_DIRECTION_LEFT);
+                        break;
+                    case sf::Keyboard::A:
+                        if (snake_direction_last != SNAKE_DIRECTION_LEFT && snake_direction_last != SNAKE_DIRECTION_RIGHT && type_of_control == 2) {
+                            if (snake_direction_queue.size() < 2) {
+                                snake_direction_queue.insert(snake_direction_queue.begin(), SNAKE_DIRECTION_LEFT);
+                            }
                         }
-                    }
-                    break;
-                case sf::Keyboard::Space: // пробел
-                    menu_type = 5;
-                    game_paused = true; // установка игры на паузу
-                    break;
-                case sf::Keyboard::Tab:
-                    game_music.stop();
-                    break;
-                case sf::Keyboard::X:
-                    game_music.setLoop(true);
-                    game_music.play();
-                    break;
+                        break;
+                    case sf::Keyboard::Space: // пробел
+                        menu_type = 5;
+                        game_paused = true; // установка игры на паузу
+                        break;
+                    case sf::Keyboard::Tab:
+                        game_music.stop();
+                        break;
+                    case sf::Keyboard::X:
+                        game_music.setLoop(true);
+                        game_music.play();
+                        break;
                 }
             }
         }
@@ -2407,73 +2266,73 @@ void game_control(bool& invert_control, sf::RenderWindow& window)
             if (event.type == sf::Event::KeyPressed) {
                 int snake_direction_last = snake_direction_queue.empty() ? game_state.snake_direction : snake_direction_queue.at(0);
                 switch (event.key.code) {
-                case sf::Keyboard::Down:
-                    if (snake_direction_last != SNAKE_DIRECTION_UP && snake_direction_last != SNAKE_DIRECTION_DOWN && type_of_control != 2) {
-                        if (snake_direction_queue.size() < 2) {
-                            snake_direction_queue.insert(snake_direction_queue.begin(), SNAKE_DIRECTION_UP);
+                    case sf::Keyboard::Down:
+                        if (snake_direction_last != SNAKE_DIRECTION_UP && snake_direction_last != SNAKE_DIRECTION_DOWN && type_of_control != 2) {
+                            if (snake_direction_queue.size() < 2) {
+                                snake_direction_queue.insert(snake_direction_queue.begin(), SNAKE_DIRECTION_UP);
+                            }
                         }
-                    }
-                    break;
-                case sf::Keyboard::Up:
-                    if (snake_direction_last != SNAKE_DIRECTION_DOWN && snake_direction_last != SNAKE_DIRECTION_UP && type_of_control != 2) {
-                        if (snake_direction_queue.size() < 2) {
-                            snake_direction_queue.insert(snake_direction_queue.begin(), SNAKE_DIRECTION_DOWN);
+                        break;
+                    case sf::Keyboard::Up:
+                        if (snake_direction_last != SNAKE_DIRECTION_DOWN && snake_direction_last != SNAKE_DIRECTION_UP && type_of_control != 2) {
+                            if (snake_direction_queue.size() < 2) {
+                                snake_direction_queue.insert(snake_direction_queue.begin(), SNAKE_DIRECTION_DOWN);
+                            }
                         }
-                    }
-                    break;
-                case sf::Keyboard::Left:
-                    if (snake_direction_last != SNAKE_DIRECTION_RIGHT && snake_direction_last != SNAKE_DIRECTION_LEFT && type_of_control != 2) {
-                        if (snake_direction_queue.size() < 2) {
-                            snake_direction_queue.insert(snake_direction_queue.begin(), SNAKE_DIRECTION_RIGHT);
+                        break;
+                    case sf::Keyboard::Left:
+                        if (snake_direction_last != SNAKE_DIRECTION_RIGHT && snake_direction_last != SNAKE_DIRECTION_LEFT && type_of_control != 2) {
+                            if (snake_direction_queue.size() < 2) {
+                                snake_direction_queue.insert(snake_direction_queue.begin(), SNAKE_DIRECTION_RIGHT);
+                            }
                         }
-                    }
-                    break;
-                case sf::Keyboard::Right:
-                    if (snake_direction_last != SNAKE_DIRECTION_LEFT && snake_direction_last != SNAKE_DIRECTION_RIGHT && type_of_control != 2) {
-                        if (snake_direction_queue.size() < 2) {
-                            snake_direction_queue.insert(snake_direction_queue.begin(), SNAKE_DIRECTION_LEFT);
+                        break;
+                    case sf::Keyboard::Right:
+                        if (snake_direction_last != SNAKE_DIRECTION_LEFT && snake_direction_last != SNAKE_DIRECTION_RIGHT && type_of_control != 2) {
+                            if (snake_direction_queue.size() < 2) {
+                                snake_direction_queue.insert(snake_direction_queue.begin(), SNAKE_DIRECTION_LEFT);
+                            }
                         }
-                    }
-                    break;
-                case sf::Keyboard::W:
-                    if (snake_direction_last != SNAKE_DIRECTION_UP && snake_direction_last != SNAKE_DIRECTION_DOWN && type_of_control == 2) {
-                        if (snake_direction_queue.size() < 2) {
-                            snake_direction_queue.insert(snake_direction_queue.begin(), SNAKE_DIRECTION_UP);
+                        break;
+                    case sf::Keyboard::W:
+                        if (snake_direction_last != SNAKE_DIRECTION_UP && snake_direction_last != SNAKE_DIRECTION_DOWN && type_of_control == 2) {
+                            if (snake_direction_queue.size() < 2) {
+                                snake_direction_queue.insert(snake_direction_queue.begin(), SNAKE_DIRECTION_UP);
+                            }
                         }
-                    }
-                    break;
-                case sf::Keyboard::D:
-                    if (snake_direction_last != SNAKE_DIRECTION_RIGHT && snake_direction_last != SNAKE_DIRECTION_LEFT && type_of_control == 2) {
-                        if (snake_direction_queue.size() < 2) {
-                            snake_direction_queue.insert(snake_direction_queue.begin(), SNAKE_DIRECTION_RIGHT);
+                        break;
+                    case sf::Keyboard::D:
+                        if (snake_direction_last != SNAKE_DIRECTION_RIGHT && snake_direction_last != SNAKE_DIRECTION_LEFT && type_of_control == 2) {
+                            if (snake_direction_queue.size() < 2) {
+                                snake_direction_queue.insert(snake_direction_queue.begin(), SNAKE_DIRECTION_RIGHT);
+                            }
                         }
-                    }
-                    break;
-                case sf::Keyboard::S:
-                    if (snake_direction_last != SNAKE_DIRECTION_DOWN && snake_direction_last != SNAKE_DIRECTION_UP && type_of_control == 2) {
-                        if (snake_direction_queue.size() < 2) {
-                            snake_direction_queue.insert(snake_direction_queue.begin(), SNAKE_DIRECTION_DOWN);
+                        break;
+                    case sf::Keyboard::S:
+                        if (snake_direction_last != SNAKE_DIRECTION_DOWN && snake_direction_last != SNAKE_DIRECTION_UP && type_of_control == 2) {
+                            if (snake_direction_queue.size() < 2) {
+                                snake_direction_queue.insert(snake_direction_queue.begin(), SNAKE_DIRECTION_DOWN);
+                            }
                         }
-                    }
-                    break;
-                case sf::Keyboard::A:
-                    if (snake_direction_last != SNAKE_DIRECTION_LEFT && snake_direction_last != SNAKE_DIRECTION_RIGHT && type_of_control == 2) {
-                        if (snake_direction_queue.size() < 2) {
-                            snake_direction_queue.insert(snake_direction_queue.begin(), SNAKE_DIRECTION_LEFT);
+                        break;
+                    case sf::Keyboard::A:
+                        if (snake_direction_last != SNAKE_DIRECTION_LEFT && snake_direction_last != SNAKE_DIRECTION_RIGHT && type_of_control == 2) {
+                            if (snake_direction_queue.size() < 2) {
+                                snake_direction_queue.insert(snake_direction_queue.begin(), SNAKE_DIRECTION_LEFT);
+                            }
                         }
-                    }
-                    break;
-                case sf::Keyboard::Space:
-                    menu_type = 5;
-                    game_paused = true; // установка игры на паузу
-                    break;
-                case sf::Keyboard::Tab:
-                    game_music.stop();
-                    break;
-                case sf::Keyboard::X:
-                    game_music.setLoop(true);
-                    game_music.play();
-                    break;
+                        break;
+                    case sf::Keyboard::Space:
+                        menu_type = 5;
+                        game_paused = true; // установка игры на паузу
+                        break;
+                    case sf::Keyboard::Tab:
+                        game_music.stop();
+                        break;
+                    case sf::Keyboard::X:
+                        game_music.setLoop(true);
+                        game_music.play();
+                        break;
                 }
             }
         }
