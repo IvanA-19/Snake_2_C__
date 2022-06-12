@@ -54,7 +54,7 @@ constexpr auto SNAKE_DIRECTION_LEFT = 3; //влево
 
 //размеры поля
 
-const int field_size_x = 40; //количество клеток по длине
+const int field_size_x = 40; //количество клеток по длине // 25 * 40
 const int field_size_y = 25; //количество клеток по высоте
 const int cell_size = 32; //размер клетки
 const int window_width = field_size_x * cell_size; //длина поля
@@ -76,9 +76,7 @@ bool game_over = false; //переменнная, отвечающая за ко
 bool game_paused = false; //переменная, отвечающая за паузу
 int count_of_apples = 0; //количество яблок, необходимое для генерации других предметов
 const int n = 10; //константа для генерации зеленого яблока
-bool event_green = false; //случай съедения зеленого яблока
-int speed = 100; //скорость змейки
-int speed_last; //скорость по умолчанию
+bool event_green = false; //случай съедения зеленого яблока //скорость по умолчанию
 bool invert_control = false; //инверсия управления
 bool length_increase = false; //увеличение длины
 bool score_decrease = false; //уменьшение длины
@@ -104,6 +102,8 @@ struct GameState {
     int snake_direction = SNAKE_DIRECTION_RIGHT; //направление движения, изначально вправо
     int score = 0;
     int last_score = 0;
+    int speed = 100; //скорость змейки
+    int speed_last;
 };
 
 GameState game_state; //текущая стадия игры
@@ -116,14 +116,14 @@ vector <sf::Text> text_menu_items;
 
 vector <string> lose_menu_items{"Your score: ", "Restart", "Exit to main menu", "GAME OVER"};
 
-vector<string> menu_items = {"Start new game", "Level", "Settings", "Help", "Quit", "SNAKE", "By Vanyok77797", "Version 3.0.0"};
+vector<string> menu_items = {"Start new game", "Level", "Settings", "Help", "Quit", "SNAKE", "By Vanyok77797", "Version 3.0.1"};
 
 vector <string> settings_menu_items{"Type of control", "Field color", "Snake skin", "Walls",
                                     "Difficulty level", "Volume", "Back to main menu", "Game settings"};
 
 vector<string> control_menu_items = {"Cursors", "W, A, S, D", "Back to settings", "Type of game control"};
 
-vector<string> difficulty_menu_items = {"Standart", "Yeasy", "Medium", "Hard", "Crazy", "Impossible",
+vector<string> difficulty_menu_items = {"Standart", "Easy", "Medium", "Hard", "Crazy", "Impossible",
                                         "Back to settings", "Difficulty level"};
 
 vector <string> pause_menu_items = {"Score: ", "Resume", "Exit to main menu", "Pause"};
@@ -133,10 +133,10 @@ vector <string> volume_menu_items = {"Volume: ", "Exit to main menu", "Volume se
 vector <string> level_menu_items = {"Level 1", "Level 2", "Level 3", "Level 4", "Level 5",
                                     "Level 6" , "Level 7", "Back to main menu", "Choose level"};
 
-vector<string> help_menu_items = {"Apples: ", "\t*Green - random trap", "\t*Gold - random bonus",
+vector<string> help_menu_items = {"Apples: ", "\t*Green - random trap", "\t*Golden - random bonus",
                                   "\t*Red - food for snake", "Heart - removes bad effect",
                                   "Space - game pause", "Tab - to turn off the music",
-                                  "X - to turn on the music", "Back to main menu", "Help"};
+                                  "X - to turn on the music", "Enter to close help", "Help"};
 
 int color_menu = 0;
 int menu_type = 0;
@@ -150,6 +150,7 @@ int level_color = 0;
 
 int game_level = 0;
 int volume_level = 30;
+int music_level = 20;
 
 sf::Sound apple_sound;
 sf::SoundBuffer apple_buffer;
@@ -1137,27 +1138,27 @@ void difficulty_menu_control(sf::RenderWindow &window_main)
                     switch(difficulty_color){
                         case 0:
                             menu_type = 2;
-                            speed = 120;
+                            game_state.speed = 120;
                             break;
                         case 1:
                             menu_type = 2;
-                            speed = 90;
+                            game_state.speed = 90;
                             break;
                         case 2:
                             menu_type = 2;
-                            speed = 60;
+                            game_state.speed = 60;
                             break;
                         case 3:
                             menu_type = 2;
-                            speed = 30;
+                            game_state.speed = 30;
                             break;
                         case 4:
                             menu_type = 2;
-                            speed = 15;
+                            game_state.speed = 15;
                             break;
                         case 5:
                             menu_type = 2;
-                            speed = 10;
+                            game_state.speed = 10;
                             break;
                         case 6:
                             menu_type = 2;
@@ -1286,7 +1287,7 @@ void open_level_menu()
 }
 
 void set_volume_level(){
-    game_music.setVolume(25);
+    game_music.setVolume(music_level);
     apple_sound.setVolume(float(volume_level));
     menu_sound.setVolume(float(volume_level));
     game_over_sound.setVolume(float(volume_level));
@@ -1308,6 +1309,9 @@ void volume_menu_control(sf::RenderWindow& window_volume)
                     menu_sound.play();
                     if(volume_level != 0){
                         volume_level -= 5;
+                        if(volume_level % 15 == 0){
+                            music_level -= 10;
+                        }
                         set_volume_level();
                     }
                     pause = true;
@@ -1316,6 +1320,9 @@ void volume_menu_control(sf::RenderWindow& window_volume)
                     menu_sound.play();
                     if(volume_level != 100){
                         volume_level += 5;
+                        if(volume_level % 15 == 0){
+                            music_level += 10;
+                        }
                         set_volume_level();
                     }
                     pause = true;
@@ -1908,19 +1915,19 @@ void random_event()
         invert_control = true; // инверсия управления
         break;
     case 1:
-        if (speed > 30) {
-            speed = 40; // ускорение
+        if (game_state.speed > 30) {
+            game_state.speed = 40; // ускорение
         }
         else{
-            switch(speed){
+            switch(game_state.speed){
                 case 30:
-                    speed = 20;
+                    game_state.speed = 20;
                     break;
                 case 15:
-                    speed = 10;
+                    game_state.speed = 10;
                     break;
                 case 10:
-                    speed = 5;
+                    game_state.speed = 5;
                     break;
             }
         }
@@ -1961,7 +1968,7 @@ int random_bonus()
         return 1;
         break;
     case 2:
-        speed = 130; // замедление
+        game_state.speed = 130; // замедление
         break;
     case 3:
         if (game_state.snake_length >= 9) {
@@ -1979,7 +1986,7 @@ int random_bonus()
 
 void normal_game()
 {
-    speed = speed_last; // установка начального уровня скорости
+    game_state.speed = game_state.speed_last; // установка начального уровня скорости
     if (count_of_lives == 0) {
         x = r; y = g; z = b; // установка начального цыета поля
     }
@@ -2508,7 +2515,7 @@ int main() // main
         if(!restart && new_game){
             open_main_menu();
             r = x; g = y; b = z;
-            speed_last = speed;
+            game_state.speed_last = game_state.speed;
         }
 
         if(set_op){
@@ -2533,7 +2540,7 @@ int main() // main
 
         if(!restart && !set_op && !new_game){
             open_main_menu();
-            speed_last = speed;
+            game_state.speed_last = game_state.speed;
             new_game = true;
         }
 
@@ -2633,7 +2640,7 @@ int main() // main
 
             window.display(); // вывод окна
 
-            sf::sleep(sf::milliseconds(speed)); // скорость
+            sf::sleep(sf::milliseconds(game_state.speed)); // скорость
 
             check_win();
         }
