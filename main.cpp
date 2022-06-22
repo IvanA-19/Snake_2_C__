@@ -4,21 +4,21 @@
 #include <vector> //для использования std::vector
 #include <windows.h>
 
-using namespace std; //стандартное пространство имен
-
-//Блок константных выражений для стандартных элементов на поле
+using namespace std;
 
 const int skin_cell_size = 32;
 const int skin_length = 2;
-const int skin_count = 5; // количество скинов
+const int skin_count = 5;
 const int skin_choice_height = (skin_length + 4) * skin_cell_size;
 const int skin_choice_width = (skin_count + 6) * skin_cell_size;
 int choice = 1;
 int skin = 0;
 
+int count_of_hearts = 0;
+
 const int wall_cell_size = 32;
 const int wall_length = 2;
-const int wall_count = 4; // количество скинов
+const int wall_count = 4;
 const int wall_choice_height = (wall_length + 3) * wall_cell_size;
 const int wall_choice_width = (wall_count + 5) * wall_cell_size;
 int choice_wall = 1;
@@ -38,27 +38,23 @@ bool difficulty_pause = false;
 bool game_level_pause = false;
 bool help_pause = false;
 
-constexpr auto FIELD_CELL_TYPE_NONE = 0; //пустая клетка
-constexpr auto FIELD_CELL_TYPE_APPLE = -1; //яблоко
-constexpr auto FIELD_CELL_TYPE_WALL = -2; //стена
-constexpr auto FIELD_CELL_TYPE_GREEN_APPLE = -3; //зеленое яблоко
-constexpr auto FIELD_CELL_TYPE_HEART = -4; //сердечко
-constexpr auto FIELD_CELL_TYPE_YELLOW_APPLE = -5; //желтое яблоко
+constexpr auto FIELD_CELL_TYPE_NONE = 0;
+constexpr auto FIELD_CELL_TYPE_APPLE = -1;
+constexpr auto FIELD_CELL_TYPE_WALL = -2;
+constexpr auto FIELD_CELL_TYPE_GREEN_APPLE = -3;
+constexpr auto FIELD_CELL_TYPE_HEART = -4;
+constexpr auto FIELD_CELL_TYPE_YELLOW_APPLE = -5;
 
-//направления движения змейки
+constexpr auto SNAKE_DIRECTION_UP = 0;
+constexpr auto SNAKE_DIRECTION_RIGHT = 1;
+constexpr auto SNAKE_DIRECTION_DOWN = 2;
+constexpr auto SNAKE_DIRECTION_LEFT = 3;
 
-constexpr auto SNAKE_DIRECTION_UP = 0; //вверх
-constexpr auto SNAKE_DIRECTION_RIGHT = 1; //вправо
-constexpr auto SNAKE_DIRECTION_DOWN = 2; //вниз
-constexpr auto SNAKE_DIRECTION_LEFT = 3; //влево
-
-//размеры поля
-
-const int field_size_x = 40; //количество клеток по длине
-const int field_size_y = 25; //количество клеток по высоте
-const int cell_size = 32; //размер клетки
-const int window_width = field_size_x * cell_size; //длина поля
-const int window_height = field_size_y * cell_size; //высота поля
+const int field_size_x = 40;
+const int field_size_y = 25;
+const int cell_size = 32;
+const int window_width = field_size_x * cell_size;
+const int window_height = field_size_y * cell_size;
 
 const int main_menu_width = 25 * cell_size;
 const int main_menu_height = 20 * cell_size;
@@ -69,24 +65,21 @@ const int pause_menu_height = 15 * cell_size;
 const int volume_menu_width = 25 * cell_size;
 const int volume_menu_height = 15 * cell_size;
 
-int type_of_control; //вид управления
+int type_of_control;
 
-vector <int> snake_direction_queue; //массив для буфферизации управления, чтобы можно было лучше координировать змейку и делать более удобные маневр
-bool game_over = false; //переменнная, отвечающая за конец игры
-bool game_paused = false; //переменная, отвечающая за паузу
-int count_of_apples = 0; //количество яблок, необходимое для генерации других предметов
-const int n = 10; //константа для генерации зеленого яблока
-bool event_green = false; //случай съедения зеленого яблока
-int speed = 100; //скорость змейки
-int speed_last; //скорость по умолчанию
-bool invert_control = false; //инверсия управления
-bool length_increase = false; //увеличение длины
-bool score_decrease = false; //уменьшение длины
-int count_of_red_apples = 0; //количество красных яблок. Для генерации некоторы предметов
-int x = 157, y = 255, z = 212, r, g, b; //цвет поля
-int count_of_lives = 0; //количество жизней при неуязвимости
-bool exit_game; // переменная, отвечающая за выход
-bool immortality = false; // переменная, отвечающая за бессмертие
+vector <int> snake_direction_queue;
+bool game_over = false;
+bool game_paused = false;
+int count_of_apples = 0;
+const int n = 10;
+bool event_green = false;
+bool event_ellow = false;
+bool invert_control = false;
+bool length_increase = false;
+bool score_decrease = false;
+int count_of_red_apples = 0;
+int x = 157, y = 255, z = 212, r, g, b;
+bool exit_game;
 bool win_game = false;
 bool new_game = true;
 
@@ -94,21 +87,22 @@ bool op_help = false;
 bool set_op = false;
 bool op_main = false;
 
-//структура с характеристиками змейкм
-
 struct GameState {
-    int field[field_size_y][field_size_x]; //матрица, задающая поле
-    int snake_position_x = field_size_x / 2; //позиция змейки по x
-    int snake_position_y = field_size_y / 2; //позицция змейки по y
-    int snake_length = 4; //длиня змейки, равная изначально 4
-    int snake_direction = SNAKE_DIRECTION_RIGHT; //направление движения, изначально вправо
+    int field[field_size_y][field_size_x];
+    int snake_position_x = field_size_x / 2;
+    int snake_position_y = field_size_y / 2;
+    int snake_length = 4;
+    int snake_direction = SNAKE_DIRECTION_RIGHT;
     int score = 0;
     int last_score = 0;
+    int speed = 100;
+    int speed_last;
+    int count_of_lifes = 0;
 };
 
-GameState game_state; //текущая стадия игры
-vector <GameState> game_last_states; //массив с сохранением стадии для отката назад
-bool rall_back = false; //откат назад
+GameState game_state;
+vector <GameState> game_last_states;
+bool rall_back = false;
 
 sf::Font font_menu;
 
@@ -116,27 +110,27 @@ vector <sf::Text> text_menu_items;
 
 vector <string> lose_menu_items{"Your score: ", "Restart", "Exit to main menu", "GAME OVER"};
 
-vector<string> menu_items = {"Start new game", "Level", "Settings", "Help", "Quit", "SNAKE", "By Vanyok77797", "Version 3.0.0"};
+vector<string> menu_items = {"Start new game", "Level", "Settings", "Help", "Quit", "SNAKE", "By Vanyok77797", "Version 4.0.1"};
 
 vector <string> settings_menu_items{"Type of control", "Field color", "Snake skin", "Walls",
                                     "Difficulty level", "Volume", "Back to main menu", "Game settings"};
 
 vector<string> control_menu_items = {"Cursors", "W, A, S, D", "Back to settings", "Type of game control"};
 
-vector<string> difficulty_menu_items = {"Standart", "Yeasy", "Medium", "Hard", "Crazy", "Impossible",
+vector<string> difficulty_menu_items = {"Standard", "Easy", "Medium", "Hard", "Crazy", "Impossible",
                                         "Back to settings", "Difficulty level"};
 
-vector <string> pause_menu_items = {"Score: ", "Resume", "Exit to main menu", "Pause"};
+vector <string> pause_menu_items = {"Score: ", "Resume", "Exit to main menu", "Pause", "Lives: "};
 
 vector <string> volume_menu_items = {"Volume: ", "Exit to main menu", "Volume settings"};
 
 vector <string> level_menu_items = {"Level 1", "Level 2", "Level 3", "Level 4", "Level 5",
                                     "Level 6" , "Level 7", "Back to main menu", "Choose level"};
 
-vector<string> help_menu_items = {"Apples: ", "\t*Green - random trap", "\t*Gold - random bonus",
-                                  "\t*Red - food for snake", "Heart - removes bad effect",
+vector<string> help_menu_items = {"Apples: ", "\t*Green - random trap", "\t*Golden - random bonus",
+                                  "\t*Red - food for snake", "Heart - every 5 gives life,\nremoves bad effect",
                                   "Space - game pause", "Tab - to turn off the music",
-                                  "X - to turn on the music", "Back to main menu", "Help"};
+                                  "X - to turn on the music", "Enter to close help", "Help"};
 
 int color_menu = 0;
 int menu_type = 0;
@@ -147,9 +141,11 @@ int difficulty_color = 0;
 int pause_color = 1;
 int volume_color = 1;
 int level_color = 0;
+int lifes_color = 0;
 
 int game_level = 0;
 int volume_level = 30;
+int music_level = 20;
 
 sf::Sound apple_sound;
 sf::SoundBuffer apple_buffer;
@@ -171,6 +167,9 @@ sf::SoundBuffer enter_buffer;
 
 sf::Sound heart_sound;
 sf::SoundBuffer heart_buffer;
+
+sf::Sound life_up_sound;
+sf::SoundBuffer life_up_buffer;
 
 sf::Music game_music;
 
@@ -197,6 +196,9 @@ void set_sounds(){
 
     heart_buffer.loadFromFile("sounds/heart.wav");
     heart_sound.setBuffer(heart_buffer);
+
+    life_up_buffer.loadFromFile("sounds/life_up.wav");
+    life_up_sound.setBuffer(life_up_buffer);
 }
 
 void set_fonts()
@@ -277,8 +279,9 @@ void set_fonts()
             text_menu_items.back().setCharacterSize(60);
             break;
         case 5:
-            for (int i = 0; i < pause_menu_items.size() - 1; i++) {
+            for (int i = 0; i < pause_menu_items.size() - 2; i++) {
                 text_menu_items.emplace_back(sf::Text());
+                text_menu_items.back().setString(pause_menu_items.at(i));
                 if(i != 0) {
                     text_menu_items.back().setString(pause_menu_items.at(i));
                 }
@@ -288,10 +291,17 @@ void set_fonts()
                 text_menu_items.back().setFont(font_menu);
                 text_menu_items.back().setCharacterSize(40);
             }
+
             text_menu_items.emplace_back(sf::Text());
             text_menu_items.back().setString(pause_menu_items.at(3));
             text_menu_items.back().setFont(font_menu);
             text_menu_items.back().setCharacterSize(70);
+
+            text_menu_items.emplace_back(sf::Text());
+            text_menu_items.back().setString(pause_menu_items.at(4) + to_string(game_state.count_of_lifes));
+            text_menu_items.back().setFont(font_menu);
+            text_menu_items.back().setCharacterSize(40);
+
             break;
         case 6:
             for (int i = 0; i < volume_menu_items.size() - 1; i++) {
@@ -340,7 +350,7 @@ void set_fonts()
     }
 }
 
-void menu_control(sf::RenderWindow& window_main) //выбор цвета фона
+void menu_control(sf::RenderWindow& window_main)
 {
     sf::Event event;
 
@@ -368,15 +378,6 @@ void menu_control(sf::RenderWindow& window_main) //выбор цвета фон�
                     }
                     pause_menu = true;
                     break;
-                case sf::Keyboard::End:
-                    if(color_menu == 4){
-                        immortality = true;
-                    }
-                    break;
-                case sf::Keyboard::Home:
-                    if(color_menu == 4){
-                        immortality = false;
-                    }
                     break;
                 case sf::Keyboard::Enter:
                     switch(color_menu){
@@ -413,14 +414,14 @@ void draw_main_menu(sf::RenderWindow& window_main)
     float menu_item_max_width = 0;
     float current_menu_item_offset_y = 0;
 
-    const float menu_width = 554;//menu_item_max_width;
-    float menu_height = 120;//current_menu_item_offset_y;
+    const float menu_width = 554;
+    float menu_height = 120;
 
     const float menu_position_x = (float(main_menu_width) - menu_width) / 2;
     float menu_position_y = (float(main_menu_height) - menu_height) / 2 - 30;
 
     const float pause_menu_position_x = (float(pause_menu_width) - menu_width) / 2;
-    float pause_menu_position_y = (float(pause_menu_height) - menu_height) / 2;
+    float pause_menu_position_y = (float(pause_menu_height) - menu_height) / 2 - 25;
 
     const float volume_menu_position_x = (float(volume_menu_width) - menu_width) / 2;
     float volume_menu_position_y = (float(volume_menu_height) - menu_height) / 2;
@@ -474,9 +475,12 @@ void draw_main_menu(sf::RenderWindow& window_main)
         case 5:
             window_main.clear(sf::Color(0, 0, 0));
             text_menu_items.at(0).setFillColor(sf::Color(0, 255,0));
+            text_menu_items.at(4).setFillColor(sf::Color(0, 255,0));
+            text_menu_items.at(4).move(float(pause_menu_position_x * 3.75), pause_menu_position_y - 25);
+            window_main.draw(text_menu_items.at(4));
             text_menu_items.at(pause_color).setFillColor(sf::Color(255, 255,0));
             text_menu_items.at(3).setFillColor(sf::Color(255, 0, 0));
-            text_menu_items.at(3).move(pause_menu_position_x + 96, 40);
+            text_menu_items.at(3).move(pause_menu_position_x + 96, 25);
             window_main.draw(text_menu_items.at(3));
             break;
         case 6:
@@ -514,8 +518,18 @@ void draw_main_menu(sf::RenderWindow& window_main)
 
     if(menu_type == 8){
         for (int i = 0; i < help_menu_items.size() - 1; i++) {
-            text_menu_items.at(i).move(menu_position_x, menu_position_y - 100);
-            menu_position_y += 50;
+            if(i != 4) {
+                text_menu_items.at(i).move(menu_position_x, menu_position_y - 125);
+            }
+            else{
+                text_menu_items.at(i).move(menu_position_x, menu_position_y - 130);
+            }
+            if(i != 4) {
+                menu_position_y += 50;
+            }
+            else{
+                menu_position_y += 75;
+            }
             window_main.draw(text_menu_items.at(i));
         }
     }
@@ -552,8 +566,13 @@ void draw_main_menu(sf::RenderWindow& window_main)
         }
     }
     else if(menu_type == 5){
-        for (int i = 0; i < menu_items.size() - 5; i++) {
-            text_menu_items.at(i).move(pause_menu_position_x, pause_menu_position_y);
+        for (int i = 0; i < pause_menu_items.size() - 2; i++) {
+            if(i != 0) {
+                text_menu_items.at(i).move(pause_menu_position_x, pause_menu_position_y);
+            }
+            else{
+                text_menu_items.at(i).move(pause_menu_position_x - 25, pause_menu_position_y - 25);
+            }
             pause_menu_position_y += 60;
             window_main.draw(text_menu_items.at(i));
         }
@@ -835,7 +854,7 @@ void chose_window_color(sf::RenderWindow& window_2) //выбор цвета фо
 
 void set_window_color()
 {
-    sf::RenderWindow window_2(sf::VideoMode(window_color_width, window_color_height), "Field", sf::Style::Close); // открытие окна
+    sf::RenderWindow window_2(sf::VideoMode(window_color_width, window_color_height), "Field", sf::Style::Close);
 
     window_2.clear(sf::Color(x, y, z));
     color_pause = false;
@@ -861,7 +880,7 @@ void check_event_2(sf::RenderWindow& window_wall)
             switch (event.key.code) {
             case sf::Keyboard::Right:
                 menu_sound.play();
-                if (choice_wall != 7) { //изменение количества выборов скина
+                if (choice_wall != 7) {
                     choice_wall += 2;
                 }
                 else {
@@ -952,7 +971,7 @@ void draw_wall_choice(sf::RenderWindow& window_wall)
 
 void choose_wall()
 {
-    sf::RenderWindow window_wall(sf::VideoMode(wall_choice_width, wall_choice_height), "Wall", sf::Style::Close); // открытие окна
+    sf::RenderWindow window_wall(sf::VideoMode(wall_choice_width, wall_choice_height), "Wall", sf::Style::Close);
     while (window_wall.isOpen()) {
         window_wall.clear(sf::Color(0, 250, 154));
 
@@ -975,7 +994,7 @@ void check_event(sf::RenderWindow& window_1)
             switch (event.key.code) {
             case sf::Keyboard::Right:
                 menu_sound.play();
-                if (choice != 9) { //изменение количества выборов скина
+                if (choice != 9) {
                     choice += 2;
                 }
                 else {
@@ -1110,7 +1129,7 @@ void draw_skin_choice(sf::RenderWindow& window_1)
 
 void choose_skin()
 {
-    sf::RenderWindow window_1(sf::VideoMode(skin_choice_width, skin_choice_height), "Snake_skin", sf::Style::Close); // открытие окна
+    sf::RenderWindow window_1(sf::VideoMode(skin_choice_width, skin_choice_height), "Snake_skin", sf::Style::Close);
     while (window_1.isOpen()) {
         window_1.clear(sf::Color(176, 224, 230));
 
@@ -1137,27 +1156,27 @@ void difficulty_menu_control(sf::RenderWindow &window_main)
                     switch(difficulty_color){
                         case 0:
                             menu_type = 2;
-                            speed = 120;
+                            game_state.speed = 120;
                             break;
                         case 1:
                             menu_type = 2;
-                            speed = 90;
+                            game_state.speed = 90;
                             break;
                         case 2:
                             menu_type = 2;
-                            speed = 60;
+                            game_state.speed = 60;
                             break;
                         case 3:
                             menu_type = 2;
-                            speed = 30;
+                            game_state.speed = 30;
                             break;
                         case 4:
                             menu_type = 2;
-                            speed = 15;
+                            game_state.speed = 15;
                             break;
                         case 5:
                             menu_type = 2;
-                            speed = 10;
+                            game_state.speed = 10;
                             break;
                         case 6:
                             menu_type = 2;
@@ -1188,7 +1207,7 @@ void difficulty_menu_control(sf::RenderWindow &window_main)
 
 void open_difficulty_menu()
 {
-    sf::RenderWindow window_main(sf::VideoMode(main_menu_width, main_menu_height), "Difficulty", sf::Style::Close);// открытие окна
+    sf::RenderWindow window_main(sf::VideoMode(main_menu_width, main_menu_height), "Difficulty", sf::Style::Close);
     difficulty_pause = true;
     while (window_main.isOpen()) {
         difficulty_menu_control(window_main);
@@ -1271,7 +1290,7 @@ void level_menu_control(sf::RenderWindow &window_main)
 
 void open_level_menu()
 {
-    sf::RenderWindow window_main(sf::VideoMode(main_menu_width, main_menu_height), "Level", sf::Style::Close);// открытие окна
+    sf::RenderWindow window_main(sf::VideoMode(main_menu_width, main_menu_height), "Level", sf::Style::Close);
     game_level_pause = true;
     while (window_main.isOpen()) {
         level_menu_control(window_main);
@@ -1286,7 +1305,7 @@ void open_level_menu()
 }
 
 void set_volume_level(){
-    game_music.setVolume(25);
+    game_music.setVolume(music_level);
     apple_sound.setVolume(float(volume_level));
     menu_sound.setVolume(float(volume_level));
     game_over_sound.setVolume(float(volume_level));
@@ -1294,6 +1313,7 @@ void set_volume_level(){
     green_apple_sound.setVolume(float(volume_level));
     enter_sound.setVolume(float(volume_level));
     heart_sound.setVolume(float(volume_level));
+    life_up_sound.setVolume(float(volume_level));
 }
 
 void volume_menu_control(sf::RenderWindow& window_volume)
@@ -1308,6 +1328,9 @@ void volume_menu_control(sf::RenderWindow& window_volume)
                     menu_sound.play();
                     if(volume_level != 0){
                         volume_level -= 5;
+                        if(volume_level % 15 == 0){
+                            music_level -= 10;
+                        }
                         set_volume_level();
                     }
                     pause = true;
@@ -1316,6 +1339,9 @@ void volume_menu_control(sf::RenderWindow& window_volume)
                     menu_sound.play();
                     if(volume_level != 100){
                         volume_level += 5;
+                        if(volume_level % 15 == 0){
+                            music_level += 10;
+                        }
                         set_volume_level();
                     }
                     pause = true;
@@ -1331,7 +1357,7 @@ void volume_menu_control(sf::RenderWindow& window_volume)
 }
 
 void open_volume_menu(){
-    sf::RenderWindow window_volume(sf::VideoMode(volume_menu_width, volume_menu_height), "Volume", sf::Style::Close);// открытие окна
+    sf::RenderWindow window_volume(sf::VideoMode(volume_menu_width, volume_menu_height), "Volume", sf::Style::Close);
     pause = true;
     while (window_volume.isOpen()) {
         volume_menu_control(window_volume);
@@ -1405,7 +1431,7 @@ void settings_menu_control(sf::RenderWindow &window_main)
 
 void open_settings_menu()
 {
-    sf::RenderWindow window_main(sf::VideoMode(main_menu_width, main_menu_height), "Settings", sf::Style::Close);// открытие окна
+    sf::RenderWindow window_main(sf::VideoMode(main_menu_width, main_menu_height), "Settings", sf::Style::Close);
     pause = true;
     while (window_main.isOpen()) {
         settings_menu_control(window_main);
@@ -1419,15 +1445,13 @@ void open_settings_menu()
     }
 }
 
-//метод определения случайной пустой клетки для генерации яблок
-
 int get_random_empty_cell()
 {
-    int empty_cell_count = 0; // количество пустых клеток на данный момент
+    int empty_cell_count = 0;
     for (int j = 0; j < field_size_y; j++) {
         for (int i = 0; i < field_size_x; i++) {
             if (game_state.field[j][i] == FIELD_CELL_TYPE_NONE) {
-                empty_cell_count++; // считаем количество пустых клеток
+                empty_cell_count++;
             }
         }
     }
@@ -1439,8 +1463,6 @@ int get_random_empty_cell()
     int target_empty_cell_index = rand() % empty_cell_count;
     int empty_cell_index = 0;
 
-    //генерация и поиск случайной пустой клетки из общего количества
-
     for (int j = 0; j < field_size_y; j++) {
         for (int i = 0; i < field_size_x; i++) {
             if (game_state.field[j][i] == FIELD_CELL_TYPE_NONE) {
@@ -1451,22 +1473,20 @@ int get_random_empty_cell()
             }
         }
     }
-     // не осталсь пустых клеток
+
     return -1;
 }
 
-//методы получения предметов на поле
-
 void add_apple()
 {
-    int apple_pos = get_random_empty_cell(); // получение координаты пустой клетки
-    if (apple_pos != -1) { //проверка, нашлась ли пустая клетка
-        game_state.field[apple_pos / field_size_x][apple_pos % field_size_x] = FIELD_CELL_TYPE_APPLE; // заменяем пустую клетку красным яблоком
+    int apple_pos = get_random_empty_cell();
+    if (apple_pos != -1) {
+        game_state.field[apple_pos / field_size_x][apple_pos % field_size_x] = FIELD_CELL_TYPE_APPLE;
     }
 
 }
 
-void add_heart() // метод работает аналогичнго предыдущему
+void add_heart()
 {
     int heart_pos = get_random_empty_cell();
     if (heart_pos != -1) {
@@ -1474,7 +1494,7 @@ void add_heart() // метод работает аналогичнго пред�
     }
 }
 
-void add_yellow_apple() // желтое яблоко получаем также
+void add_yellow_apple()
 {
     int yellow_apple_pos = get_random_empty_cell();
     if (yellow_apple_pos != -1) {
@@ -1482,7 +1502,7 @@ void add_yellow_apple() // желтое яблоко получаем также
     }
 }
 
-void add_green_apple() //зеленое аналогично
+void add_green_apple()
 {
     int green_apple_pos = get_random_empty_cell();
     if (green_apple_pos != -1) {
@@ -1490,17 +1510,15 @@ void add_green_apple() //зеленое аналогично
     }
 }
 
-//метод очищения поля для генерации стен, первого зеленого и красного яблока, пустых клеток, змейки на анчальной позиции
-
 void clear_field()
 {
     for (int j = 0; j < field_size_y; j++) {
         for (int i = 0; i < field_size_x; i++) {
-            game_state.field[j][i] = FIELD_CELL_TYPE_NONE; // генерация пустых клеток
+            game_state.field[j][i] = FIELD_CELL_TYPE_NONE;
         }
     }
 
-    for (int i = 0; i < game_state.snake_length; i++) //установка позиции змейки в начале
+    for (int i = 0; i < game_state.snake_length; i++)
         game_state.field[game_state.snake_position_y][game_state.snake_position_x - i] = game_state.snake_length - i;
 
 
@@ -1509,36 +1527,37 @@ void clear_field()
             for (int i = 0; i < field_size_x; i++) {
                 if (i < 10 || field_size_x - i - 1 < 10) {
                     game_state.field[0][i] = FIELD_CELL_TYPE_WALL;
-                    game_state.field[field_size_y - 1][i] = FIELD_CELL_TYPE_WALL; //генерация горизонтальных стен
+                    game_state.field[field_size_y - 1][i] = FIELD_CELL_TYPE_WALL;
                 }
             }
             for (int j = 1; j < field_size_y - 1; j++) {
                 if (j < 8 || field_size_y - j - 1 < 8) {
-                    game_state.field[j][0] = FIELD_CELL_TYPE_WALL; // генерация уголка
-                    game_state.field[j][field_size_x - 1] = FIELD_CELL_TYPE_WALL; // генерация вертикальных стен
+                    game_state.field[j][0] = FIELD_CELL_TYPE_WALL;
+                    game_state.field[j][field_size_x - 1] = FIELD_CELL_TYPE_WALL;
                 }
             }
             break;
         case 1:
             for (int i = 0; i < field_size_x; i++) {
                 game_state.field[0][i] = FIELD_CELL_TYPE_WALL;
-                game_state.field[field_size_y - 1][i] = FIELD_CELL_TYPE_WALL; //генерация горизонтальных сте
+                game_state.field[field_size_y - 1][i] = FIELD_CELL_TYPE_WALL;
             }
             for (int j = 1; j < field_size_y - 1; j++) {
-                game_state.field[j][0] = FIELD_CELL_TYPE_WALL; // генерация уголка
-                game_state.field[j][field_size_x - 1] = FIELD_CELL_TYPE_WALL; // генерация вертикальных стен
+                game_state.field[j][0] = FIELD_CELL_TYPE_WALL;
+                game_state.field[j][field_size_x - 1] = FIELD_CELL_TYPE_WALL;
+
             }
 
             for (int i = 0; i < field_size_x - 10; i++) {
                 if (i > 9 && i < 17 || i > 22) {
                     game_state.field[5][i] = FIELD_CELL_TYPE_WALL;
-                    game_state.field[field_size_y - 6][i] = FIELD_CELL_TYPE_WALL; //генерация горизонтальных стен
+                    game_state.field[field_size_y - 6][i] = FIELD_CELL_TYPE_WALL;
                 }
             }
             for (int j = 1; j < field_size_y - 6; j++) {
                 if (j > 5 && j < 10 || j > 14 && j < 30) {
-                    game_state.field[j][10] = FIELD_CELL_TYPE_WALL; // генерация уголка
-                    game_state.field[j][field_size_x - 11] = FIELD_CELL_TYPE_WALL; // генерация вертикальных стен
+                    game_state.field[j][10] = FIELD_CELL_TYPE_WALL;
+                    game_state.field[j][field_size_x - 11] = FIELD_CELL_TYPE_WALL;
                 }
             }
             break;
@@ -1568,8 +1587,8 @@ void clear_field()
                 game_state.field[field_size_y - 1][i] = FIELD_CELL_TYPE_WALL;
             }
             for (int j = 1; j < field_size_y - 1; j++) {
-                game_state.field[j][0] = FIELD_CELL_TYPE_WALL; // генерация уголка
-                game_state.field[j][field_size_x - 1] = FIELD_CELL_TYPE_WALL; // генерация вертикальных стен
+                game_state.field[j][0] = FIELD_CELL_TYPE_WALL;
+                game_state.field[j][field_size_x - 1] = FIELD_CELL_TYPE_WALL;
             }
             break;
 
@@ -1729,85 +1748,82 @@ void clear_field()
             break;
     }
 
-    add_green_apple(); // генерация зеленого ябллока
-    add_apple(); // генерация красного яблока
+    add_green_apple();
+    add_apple();
 }
-
-//метод отрисовки поля
 
 void draw_field(sf::RenderWindow& window)
 {
-    sf::Texture none_texture; //текстура пустой клетки
-    none_texture.loadFromFile("images/none.png"); //загрузка изображения пустой клетки
-    sf::Sprite none; //спрайт пустой клетки
-    none.setTexture(none_texture); //установка текстуры
+    sf::Texture none_texture;
+    none_texture.loadFromFile("images/none.png");
+    sf::Sprite none;
+    none.setTexture(none_texture);
 
-    // skeens
-    sf::Texture snake_texture; //текстура змейки
-    sf::Sprite snake; // спрайт
+    sf::Texture snake_texture;
+    sf::Sprite snake;
 
-    sf::Texture snake_head_texture; //текстура головы змйки
-    sf::Sprite snake_head; //спрайт
+    sf::Texture snake_head_texture;
+    sf::Sprite snake_head;
 
     switch (skin) {
     case 1:
-        snake_texture.loadFromFile("images/snake_1.png"); //загрузка элеимента змейки
-        snake.setTexture(snake_texture); //установка текстуры
+        snake_texture.loadFromFile("images/snake_1.png");
+        snake.setTexture(snake_texture);
 
-        snake_head_texture.loadFromFile("images/head_1.png"); //загрузка ищображения
-        snake_head.setTexture(snake_head_texture); //установка текстуры
+        snake_head_texture.loadFromFile("images/head_1.png");
+        snake_head.setTexture(snake_head_texture);
         break;
     case 2:
-        snake_texture.loadFromFile("images/snake_2.png"); //загрузка элемента змейки
-        snake.setTexture(snake_texture); //установка текстуры
+        snake_texture.loadFromFile("images/snake_2.png");
+        snake.setTexture(snake_texture);
 
-        snake_head_texture.loadFromFile("images/head_2.png"); //загрузка ищображения
-        snake_head.setTexture(snake_head_texture); //установка текстуры
+        snake_head_texture.loadFromFile("images/head_2.png");
+        snake_head.setTexture(snake_head_texture);
         break;
     case 3:
-        snake_texture.loadFromFile("images/snake_3.png"); //загрузка элеимента змейки
-        snake.setTexture(snake_texture); //установка текстуры
+        snake_texture.loadFromFile("images/snake_3.png");
+        snake.setTexture(snake_texture);
 
-        snake_head_texture.loadFromFile("images/head_3.png"); //загрузка ищображения
-        snake_head.setTexture(snake_head_texture); //установка текстуры
+        snake_head_texture.loadFromFile("images/head_3.png");
+        snake_head.setTexture(snake_head_texture);
         break;
     case 4:
-        snake_texture.loadFromFile("images/snake_4.png"); //загрузка элеимента змейки
-        snake.setTexture(snake_texture); //установка текстуры
+        snake_texture.loadFromFile("images/snake_4.png");
+        snake.setTexture(snake_texture);
 
-        snake_head_texture.loadFromFile("images/head_4.png"); //загрузка ищображения
-        snake_head.setTexture(snake_head_texture); //установка текстуры
+        snake_head_texture.loadFromFile("images/head_4.png");
+        snake_head.setTexture(snake_head_texture);
         break;
     default:
-        snake_texture.loadFromFile("images/snake.png"); //загрузка элеимента змейки
-        snake.setTexture(snake_texture); //установка текстуры
+        snake_texture.loadFromFile("images/snake.png");
+        snake.setTexture(snake_texture);
 
-        snake_head_texture.loadFromFile("images/head.png"); //загрузка ищображения
-        snake_head.setTexture(snake_head_texture); //установка текстуры
+        snake_head_texture.loadFromFile("images/head.png");
+        snake_head.setTexture(snake_head_texture);
     }
 
-    sf::Texture apple_texture; //текстура красного яблока
-    apple_texture.loadFromFile("images/apple.png"); //загрузка изображения
-    sf::Sprite apple; //спрайт
-    apple.setTexture(apple_texture); //установка текстуры
+    sf::Texture apple_texture;
+    apple_texture.loadFromFile("images/apple.png");
+    sf::Sprite apple;
+    apple.setTexture(apple_texture);
 
-    sf::Texture apple_green_texture; //текстура зеленого яблока
-    apple_green_texture.loadFromFile("images/apple_green.png"); //загрузка изображения
-    sf::Sprite apple_green; //спрайт
-    apple_green.setTexture(apple_green_texture); //установка текстуры
+    sf::Texture apple_green_texture;
+    apple_green_texture.loadFromFile("images/apple_green.png");
+    sf::Sprite apple_green;
+    apple_green.setTexture(apple_green_texture);
 
-    sf::Texture apple_yellow_texture; //текстура желтого яблока
-    apple_yellow_texture.loadFromFile("images/yelow_apple.png"); //загрузка изображения
-    sf::Sprite apple_yellow; //спрайт
-    apple_yellow.setTexture(apple_yellow_texture); //установка текстуры
+    sf::Texture apple_yellow_texture;
+    apple_yellow_texture.loadFromFile("images/yelow_apple.png");
+    sf::Sprite apple_yellow;
+    apple_yellow.setTexture(apple_yellow_texture);
 
-    sf::Texture wall_texture; //текстура стены // // // // // //
+    sf::Texture wall_texture;
     switch (wall) {
     case 1:
-        wall_texture.loadFromFile("images/wall_2.png"); //загрузка изображения
+        wall_texture.loadFromFile("images/wall_2.png");
         break;
     case 2:
-        wall_texture.loadFromFile("images/wall_3.png"); //загрузка изображения
+        wall_texture.loadFromFile("images/wall_3.png");
         break;
     case 3:
         wall_texture.loadFromFile("images/cactus_wall.png");
@@ -1816,48 +1832,48 @@ void draw_field(sf::RenderWindow& window)
         wall_texture.loadFromFile("images/wall.png");
     }
 
-    sf::Sprite wall; //спрайт
-    wall.setTexture(wall_texture); //установка текстуры
+    sf::Sprite wall;
+    wall.setTexture(wall_texture);
 
-    sf::Texture heart_texture; //текстура сердечка
-    heart_texture.loadFromFile("images/life.png"); //загрузка изображения
-    sf::Sprite heart; //спрайт
-    heart.setTexture(heart_texture); //установка текстуры
+    sf::Texture heart_texture;
+    heart_texture.loadFromFile("images/life.png");
+    sf::Sprite heart;
+    heart.setTexture(heart_texture);
 
     for (int j = 0; j < field_size_y; j++) {
         for (int i = 0; i < field_size_x; i++) {
-            switch (game_state.field[j][i]) { //проверяем тип текстуры
+            switch (game_state.field[j][i]) {
             case FIELD_CELL_TYPE_NONE:
                 none.setPosition(float(i * cell_size), float(j * cell_size));
-                window.draw(none); //отрисовка пустой клетки
+                window.draw(none);
                 break;
             case FIELD_CELL_TYPE_APPLE:
                 apple.setPosition(float(i * cell_size), float(j * cell_size));
-                window.draw(apple); //отрисовка красного  яблока
+                window.draw(apple);
                 break;
             case FIELD_CELL_TYPE_GREEN_APPLE:
                 apple_green.setPosition(float(i * cell_size), float(j * cell_size));
-                window.draw(apple_green); //отрисовка зеленого яблока
+                window.draw(apple_green);
                 break;
             case FIELD_CELL_TYPE_YELLOW_APPLE:
                 apple_yellow.setPosition(float(i * cell_size), float(j * cell_size));
-                window.draw(apple_yellow); //отрисовка желтого яблока
+                window.draw(apple_yellow);
                 break;
             case FIELD_CELL_TYPE_WALL:
                 wall.setPosition(float(i * cell_size), float(j * cell_size));
-                window.draw(wall); //отрисовка стены
+                window.draw(wall);
                 break;
             case FIELD_CELL_TYPE_HEART:
                 heart.setPosition(float(i * cell_size), float(j * cell_size));
-                window.draw(heart); //отрисовка сердечка
+                window.draw(heart);
                 break;
             default:
                 if (game_state.field[j][i] == game_state.snake_length) {
-                    float offset_x = snake_head.getLocalBounds().width / 2; //установка координат головы змейки
+                    float offset_x = snake_head.getLocalBounds().width / 2;
                     float offset_y = snake_head.getLocalBounds().height / 2;
                     snake_head.setPosition(float(i * cell_size + offset_x), float(j * cell_size + offset_y));
                     snake_head.setOrigin(offset_x, offset_y);
-                    switch (game_state.snake_direction) { //поворот головы в зависимости от направления
+                    switch (game_state.snake_direction) {
                     case SNAKE_DIRECTION_RIGHT:
                         snake_head.setRotation(90);
                         break;
@@ -1872,125 +1888,115 @@ void draw_field(sf::RenderWindow& window)
                         break;
                     }
 
-                    window.draw(snake_head); // отрисовка головы
+                    window.draw(snake_head);
                 }
                 else {
                     snake.setPosition(float(i * cell_size), float(j * cell_size));
-                    window.draw(snake); // отрисовка остальной змейки
+                    window.draw(snake);
                 }
             }
         }
     }
 }
-
-//метод увеличения длины
 
 void grow_snake()
 {
     for (int j = 0; j < field_size_y; j++) {
         for (int i = 0; i < field_size_x; i++) {
-            if (game_state.field[j][i] > FIELD_CELL_TYPE_NONE) { // проверяем текущую клетку
-                game_state.field[j][i]++; // увеличиваем длину змейки
+            if (game_state.field[j][i] > FIELD_CELL_TYPE_NONE) {
+                game_state.field[j][i]++;
             }
         }
     }
 }
 
-//метод получения случайного события при съедении зеленого яблока
-
 void random_event()
 {
     srand(time(nullptr));
     int random_trap;
-    random_trap = rand() % 4; //генерация случайного числа
+    random_trap = rand() % 4;
     switch (random_trap) {
     case 0:
-        invert_control = true; // инверсия управления
+        invert_control = true;
         break;
     case 1:
-        if (speed > 30) {
-            speed = 40; // ускорение
+        if (game_state.speed > 30) {
+            game_state.speed = 40;
         }
         else{
-            switch(speed){
+            switch(game_state.speed){
                 case 30:
-                    speed = 20;
+                    game_state.speed = 20;
                     break;
                 case 15:
-                    speed = 10;
+                    game_state.speed = 10;
                     break;
                 case 10:
-                    speed = 5;
+                    game_state.speed = 5;
                     break;
             }
         }
         break;
     case 2:
         if (game_state.score >= 10) {
-            game_state.score -= 10; //уменьшение счета
+            game_state.score -= 10;
         }
         else {
             game_state.score = 0;
         }
-        score_decrease = true; // запоминаем, что счет уменьшен для того, чтобы вернуться в начальное состояние
+        score_decrease = true;
         break;
     case 3:
-        game_state.snake_length += 3; // увеличение длины
-        length_increase = true; //запоминаем, что длина была увеличена
+        game_state.snake_length += 3;
+        length_increase = true;
         break;
     }
 }
-
-//метод получения случайного бонуса при съедении желтого яблока
 
 int random_bonus()
 {
     srand(time(nullptr));
     int bonus;
-    if (immortality) {
-        bonus = rand() % 4; // генерация случайного числа
-    }
-    else {
-        bonus = rand() % 5;
-    }
+
+    bonus = rand() % 5;
+
     switch (bonus) {
     case 0:
-        game_state.score += 15; // увеличение счета
+        game_state.score += 15;
         break;
     case 1:
         return 1;
         break;
     case 2:
-        speed = 130; // замедление
+        game_state.speed = 130;
         break;
     case 3:
         if (game_state.snake_length >= 9) {
-            game_state.snake_length -= 5; //уменьшение длины
+            game_state.snake_length -= 5;
         }
         break;
     case 4:
-        count_of_lives = 5; // неуязвимость
-        x = 0; y = 220; z = 255; // изменнение цвета поля при неуязвимости
+        game_state.count_of_lifes += 5;
+        x = 0; y = 220; z = 255;
+        lifes_color = 5;
         break;
     }
 }
 
-//восставновление настроек игры при сбросе эффекта зеленого яблока
-
 void normal_game()
 {
-    speed = speed_last; // установка начального уровня скорости
-    if (count_of_lives == 0) {
-        x = r; y = g; z = b; // установка начального цыета поля
+    game_state.speed = game_state.speed_last;
+    if (lifes_color == 0) {
+        x = r; y = g; z = b;
     }
-    invert_control = false; // выключение инверсии
+    invert_control = false;
     if (length_increase) {
-        length_increase = false; // переключение переменной, отвечающей за длину
-        game_state.snake_length -= 3; // уменьшение длины
+        length_increase = false;
+        game_state.snake_length -= 3;
     }
     if (score_decrease) {
-        score_decrease = false; //переключение переменной, отвечающей за счет
-        game_state.score = game_state.last_score; // уменьшение счета
+        score_decrease = false;
+        game_state.score = game_state.last_score;
     }
 }
 
@@ -2017,7 +2023,6 @@ void pause_menu_control(sf::RenderWindow &window_pause, sf::RenderWindow& window
                             window.close();
                             pause_menu = 0;
                             restart = false;
-                            immortality = false;
                             x = r; y = g; z = b;
                             normal_game();
                             break;
@@ -2062,18 +2067,12 @@ void open_pause_menu(sf::RenderWindow& window)
     }
 }
 
-//метод, отвечающий за движение и изменение поля
-
 void make_move()
 {
-    // запоминаем позицию змейки на 10 передвижений
-
     game_last_states.push_back(game_state);
     if (game_last_states.size() > 10) {
         game_last_states.erase(game_last_states.begin());
     }
-
-    //установка направления движения змейкм
 
     switch (game_state.snake_direction) {
     case SNAKE_DIRECTION_UP:
@@ -2102,61 +2101,75 @@ void make_move()
         break;
     }
 
-    //если змейка с чем-то провзаимодействовала
-
     if (game_state.field[game_state.snake_position_y][game_state.snake_position_x] != FIELD_CELL_TYPE_NONE) {
         switch (game_state.field[game_state.snake_position_y][game_state.snake_position_x]) {
-        case FIELD_CELL_TYPE_APPLE: // случай - яблоко
-            game_state.last_score++; //предыдущий счет +1
+        case FIELD_CELL_TYPE_APPLE:
+            game_state.last_score++;
             apple_sound.play();
-            game_state.score++; //текущий счет +1
-            game_state.snake_length++; // увеличение длины на 1
-            count_of_apples++; // считаем количество съеденных яблок
-            if (count_of_apples == n) { // если их 10 - гененрируем одно зеленое
+            game_state.score++;
+            game_state.snake_length++;
+            count_of_apples++;
+            if (count_of_apples == n) {
                 add_green_apple();
-                count_of_apples = 0; // обнуляем количество съеденных до зеленого яблок
+                count_of_apples = 0;
             }
-            count_of_red_apples++; // считаем количество съеденных яблок для генерации сердечечка
-            if (count_of_red_apples == 5) { // если 5 - гененрируем сердечко
+            count_of_red_apples++;
+            if (count_of_red_apples == 5) {
                 add_heart();
             }
-            if (game_state.score != 0 && game_state.score % 15 == 0) { //генерация желтого яблока в случае, если съедено 15 красных
+            if (game_state.score != 0 && game_state.score % 15 == 0) {
                 add_yellow_apple();
             }
-            grow_snake(); // увеличение змейки
-            add_apple(); // генерация нового яблока
+            grow_snake();
+            add_apple();
             break;
-        case FIELD_CELL_TYPE_GREEN_APPLE: // случай - зеленое яблоко
+        case FIELD_CELL_TYPE_GREEN_APPLE:
             green_apple_sound.play();
-            count_of_red_apples = 0; // подготовка к генерации сердечкка через 5 яблок
-            count_of_apples = 0; // установка в 0 отсчета до следующего зеленого яблока
-            random_event(); // получение случайной ловушки
-            if (count_of_lives == 0 || immortality) { //если не включена неуязвимость или введен код бессмертия
-                x = 50; y = 185; z = 50; //изменение цвета поля
+            count_of_red_apples = 0;
+            count_of_apples = 0;
+            random_event();
+            event_green = true;
+            if (lifes_color == 0) {
+                x = 50; y = 185; z = 50;
             }
             break;
-        case FIELD_CELL_TYPE_YELLOW_APPLE: // случай - желтое яблоко
+        case FIELD_CELL_TYPE_YELLOW_APPLE:
             yellow_apple_sound.play();
-            if (random_bonus() == 1) { // получение случайного бонуса
+            event_ellow = true;
+            if (random_bonus() == 1) {
                 for (int m = 0; m < 2; m++) {
-                    add_heart(); // генерация двух сердечек в случае получения 1 в генераторе случайных чисел
+                    add_heart();
                 }
             }
             break;
-        case FIELD_CELL_TYPE_HEART: // случай - сердечко
-            heart_sound.play();
-            normal_game(); // восставновление параметров игры
-            if (immortality) {
-                x = r; y = g; z = b;
+        case FIELD_CELL_TYPE_HEART:
+            count_of_hearts++;
+
+            if(count_of_hearts != 5) {
+                heart_sound.play();
             }
+            else{
+                life_up_sound.play();
+            }
+
+            if(count_of_hearts == 5){
+                game_state.count_of_lifes++;
+                count_of_hearts = 0;
+            }
+
+            if(event_green) {
+                event_green = false;
+            }
+            normal_game();
             break;
-        case FIELD_CELL_TYPE_WALL: //случай - стена
+        case FIELD_CELL_TYPE_WALL:
             game_over_sound.play();
-            if (count_of_lives != 0) { //если есть неуязвимость, проверяем, сколько осталось жизней
-                rall_back = true; //откат включен
-                if (!immortality) {//в случае, если не введен код бессмертия
-                    count_of_lives--; // уменьшаем количество жизней
-                    switch (count_of_lives) { //меняем фон
+            if (game_state.count_of_lifes != 0) {
+                rall_back = true;
+
+                if (event_ellow) {
+                    lifes_color--;
+                    switch (lifes_color) {
                     case 4:
                         x = 255; y = 20; z = 147;
                         break;
@@ -2170,25 +2183,23 @@ void make_move()
                         x = 255; y = 215; z = 0;
                         break;
                     default:
+                        event_ellow = false;
                         x = r; y = g; z = b;
                     }
                 }
-                else{
-                    count_of_lives = 1;
-                }
+
             }
             else {
-                game_over = true;// иначе конец игры
+                game_over = true;
             }
             break;
-        default: // аналогично, если врезались в себя
+        default:
             game_over_sound.play();
             if (game_state.field[game_state.snake_position_y][game_state.snake_position_x] > 1) {
-                if (count_of_lives != 0) {
+                if (lifes_color != 0 && event_ellow) {
                     rall_back = true;
-                    if (!immortality) {
-                        count_of_lives--; // уменьшаем количество жизней
-                        switch (count_of_lives) { //меняем фон
+                    lifes_color--;
+                    switch (lifes_color) {
                         case 4:
                             x = 255; y = 20; z = 147;
                             break;
@@ -2203,7 +2214,6 @@ void make_move()
                             break;
                         default:
                             x = r; y = g; z = b;
-                        }
                     }
                 }
                 else {
@@ -2213,7 +2223,7 @@ void make_move()
         }
     }
 
-    if (!rall_back) { //перемещение змейки
+    if (!rall_back) {
         for (int j = 0; j < field_size_y; j++) {
             for (int i = 0; i < field_size_x; i++) {
                 if (game_state.field[j][i] > FIELD_CELL_TYPE_NONE) {
@@ -2223,34 +2233,37 @@ void make_move()
             }
         }
 
-        game_state.field[game_state.snake_position_y][game_state.snake_position_x] = game_state.snake_length; // бновление информации об игре
+        game_state.field[game_state.snake_position_y][game_state.snake_position_x] = game_state.snake_length;
     }
 }
 
-void start_game() // начало игры
+void start_game()
 {
-    game_state.snake_position_x = field_size_x / 2; // установка змейки на начальную позицию
+    game_state.snake_position_x = field_size_x / 2;
     game_state.snake_position_y = field_size_y / 2;
-    game_state.snake_length = 4; // длина по умолчанию
-    game_state.snake_direction = SNAKE_DIRECTION_RIGHT; // начальное направление - вправо
-    game_state.score = 0; // счет равен 0
+    game_state.snake_length = 4;
+    game_state.snake_direction = SNAKE_DIRECTION_RIGHT;
+    game_state.score = 0;
     choice = 1;
-    game_state.last_score = 0; //обновление предыдущего счета
-    game_over = false; // обновление значения конца игры
-    exit_game = false; //обновление значения выхода из игры
-    invert_control = false; // значение по умолчанию для инверсии
-    event_green = false; //значение по умолчанию для съедения зеленых яблок
-    count_of_apples = 0; //обновление количества яблок
-    count_of_red_apples = 0; //обновление количества красных яблок
-    count_of_lives = 0; //обновление количества жизней
-    length_increase = false;  //значение по умолчанию для увеличения длины
-    score_decrease = false; //значение по умолчанию для уменьшения длины
+    game_state.last_score = 0;
+    game_over = false;
+    exit_game = false;
+    invert_control = false;
+    event_green = false;
+    count_of_apples = 0;
+    count_of_red_apples = 0;
+    game_state.count_of_lifes = 0;
+    length_increase = false;
+    score_decrease = false;
     r = x, g = y, b = z;
+    lifes_color = 0;
+    event_green = false;
+    event_ellow = false;
     pause = false;
     color = 1;
     choice_wall = 1;
     win_game = false;
-    clear_field(); // очищение поля
+    clear_field();
 }
 
 void lose_menu_control(sf::RenderWindow &window_main)
@@ -2316,20 +2329,17 @@ void open_lose_menu()
     }
 }
 
-//метод управления игрой
-
 void game_control(bool& invert_control, sf::RenderWindow& window)
 {
     sf::Event event;
-    if (!invert_control) { // если управление инвертировано
+    if (!invert_control) {
         while (window.pollEvent(event))
         {
             if (event.type == sf::Event::KeyPressed) {
                 int snake_direction_last = snake_direction_queue.empty() ? game_state.snake_direction : snake_direction_queue.at(0);
-                switch (event.key.code) { // проверка нажатия той или иной клавиши
+                switch (event.key.code) {
                 case sf::Keyboard::Up:
-                    if (snake_direction_last != SNAKE_DIRECTION_UP && snake_direction_last != SNAKE_DIRECTION_DOWN && type_of_control != 2) { // проверка направления, чтобы не врезаться в себя в обратную
-                        //сторону. изменение направления движения. для остальных клавиш аналогично
+                    if (snake_direction_last != SNAKE_DIRECTION_UP && snake_direction_last != SNAKE_DIRECTION_DOWN && type_of_control != 2) {
                         if (snake_direction_queue.size() < 2) {
                             snake_direction_queue.insert(snake_direction_queue.begin(), SNAKE_DIRECTION_UP);
                         }
@@ -2384,9 +2394,9 @@ void game_control(bool& invert_control, sf::RenderWindow& window)
                         }
                     }
                     break;
-                case sf::Keyboard::Space: // пробел
+                case sf::Keyboard::Space:
                     menu_type = 5;
-                    game_paused = true; // установка игры на паузу
+                    game_paused = true;
                     break;
                 case sf::Keyboard::Tab:
                     game_music.stop();
@@ -2399,7 +2409,7 @@ void game_control(bool& invert_control, sf::RenderWindow& window)
             }
         }
     }
-    else { // аналогично для классического кправления
+    else {
         while (window.pollEvent(event))
         {
             if (event.type == sf::Event::Closed)
@@ -2465,7 +2475,7 @@ void game_control(bool& invert_control, sf::RenderWindow& window)
                     break;
                 case sf::Keyboard::Space:
                     menu_type = 5;
-                    game_paused = true; // установка игры на паузу
+                    game_paused = true;
                     break;
                 case sf::Keyboard::Tab:
                     game_music.stop();
@@ -2484,16 +2494,19 @@ void game_control(bool& invert_control, sf::RenderWindow& window)
 void check_win() {
     for (int i = 0; i < field_size_y; i++) {
         for (int j = 0; j < field_size_x; j++) {
-            if (((game_state.field[i][j] != FIELD_CELL_TYPE_APPLE && game_state.field[i][j] != FIELD_CELL_TYPE_GREEN_APPLE && game_state.field[i][j] != FIELD_CELL_TYPE_YELLOW_APPLE && game_state.field[i][j] != FIELD_CELL_TYPE_HEART) || game_state.field[i][j] == FIELD_CELL_TYPE_WALL) && get_random_empty_cell() == -1) {
+            if (((game_state.field[i][j] != FIELD_CELL_TYPE_APPLE && game_state.field[i][j] != FIELD_CELL_TYPE_GREEN_APPLE &&
+            game_state.field[i][j] != FIELD_CELL_TYPE_YELLOW_APPLE &&
+            game_state.field[i][j] != FIELD_CELL_TYPE_HEART) ||
+            game_state.field[i][j] == FIELD_CELL_TYPE_WALL) && get_random_empty_cell() == -1) {
                 win_game = true;
             }
         }
     }
 }
 
-int main() // main
+int main()
 {
-    srand(time(nullptr)); //рандомизация
+    srand(time(nullptr));
 
     set_sounds();
     set_volume_level();
@@ -2503,12 +2516,10 @@ int main() // main
             break;
         }
 
-        // начало игры
-
         if(!restart && new_game){
             open_main_menu();
             r = x; g = y; b = z;
-            speed_last = speed;
+            game_state.speed_last = game_state.speed;
         }
 
         if(set_op){
@@ -2533,7 +2544,7 @@ int main() // main
 
         if(!restart && !set_op && !new_game){
             open_main_menu();
-            speed_last = speed;
+            game_state.speed_last = game_state.speed;
             new_game = true;
         }
 
@@ -2569,45 +2580,43 @@ int main() // main
         }
 
         start_game();
-        // скорость по умолчанию
 
-        sf::RenderWindow window(sf::VideoMode(window_width, window_height), "snake", sf::Style::Close); // открытие окна
+        sf::RenderWindow window(sf::VideoMode(window_width, window_height), "snake", sf::Style::Close);
 
         game_music.setLoop(true);
         game_music.play();
 
-        while (window.isOpen()) { // пока окно открыто
-            game_control(invert_control, window); // подключение управления
+        while (window.isOpen()) {
+            game_control(invert_control, window);
 
-            if (!snake_direction_queue.empty()) { // буферизация управления
+            if (!snake_direction_queue.empty()) {
                 game_state.snake_direction = snake_direction_queue.back();
                 snake_direction_queue.pop_back();
             }
 
-            if(immortality){
-                count_of_lives = 1;
-            }
-
-            if (!game_paused) { //если не пауза
-                if (!rall_back) { // если не откат
-                    make_move(); //обновляем поле
+            if (!game_paused) {
+                if (!rall_back) {
+                    make_move();
                 }
                 else {
-                    if (!game_last_states.empty()) { //откат
+                    if (!game_last_states.empty()) {
                         game_state = game_last_states.back();
                         game_last_states.pop_back();
                     }
                     else {
-                        rall_back = false; // выключение отката
+                        if(game_state.count_of_lifes > 0) {
+                            game_state.count_of_lifes--;
+                        }
+                        rall_back = false;
                     }
                 }
             }
 
-            if (game_over) { // если не откат и конец игры
+            if (game_over) {
                 if (!rall_back) {
                     game_music.stop();
-                    sf::sleep(sf::seconds(1)); // задержка на 1 секунду
-                    window.close(); // закрытие окна
+                    sf::sleep(sf::seconds(1));
+                    window.close();
                     lose_color = 1;
                     menu_type = 1;
                 }
@@ -2615,7 +2624,7 @@ int main() // main
 
             if (win_game) {
                 game_music.stop();
-                sf::sleep(sf::seconds(1)); // задержка на 1 секунду
+                sf::sleep(sf::seconds(1));
                 window.close();
             }
 
@@ -2628,12 +2637,12 @@ int main() // main
                 pause_color = 1;
             }
 
-            window.clear(sf::Color(x, y, z)); //цвет поля
-            draw_field(window); // отрисовка поля
+            window.clear(sf::Color(x, y, z));
+            draw_field(window);
 
-            window.display(); // вывод окна
+            window.display();
 
-            sf::sleep(sf::milliseconds(speed)); // скорость
+            sf::sleep(sf::milliseconds(game_state.speed));
 
             check_win();
         }
@@ -2644,11 +2653,10 @@ int main() // main
 
         if (restart) {
             normal_game();
-            immortality = false;
             lose_color = 1;
-            snake_direction_queue.clear(); // очищение буфера уапрввления при начале новой игры
-            game_last_states.clear(); //очищение буфера состояний игры
-            continue; //возврат в начало цикла и начало новой игры
+            snake_direction_queue.clear();
+            game_last_states.clear();
+            continue;
         }
     }
     return 0;
