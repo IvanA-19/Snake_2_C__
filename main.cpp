@@ -1,7 +1,7 @@
-#include <SFML/Graphics.hpp> //графическая библиотека
+#include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
-#include <cstdlib> //стандартная библиотека
-#include <vector> //для использования std::vector
+#include <cstdlib>
+#include <vector>
 #include <windows.h>
 
 using namespace std;
