@@ -16,6 +16,8 @@ const int skin_choice_width = (skin_count + 6) * skin_cell_size;
 int choice = 1;
 int skin = 0;
 
+int count_of_hearts = 0;
+
 const int wall_cell_size = 32;
 const int wall_length = 2;
 const int wall_count = 4; // количество скинов
@@ -77,14 +79,13 @@ bool game_paused = false; //переменная, отвечающая за па
 int count_of_apples = 0; //количество яблок, необходимое для генерации других предметов
 const int n = 10; //константа для генерации зеленого яблока
 bool event_green = false; //случай съедения зеленого яблока //скорость по умолчанию
+bool event_ellow = false;
 bool invert_control = false; //инверсия управления
 bool length_increase = false; //увеличение длины
 bool score_decrease = false; //уменьшение длины
 int count_of_red_apples = 0; //количество красных яблок. Для генерации некоторы предметов
-int x = 157, y = 255, z = 212, r, g, b; //цвет поля
-int count_of_lives = 0; //количество жизней при неуязвимости
+int x = 157, y = 255, z = 212, r, g, b; //цвет поля //количество жизней при неуязвимости
 bool exit_game; // переменная, отвечающая за выход
-bool immortality = false; // переменная, отвечающая за бессмертие
 bool win_game = false;
 bool new_game = true;
 
@@ -104,6 +105,7 @@ struct GameState {
     int last_score = 0;
     int speed = 100; //скорость змейки
     int speed_last;
+    int count_of_lifes = 0;
 };
 
 GameState game_state; //текущая стадия игры
@@ -116,17 +118,17 @@ vector <sf::Text> text_menu_items;
 
 vector <string> lose_menu_items{"Your score: ", "Restart", "Exit to main menu", "GAME OVER"};
 
-vector<string> menu_items = {"Start new game", "Level", "Settings", "Help", "Quit", "SNAKE", "By Vanyok77797", "Version 3.0.1"};
+vector<string> menu_items = {"Start new game", "Level", "Settings", "Help", "Quit", "SNAKE", "By Vanyok77797", "Version 4.0.1"};
 
 vector <string> settings_menu_items{"Type of control", "Field color", "Snake skin", "Walls",
                                     "Difficulty level", "Volume", "Back to main menu", "Game settings"};
 
 vector<string> control_menu_items = {"Cursors", "W, A, S, D", "Back to settings", "Type of game control"};
 
-vector<string> difficulty_menu_items = {"Standart", "Easy", "Medium", "Hard", "Crazy", "Impossible",
+vector<string> difficulty_menu_items = {"Standard", "Easy", "Medium", "Hard", "Crazy", "Impossible",
                                         "Back to settings", "Difficulty level"};
 
-vector <string> pause_menu_items = {"Score: ", "Resume", "Exit to main menu", "Pause"};
+vector <string> pause_menu_items = {"Score: ", "Resume", "Exit to main menu", "Pause", "Lives: "};
 
 vector <string> volume_menu_items = {"Volume: ", "Exit to main menu", "Volume settings"};
 
@@ -134,7 +136,7 @@ vector <string> level_menu_items = {"Level 1", "Level 2", "Level 3", "Level 4", 
                                     "Level 6" , "Level 7", "Back to main menu", "Choose level"};
 
 vector<string> help_menu_items = {"Apples: ", "\t*Green - random trap", "\t*Golden - random bonus",
-                                  "\t*Red - food for snake", "Heart - removes bad effect",
+                                  "\t*Red - food for snake", "Heart - every 5 gives life,\nremoves bad effect",
                                   "Space - game pause", "Tab - to turn off the music",
                                   "X - to turn on the music", "Enter to close help", "Help"};
 
@@ -147,6 +149,7 @@ int difficulty_color = 0;
 int pause_color = 1;
 int volume_color = 1;
 int level_color = 0;
+int lifes_color = 0;
 
 int game_level = 0;
 int volume_level = 30;
@@ -173,6 +176,9 @@ sf::SoundBuffer enter_buffer;
 sf::Sound heart_sound;
 sf::SoundBuffer heart_buffer;
 
+sf::Sound life_up_sound;
+sf::SoundBuffer life_up_buffer;
+
 sf::Music game_music;
 
 void set_sounds(){
@@ -198,6 +204,9 @@ void set_sounds(){
 
     heart_buffer.loadFromFile("sounds/heart.wav");
     heart_sound.setBuffer(heart_buffer);
+
+    life_up_buffer.loadFromFile("sounds/life_up.wav");
+    life_up_sound.setBuffer(life_up_buffer);
 }
 
 void set_fonts()
@@ -278,8 +287,9 @@ void set_fonts()
             text_menu_items.back().setCharacterSize(60);
             break;
         case 5:
-            for (int i = 0; i < pause_menu_items.size() - 1; i++) {
+            for (int i = 0; i < pause_menu_items.size() - 2; i++) {
                 text_menu_items.emplace_back(sf::Text());
+                text_menu_items.back().setString(pause_menu_items.at(i));
                 if(i != 0) {
                     text_menu_items.back().setString(pause_menu_items.at(i));
                 }
@@ -289,10 +299,17 @@ void set_fonts()
                 text_menu_items.back().setFont(font_menu);
                 text_menu_items.back().setCharacterSize(40);
             }
+
             text_menu_items.emplace_back(sf::Text());
             text_menu_items.back().setString(pause_menu_items.at(3));
             text_menu_items.back().setFont(font_menu);
             text_menu_items.back().setCharacterSize(70);
+
+            text_menu_items.emplace_back(sf::Text());
+            text_menu_items.back().setString(pause_menu_items.at(4) + to_string(game_state.count_of_lifes));
+            text_menu_items.back().setFont(font_menu);
+            text_menu_items.back().setCharacterSize(40);
+
             break;
         case 6:
             for (int i = 0; i < volume_menu_items.size() - 1; i++) {
@@ -369,15 +386,6 @@ void menu_control(sf::RenderWindow& window_main) //выбор цвета фон�
                     }
                     pause_menu = true;
                     break;
-                case sf::Keyboard::End:
-                    if(color_menu == 4){
-                        immortality = true;
-                    }
-                    break;
-                case sf::Keyboard::Home:
-                    if(color_menu == 4){
-                        immortality = false;
-                    }
                     break;
                 case sf::Keyboard::Enter:
                     switch(color_menu){
@@ -421,7 +429,7 @@ void draw_main_menu(sf::RenderWindow& window_main)
     float menu_position_y = (float(main_menu_height) - menu_height) / 2 - 30;
 
     const float pause_menu_position_x = (float(pause_menu_width) - menu_width) / 2;
-    float pause_menu_position_y = (float(pause_menu_height) - menu_height) / 2;
+    float pause_menu_position_y = (float(pause_menu_height) - menu_height) / 2 - 25;
 
     const float volume_menu_position_x = (float(volume_menu_width) - menu_width) / 2;
     float volume_menu_position_y = (float(volume_menu_height) - menu_height) / 2;
@@ -475,9 +483,12 @@ void draw_main_menu(sf::RenderWindow& window_main)
         case 5:
             window_main.clear(sf::Color(0, 0, 0));
             text_menu_items.at(0).setFillColor(sf::Color(0, 255,0));
+            text_menu_items.at(4).setFillColor(sf::Color(0, 255,0));
+            text_menu_items.at(4).move(float(pause_menu_position_x * 3.75), pause_menu_position_y - 25);
+            window_main.draw(text_menu_items.at(4));
             text_menu_items.at(pause_color).setFillColor(sf::Color(255, 255,0));
             text_menu_items.at(3).setFillColor(sf::Color(255, 0, 0));
-            text_menu_items.at(3).move(pause_menu_position_x + 96, 40);
+            text_menu_items.at(3).move(pause_menu_position_x + 96, 25);
             window_main.draw(text_menu_items.at(3));
             break;
         case 6:
@@ -515,8 +526,18 @@ void draw_main_menu(sf::RenderWindow& window_main)
 
     if(menu_type == 8){
         for (int i = 0; i < help_menu_items.size() - 1; i++) {
-            text_menu_items.at(i).move(menu_position_x, menu_position_y - 100);
-            menu_position_y += 50;
+            if(i != 4) {
+                text_menu_items.at(i).move(menu_position_x, menu_position_y - 125);
+            }
+            else{
+                text_menu_items.at(i).move(menu_position_x, menu_position_y - 130);
+            }
+            if(i != 4) {
+                menu_position_y += 50;
+            }
+            else{
+                menu_position_y += 75;
+            }
             window_main.draw(text_menu_items.at(i));
         }
     }
@@ -553,8 +574,13 @@ void draw_main_menu(sf::RenderWindow& window_main)
         }
     }
     else if(menu_type == 5){
-        for (int i = 0; i < menu_items.size() - 5; i++) {
-            text_menu_items.at(i).move(pause_menu_position_x, pause_menu_position_y);
+        for (int i = 0; i < pause_menu_items.size() - 2; i++) {
+            if(i != 0) {
+                text_menu_items.at(i).move(pause_menu_position_x, pause_menu_position_y);
+            }
+            else{
+                text_menu_items.at(i).move(pause_menu_position_x - 25, pause_menu_position_y - 25);
+            }
             pause_menu_position_y += 60;
             window_main.draw(text_menu_items.at(i));
         }
@@ -1295,6 +1321,7 @@ void set_volume_level(){
     green_apple_sound.setVolume(float(volume_level));
     enter_sound.setVolume(float(volume_level));
     heart_sound.setVolume(float(volume_level));
+    life_up_sound.setVolume(float(volume_level));
 }
 
 void volume_menu_control(sf::RenderWindow& window_volume)
@@ -1954,12 +1981,9 @@ int random_bonus()
 {
     srand(time(nullptr));
     int bonus;
-    if (immortality) {
-        bonus = rand() % 4; // генерация случайного числа
-    }
-    else {
-        bonus = rand() % 5;
-    }
+
+    bonus = rand() % 5;
+
     switch (bonus) {
     case 0:
         game_state.score += 15; // увеличение счета
@@ -1976,8 +2000,9 @@ int random_bonus()
         }
         break;
     case 4:
-        count_of_lives = 5; // неуязвимость
+        game_state.count_of_lifes += 5; // неуязвимость
         x = 0; y = 220; z = 255; // изменнение цвета поля при неуязвимости
+        lifes_color = 5;
         break;
     }
 }
@@ -1987,8 +2012,8 @@ int random_bonus()
 void normal_game()
 {
     game_state.speed = game_state.speed_last; // установка начального уровня скорости
-    if (count_of_lives == 0) {
-        x = r; y = g; z = b; // установка начального цыета поля
+    if (lifes_color == 0) {
+        x = r; y = g; z = b;
     }
     invert_control = false; // выключение инверсии
     if (length_increase) {
@@ -2024,7 +2049,6 @@ void pause_menu_control(sf::RenderWindow &window_pause, sf::RenderWindow& window
                             window.close();
                             pause_menu = 0;
                             restart = false;
-                            immortality = false;
                             x = r; y = g; z = b;
                             normal_game();
                             break;
@@ -2138,12 +2162,14 @@ void make_move()
             count_of_red_apples = 0; // подготовка к генерации сердечкка через 5 яблок
             count_of_apples = 0; // установка в 0 отсчета до следующего зеленого яблока
             random_event(); // получение случайной ловушки
-            if (count_of_lives == 0 || immortality) { //если не включена неуязвимость или введен код бессмертия
+            event_green = true;
+            if (lifes_color == 0) {
                 x = 50; y = 185; z = 50; //изменение цвета поля
             }
             break;
         case FIELD_CELL_TYPE_YELLOW_APPLE: // случай - желтое яблоко
             yellow_apple_sound.play();
+            event_ellow = true;
             if (random_bonus() == 1) { // получение случайного бонуса
                 for (int m = 0; m < 2; m++) {
                     add_heart(); // генерация двух сердечек в случае получения 1 в генераторе случайных чисел
@@ -2151,19 +2177,33 @@ void make_move()
             }
             break;
         case FIELD_CELL_TYPE_HEART: // случай - сердечко
-            heart_sound.play();
-            normal_game(); // восставновление параметров игры
-            if (immortality) {
-                x = r; y = g; z = b;
+            count_of_hearts++;
+
+            if(count_of_hearts != 5) {
+                heart_sound.play();
             }
+            else{
+                life_up_sound.play();
+            }
+
+            if(count_of_hearts == 5){
+                game_state.count_of_lifes++;
+                count_of_hearts = 0;
+            }
+
+            if(event_green) {
+                event_green = false;
+            }
+            normal_game(); // восставновление параметров игры
             break;
         case FIELD_CELL_TYPE_WALL: //случай - стена
             game_over_sound.play();
-            if (count_of_lives != 0) { //если есть неуязвимость, проверяем, сколько осталось жизней
+            if (game_state.count_of_lifes != 0) { //если есть неуязвимость, проверяем, сколько осталось жизней
                 rall_back = true; //откат включен
-                if (!immortality) {//в случае, если не введен код бессмертия
-                    count_of_lives--; // уменьшаем количество жизней
-                    switch (count_of_lives) { //меняем фон
+
+                if (event_ellow) {
+                    lifes_color--;
+                    switch (lifes_color) { //меняем фон
                     case 4:
                         x = 255; y = 20; z = 147;
                         break;
@@ -2177,25 +2217,23 @@ void make_move()
                         x = 255; y = 215; z = 0;
                         break;
                     default:
+                        event_ellow = false;
                         x = r; y = g; z = b;
                     }
                 }
-                else{
-                    count_of_lives = 1;
-                }
+
             }
             else {
                 game_over = true;// иначе конец игры
             }
             break;
-        default: // аналогично, если врезались в себя
+        default:
             game_over_sound.play();
             if (game_state.field[game_state.snake_position_y][game_state.snake_position_x] > 1) {
-                if (count_of_lives != 0) {
+                if (lifes_color != 0 && event_ellow) {
                     rall_back = true;
-                    if (!immortality) {
-                        count_of_lives--; // уменьшаем количество жизней
-                        switch (count_of_lives) { //меняем фон
+                    lifes_color--;
+                    switch (lifes_color) {
                         case 4:
                             x = 255; y = 20; z = 147;
                             break;
@@ -2210,7 +2248,6 @@ void make_move()
                             break;
                         default:
                             x = r; y = g; z = b;
-                        }
                     }
                 }
                 else {
@@ -2249,10 +2286,13 @@ void start_game() // начало игры
     event_green = false; //значение по умолчанию для съедения зеленых яблок
     count_of_apples = 0; //обновление количества яблок
     count_of_red_apples = 0; //обновление количества красных яблок
-    count_of_lives = 0; //обновление количества жизней
+    game_state.count_of_lifes = 0; //обновление количества жизней
     length_increase = false;  //значение по умолчанию для увеличения длины
     score_decrease = false; //значение по умолчанию для уменьшения длины
     r = x, g = y, b = z;
+    lifes_color = 0;
+    event_green = false;
+    event_ellow = false;
     pause = false;
     color = 1;
     choice_wall = 1;
@@ -2591,10 +2631,6 @@ int main() // main
                 snake_direction_queue.pop_back();
             }
 
-            if(immortality){
-                count_of_lives = 1;
-            }
-
             if (!game_paused) { //если не пауза
                 if (!rall_back) { // если не откат
                     make_move(); //обновляем поле
@@ -2605,6 +2641,9 @@ int main() // main
                         game_last_states.pop_back();
                     }
                     else {
+                        if(game_state.count_of_lifes > 0) {
+                            game_state.count_of_lifes--;
+                        }
                         rall_back = false; // выключение отката
                     }
                 }
@@ -2651,7 +2690,6 @@ int main() // main
 
         if (restart) {
             normal_game();
-            immortality = false;
             lose_color = 1;
             snake_direction_queue.clear(); // очищение буфера уапрввления при начале новой игры
             game_last_states.clear(); //очищение буфера состояний игры
