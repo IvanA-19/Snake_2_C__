@@ -2,9 +2,6 @@
 #include <SFML/Audio.hpp>
 #include <cstdlib>
 #include <vector>
-#include <windows.h>
-
-using namespace std;
 
 const int skin_cell_size = 32;
 const int skin_length = 2;
@@ -67,7 +64,7 @@ const int volume_menu_height = 15 * cell_size;
 
 int type_of_control;
 
-vector <int> snake_direction_queue;
+std::vector <int> snake_direction_queue;
 bool game_over = false;
 bool game_paused = false;
 int count_of_apples = 0;
@@ -101,33 +98,34 @@ struct GameState {
 };
 
 GameState game_state;
-vector <GameState> game_last_states;
+std::vector <GameState> game_last_states;
 bool rall_back = false;
 
 sf::Font font_menu;
 
-vector <sf::Text> text_menu_items;
+std::vector <sf::Text> text_menu_items;
 
-vector <string> lose_menu_items{"Your score: ", "Restart", "Exit to main menu", "GAME OVER"};
+std::vector <std::string> lose_menu_items{"Your score: ", "Restart", "Exit to main menu", "GAME OVER"};
 
-vector<string> menu_items = {"Start new game", "Level", "Settings", "Help", "Quit", "SNAKE", "By Vanyok77797", "Version 4.0.1"};
+std::vector<std::string> menu_items = {"Start new game", "Level", "Settings", "Help", "Quit", "SNAKE",
+                                       "By Vanyok77797", "Version 4.2.3"};
 
-vector <string> settings_menu_items{"Type of control", "Field color", "Snake skin", "Walls",
+std::vector <std::string> settings_menu_items{"Type of control", "Field color", "Snake skin", "Walls",
                                     "Difficulty level", "Volume", "Back to main menu", "Game settings"};
 
-vector<string> control_menu_items = {"Cursors", "W, A, S, D", "Back to settings", "Type of game control"};
+std::vector<std::string> control_menu_items = {"Cursors", "W, A, S, D", "Back to settings", "Type of game control"};
 
-vector<string> difficulty_menu_items = {"Standard", "Easy", "Medium", "Hard", "Crazy", "Impossible",
+std::vector<std::string> difficulty_menu_items = {"Standard", "Easy", "Medium", "Hard", "Crazy", "Impossible",
                                         "Back to settings", "Difficulty level"};
 
-vector <string> pause_menu_items = {"Score: ", "Resume", "Exit to main menu", "Pause", "Lives: "};
+std::vector <std::string> pause_menu_items = {"Score: ", "Resume", "Exit to main menu", "Pause", "Lives: "};
 
-vector <string> volume_menu_items = {"Volume: ", "Exit to main menu", "Volume settings"};
+std::vector <std::string> volume_menu_items = {"Volume: ", "Exit to main menu", "Volume settings"};
 
-vector <string> level_menu_items = {"Level 1", "Level 2", "Level 3", "Level 4", "Level 5",
+std::vector <std::string> level_menu_items = {"Level 1", "Level 2", "Level 3", "Level 4", "Level 5",
                                     "Level 6" , "Level 7", "Back to main menu", "Choose level"};
 
-vector<string> help_menu_items = {"Apples: ", "\t*Green - random trap", "\t*Golden - random bonus",
+std::vector<std::string> help_menu_items = {"Apples: ", "\t*Green - random trap", "\t*Golden - random bonus",
                                   "\t*Red - food for snake", "Heart - every 5 gives life,\nremoves bad effect",
                                   "Space - game pause", "Tab - to turn off the music",
                                   "X - to turn on the music", "Enter to close help", "Help"};
@@ -232,7 +230,7 @@ void set_fonts()
                     text_menu_items.back().setString(lose_menu_items.at(i));
                 }
                 else{
-                    text_menu_items.back().setString(lose_menu_items.at(i) + to_string(game_state.score));
+                    text_menu_items.back().setString(lose_menu_items.at(i) + std::to_string(game_state.score));
                 }
                 text_menu_items.back().setFont(font_menu);
                 text_menu_items.back().setCharacterSize(40);
@@ -286,7 +284,7 @@ void set_fonts()
                     text_menu_items.back().setString(pause_menu_items.at(i));
                 }
                 else{
-                    text_menu_items.back().setString(pause_menu_items.at(i) + to_string(game_state.score));
+                    text_menu_items.back().setString(pause_menu_items.at(i) + std::to_string(game_state.score));
                 }
                 text_menu_items.back().setFont(font_menu);
                 text_menu_items.back().setCharacterSize(40);
@@ -298,7 +296,7 @@ void set_fonts()
             text_menu_items.back().setCharacterSize(70);
 
             text_menu_items.emplace_back(sf::Text());
-            text_menu_items.back().setString(pause_menu_items.at(4) + to_string(game_state.count_of_lifes));
+            text_menu_items.back().setString(pause_menu_items.at(4) + std::to_string(game_state.count_of_lifes));
             text_menu_items.back().setFont(font_menu);
             text_menu_items.back().setCharacterSize(40);
 
@@ -310,7 +308,7 @@ void set_fonts()
                     text_menu_items.back().setString(volume_menu_items.at(i));
                 }
                 else{
-                    text_menu_items.back().setString(volume_menu_items.at(i) + to_string(volume_level) + " %");
+                    text_menu_items.back().setString(volume_menu_items.at(i) + std::to_string(volume_level) + " %");
                 }
                 text_menu_items.back().setFont(font_menu);
                 text_menu_items.back().setCharacterSize(40);
@@ -2166,7 +2164,6 @@ void make_move()
             game_over_sound.play();
             if (game_state.count_of_lifes != 0) {
                 rall_back = true;
-
                 if (event_ellow) {
                     lifes_color--;
                     switch (lifes_color) {
@@ -2196,24 +2193,37 @@ void make_move()
         default:
             game_over_sound.play();
             if (game_state.field[game_state.snake_position_y][game_state.snake_position_x] > 1) {
-                if (lifes_color != 0 && event_ellow) {
+                if (game_state.count_of_lifes != 0) {
                     rall_back = true;
-                    lifes_color--;
-                    switch (lifes_color) {
-                        case 4:
-                            x = 255; y = 20; z = 147;
-                            break;
-                        case 3:
-                            x = 255; y = 140; z = 0;
-                            break;
-                        case 2:
-                            x = 139; y = 0; z = 139;
-                            break;
-                        case 1:
-                            x = 255; y = 255; z = 0;
-                            break;
-                        default:
-                            x = r; y = g; z = b;
+                    if (event_ellow) {
+                        //rall_back = true;
+                        lifes_color--;
+                        switch (lifes_color) {
+                            case 4:
+                                x = 255;
+                                y = 20;
+                                z = 147;
+                                break;
+                            case 3:
+                                x = 255;
+                                y = 140;
+                                z = 0;
+                                break;
+                            case 2:
+                                x = 139;
+                                y = 0;
+                                z = 139;
+                                break;
+                            case 1:
+                                x = 255;
+                                y = 255;
+                                z = 0;
+                                break;
+                            default:
+                                x = r;
+                                y = g;
+                                z = b;
+                        }
                     }
                 }
                 else {
