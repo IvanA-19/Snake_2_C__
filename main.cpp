@@ -1976,6 +1976,7 @@ int random_bonus()
     case 4:
         game_state.count_of_lifes += 5;
         x = 0; y = 220; z = 255;
+        event_ellow = true;
         lifes_color = 5;
         break;
     }
@@ -2127,13 +2128,12 @@ void make_move()
             count_of_apples = 0;
             random_event();
             event_green = true;
-            if (lifes_color == 0) {
+            if (!event_ellow) {
                 x = 50; y = 185; z = 50;
             }
             break;
         case FIELD_CELL_TYPE_YELLOW_APPLE:
             yellow_apple_sound.play();
-            event_ellow = true;
             if (random_bonus() == 1) {
                 for (int m = 0; m < 2; m++) {
                     add_heart();
@@ -2155,10 +2155,9 @@ void make_move()
                 count_of_hearts = 0;
             }
 
-            if(event_green) {
-                event_green = false;
-            }
+            event_green = false;
             normal_game();
+
             break;
         case FIELD_CELL_TYPE_WALL:
             game_over_sound.play();
@@ -2181,7 +2180,12 @@ void make_move()
                         break;
                     default:
                         event_ellow = false;
-                        x = r; y = g; z = b;
+                        if(!event_green) {
+                            x = r; y = g; z = b;
+                        }
+                        else{
+                            x = 50; y = 185; z = 50;
+                        }
                     }
                 }
 
@@ -2196,33 +2200,28 @@ void make_move()
                 if (game_state.count_of_lifes != 0) {
                     rall_back = true;
                     if (event_ellow) {
-                        //rall_back = true;
                         lifes_color--;
                         switch (lifes_color) {
                             case 4:
-                                x = 255;
-                                y = 20;
-                                z = 147;
+                                x = 255; y = 20; z = 147;
                                 break;
                             case 3:
-                                x = 255;
-                                y = 140;
-                                z = 0;
+                                x = 255; y = 140; z = 0;
                                 break;
                             case 2:
-                                x = 139;
-                                y = 0;
-                                z = 139;
+                                x = 139; y = 0; z = 139;
                                 break;
                             case 1:
-                                x = 255;
-                                y = 255;
-                                z = 0;
+                                x = 255; y = 255; z = 0;
                                 break;
                             default:
-                                x = r;
-                                y = g;
-                                z = b;
+                                event_ellow = false;
+                                if(!event_green) {
+                                    x = r; y = g; z = b;
+                                }
+                                else{
+                                    x = 50; y = 185; z = 50;
+                                }
                         }
                     }
                 }
