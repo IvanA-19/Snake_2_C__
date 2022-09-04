@@ -70,7 +70,7 @@ bool game_paused = false;
 int count_of_apples = 0;
 const int n = 10;
 bool event_green = false;
-bool event_ellow = false;
+bool event_yellow = false;
 bool invert_control = false;
 bool length_increase = false;
 bool score_decrease = false;
@@ -1976,7 +1976,7 @@ int random_bonus()
     case 4:
         game_state.count_of_lifes += 5;
         x = 0; y = 220; z = 255;
-        event_ellow = true;
+        event_yellow = true;
         lifes_color = 5;
         break;
     }
@@ -2128,7 +2128,7 @@ void make_move()
             count_of_apples = 0;
             random_event();
             event_green = true;
-            if (!event_ellow) {
+            if (!event_yellow) {
                 x = 50; y = 185; z = 50;
             }
             break;
@@ -2163,7 +2163,7 @@ void make_move()
             game_over_sound.play();
             if (game_state.count_of_lifes != 0) {
                 rall_back = true;
-                if (event_ellow) {
+                if (event_yellow) {
                     lifes_color--;
                     switch (lifes_color) {
                     case 4:
@@ -2179,7 +2179,7 @@ void make_move()
                         x = 255; y = 215; z = 0;
                         break;
                     default:
-                        event_ellow = false;
+                        event_yellow = false;
                         if(!event_green) {
                             x = r; y = g; z = b;
                         }
@@ -2199,7 +2199,7 @@ void make_move()
             if (game_state.field[game_state.snake_position_y][game_state.snake_position_x] > 1) {
                 if (game_state.count_of_lifes != 0) {
                     rall_back = true;
-                    if (event_ellow) {
+                    if (event_yellow) {
                         lifes_color--;
                         switch (lifes_color) {
                             case 4:
@@ -2215,7 +2215,7 @@ void make_move()
                                 x = 255; y = 255; z = 0;
                                 break;
                             default:
-                                event_ellow = false;
+                                event_yellow = false;
                                 if(!event_green) {
                                     x = r; y = g; z = b;
                                 }
@@ -2267,7 +2267,7 @@ void start_game()
     r = x, g = y, b = z;
     lifes_color = 0;
     event_green = false;
-    event_ellow = false;
+    event_yellow = false;
     pause = false;
     color = 1;
     choice_wall = 1;
