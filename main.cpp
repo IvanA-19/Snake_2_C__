@@ -1086,36 +1086,36 @@ void draw_skin_choice(sf::RenderWindow& window_1)
             default:
                 if (i != 0 && i != 5) {
                     switch (j) {
-                    case 1:
-                        skin_texture.loadFromFile("images/snake.png");
-                        skin.setTexture(skin_texture);
-                        skin.setPosition(float(j * skin_cell_size), float(i * skin_cell_size));
-                        window_1.draw(skin);
-                        break;
-                    case 3:
-                        skin_texture.loadFromFile("images/snake_1.png");
-                        skin.setTexture(skin_texture);
-                        skin.setPosition(float(j * skin_cell_size), float(i * skin_cell_size));
-                        window_1.draw(skin);
-                        break;
-                    case 5:
-                        skin_texture.loadFromFile("images/snake_2.png");
-                        skin.setTexture(skin_texture);
-                        skin.setPosition(float(j * skin_cell_size), float(i * skin_cell_size));
-                        window_1.draw(skin);
-                        break;
-                    case 7:
-                        skin_texture.loadFromFile("images/snake_3.png");
-                        skin.setTexture(skin_texture);
-                        skin.setPosition(float(j * skin_cell_size), float(i * skin_cell_size));
-                        window_1.draw(skin);
-                        break;
-                    case 9:
-                        skin_texture.loadFromFile("images/snake_4.png");
-                        skin.setTexture(skin_texture);
-                        skin.setPosition(float(j * skin_cell_size), float(i * skin_cell_size));
-                        window_1.draw(skin);
-                        break;
+                        case 1:
+                            skin_texture.loadFromFile("images/snake.png");
+                            skin.setTexture(skin_texture);
+                            skin.setPosition(float(j * skin_cell_size), float(i * skin_cell_size));
+                            window_1.draw(skin);
+                            break;
+                        case 3:
+                            skin_texture.loadFromFile("images/snake_1.png");
+                            skin.setTexture(skin_texture);
+                            skin.setPosition(float(j * skin_cell_size), float(i * skin_cell_size));
+                            window_1.draw(skin);
+                            break;
+                        case 5:
+                            skin_texture.loadFromFile("images/snake_2.png");
+                            skin.setTexture(skin_texture);
+                            skin.setPosition(float(j * skin_cell_size), float(i * skin_cell_size));
+                            window_1.draw(skin);
+                            break;
+                        case 7:
+                            skin_texture.loadFromFile("images/snake_3.png");
+                            skin.setTexture(skin_texture);
+                            skin.setPosition(float(j * skin_cell_size), float(i * skin_cell_size));
+                            window_1.draw(skin);
+                            break;
+                        case 9:
+                            skin_texture.loadFromFile("images/snake_4.png");
+                            skin.setTexture(skin_texture);
+                            skin.setPosition(float(j * skin_cell_size), float(i * skin_cell_size));
+                            window_1.draw(skin);
+                            break;
                     }
                 }
             }
