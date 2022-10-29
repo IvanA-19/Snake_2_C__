@@ -39,7 +39,7 @@ void graphics_menu(sf::RenderWindow& window){
     float menu_position_y = (float(main_menu_height) - menu_height) / 2 - 30;
 
     window.clear(sf::Color(0, 0, 0));
-    text_menu_items.at(3).move(menu_position_x - 40, 20);
+    text_menu_items.at(3).move(menu_position_x - 70, 20);
     text_menu_items.at(3).setFillColor(sf::Color(30, 255,25));
     window.draw(text_menu_items.at(3));
     text_menu_items.at(graphics_color).setFillColor(sf::Color(30, 206, 150));
