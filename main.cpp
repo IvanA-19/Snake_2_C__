@@ -3,7 +3,7 @@
 #include "Low_graphics_version.h"
 #include "High_graphics_version.h"
 
-std::vector<std::string> graphics_menu_items = {"Low graphics", "High graphics", "Quit", "Chose graphics"};
+std::vector<std::string> graphics_menu_items = {"Low graphics", "High graphics", "Quit", "Choose graphics"};
 
 int graphics_color = 0;
 bool graphics_pause;
