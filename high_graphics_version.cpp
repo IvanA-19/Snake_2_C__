@@ -1991,9 +1991,6 @@ void high_make_move()
                 count_of_apples = 0;
                 high_random_event();
                 event_green = true;
-                if (lifes_color == 0) {
-                    x = 50; y = 185; z = 50;
-                }
                 break;
             case FIELD_CELL_TYPE_YELLOW_APPLE:
                 yellow_apple_sound.play();

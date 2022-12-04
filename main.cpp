@@ -1,7 +1,5 @@
 #include <SFML/Graphics.hpp>
 #include "vars.h"
-#include "Low_graphics_version.h"
-#include "High_graphics_version.h"
 
 std::vector<std::string> graphics_menu_items = {"Low graphics", "High graphics", "Quit", "Choose graphics"};
 

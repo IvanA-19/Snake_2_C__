@@ -134,7 +134,7 @@ static std::vector <sf::Text> text_menu_items;
 static std::vector <std::string> lose_menu_items{"Your score: ", "Restart", "Exit to main menu", "GAME OVER"};
 
 static std::vector<std::string> menu_items = {"Start new game", "Level", "Settings", "Help", "Quit", "SNAKE",
-                                              "By Vanyok77797", "Version 4.2.3"};
+                                              "By Vanyok77797", "Version 7.9.7"};
 
 static std::vector <std::string> settings_menu_items{"Type of control", "Field color", "Snake skin", "Walls",
                                                      "Difficulty level", "Volume", "Back to main menu", "Game settings"};
@@ -204,5 +204,5 @@ static sf::SoundBuffer life_up_buffer;
 
 static sf::Music game_music;
 
-
-
+void low_graphics_game();
+void high_graphics_game();
