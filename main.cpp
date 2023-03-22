@@ -28,8 +28,6 @@ void set_graphics_fonts(){
 }
 
 void graphics_menu(sf::RenderWindow& window){
-
-
     const float menu_width = 554;
     float menu_height = 120;
 
@@ -104,11 +102,9 @@ void control_graphics_menu(sf::RenderWindow &window)
             }
         }
     }
-
 }
 
-int main()
-{
+void open_graphics_menu(){
     set_sound();
     sf::RenderWindow window(sf::VideoMode(main_menu_width, main_menu_height - 180), "Snake", sf::Style::Close);
     auto image = sf::Image{};
@@ -125,6 +121,11 @@ int main()
             window.display();
         }
     }
+}
+
+int main()
+{
+    open_graphics_menu();
 
     return 0;
 }

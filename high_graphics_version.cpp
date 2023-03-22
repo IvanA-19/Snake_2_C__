@@ -1,8 +1,8 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
 #include <cstdlib>
-#include "High_graphics_version.h"
 #include "vars.h"
+
 
 void high_set_sounds(){
     game_music.openFromFile("sounds/music_game.ogg");
@@ -129,7 +129,7 @@ void high_set_fonts()
             text_menu_items.back().setCharacterSize(70);
 
             text_menu_items.emplace_back(sf::Text());
-            text_menu_items.back().setString(pause_menu_items.at(4) + std::to_string(high_game_state.count_of_lifes));
+            text_menu_items.back().setString(pause_menu_items.at(4) + std::to_string(high_game_state.count_of_lives));
             text_menu_items.back().setFont(font_menu);
             text_menu_items.back().setCharacterSize(40);
 
@@ -177,6 +177,8 @@ void high_set_fonts()
             text_menu_items.back().setString(high_help_menu_items.at(9));
             text_menu_items.back().setFont(font_menu);
             text_menu_items.back().setCharacterSize(60);
+            break;
+        default:
             break;
     }
 }
@@ -228,6 +230,8 @@ void high_menu_control(sf::RenderWindow& window_main)
                             break;
                         case 4:
                             exit_game = true;
+                            break;
+                        default:
                             break;
                     }
                     enter_sound.play();
@@ -345,6 +349,8 @@ void high_draw_main_menu(sf::RenderWindow& window_main)
             text_menu_items.at(8).setFillColor(sf::Color(0, 255, 255));
             window_main.draw(text_menu_items.at(9));
             break;
+        default:
+            break;
     }
 
     if(menu_type == 8){
@@ -447,6 +453,8 @@ void high_control_menu_control(sf::RenderWindow &window_main)
                             break;
                         case 2:
                             menu_type = 2;
+                            break;
+                        default:
                             break;
                     }
                     window_main.close();
@@ -750,6 +758,8 @@ void high_check_event_2(sf::RenderWindow& window_wall)
                             wall = 3;
                             window_wall.close();
                             break;
+                        default:
+                            break;
                     }
             }
         }
@@ -797,6 +807,8 @@ void high_draw_wall_choice(sf::RenderWindow& window_wall)
                         wall.setTexture(wall_texture);
                         wall.setPosition(float(j * wall_cell_size), float(i * wall_cell_size));
                         window_wall.draw(wall);
+                        break;
+                    default:
                         break;
                 }
             }
@@ -868,6 +880,8 @@ void high_check_event(sf::RenderWindow& window_1)
                         case 9:
                             skin = 4;
                             break;
+                        default:
+                            break;
                     }
                     window_1.close();
                     break;
@@ -892,78 +906,80 @@ void high_draw_skin_choice(sf::RenderWindow& window_1)
     sf::Sprite skin;
     for (int i = 0; i < skin_length + 5; i++) {
         for (int j = 0; j < skin_count + 5; j++) {
-            switch (i) {
-                case 1:
+            if(i == 1) {
+                switch (j) {
+                    case 1:
+                        skin_texture.loadFromFile("images/head.png");
+                        skin.setTexture(skin_texture);
+                        skin.setPosition(float(j * skin_cell_size), float(i * skin_cell_size));
+                        window_1.draw(skin);
+                        break;
+                    case 3:
+                        skin_texture.loadFromFile("images/head_1.png");
+                        skin.setTexture(skin_texture);
+                        skin.setPosition(float(j * skin_cell_size), float(i * skin_cell_size));
+                        window_1.draw(skin);
+                        break;
+                    case 5:
+                        skin_texture.loadFromFile("images/head_2.png");
+                        skin.setTexture(skin_texture);
+                        skin.setPosition(float(j * skin_cell_size), float(i * skin_cell_size));
+                        window_1.draw(skin);
+                        break;
+                    case 7:
+                        skin_texture.loadFromFile("images/head_3.png");
+                        skin.setTexture(skin_texture);
+                        skin.setPosition(float(j * skin_cell_size), float(i * skin_cell_size));
+                        window_1.draw(skin);
+                        break;
+                    case 9:
+                        skin_texture.loadFromFile("images/head_4.png");
+                        skin.setTexture(skin_texture);
+                        skin.setPosition(float(j * skin_cell_size), float(i * skin_cell_size));
+                        window_1.draw(skin);
+                        break;
+                    default:
+                        break;
+                }
+            }
+            else {
+                if (i != 0 && i != 5) {
                     switch (j) {
                         case 1:
-                            skin_texture.loadFromFile("images/head.png");
+                            skin_texture.loadFromFile("images/snake.png");
                             skin.setTexture(skin_texture);
                             skin.setPosition(float(j * skin_cell_size), float(i * skin_cell_size));
                             window_1.draw(skin);
                             break;
                         case 3:
-                            skin_texture.loadFromFile("images/head_1.png");
+                            skin_texture.loadFromFile("images/snake_1.png");
                             skin.setTexture(skin_texture);
                             skin.setPosition(float(j * skin_cell_size), float(i * skin_cell_size));
                             window_1.draw(skin);
                             break;
                         case 5:
-                            skin_texture.loadFromFile("images/head_2.png");
+                            skin_texture.loadFromFile("images/snake_2.png");
                             skin.setTexture(skin_texture);
                             skin.setPosition(float(j * skin_cell_size), float(i * skin_cell_size));
                             window_1.draw(skin);
                             break;
                         case 7:
-                            skin_texture.loadFromFile("images/head_3.png");
+                            skin_texture.loadFromFile("images/snake_3.png");
                             skin.setTexture(skin_texture);
                             skin.setPosition(float(j * skin_cell_size), float(i * skin_cell_size));
                             window_1.draw(skin);
                             break;
                         case 9:
-                            skin_texture.loadFromFile("images/head_4.png");
+                            skin_texture.loadFromFile("images/snake_4.png");
                             skin.setTexture(skin_texture);
                             skin.setPosition(float(j * skin_cell_size), float(i * skin_cell_size));
                             window_1.draw(skin);
                             break;
+                        default:
+                            break;
                     }
-                    break;
-                default:
-                    if (i != 0 && i != 5) {
-                        switch (j) {
-                            case 1:
-                                skin_texture.loadFromFile("images/snake.png");
-                                skin.setTexture(skin_texture);
-                                skin.setPosition(float(j * skin_cell_size), float(i * skin_cell_size));
-                                window_1.draw(skin);
-                                break;
-                            case 3:
-                                skin_texture.loadFromFile("images/snake_1.png");
-                                skin.setTexture(skin_texture);
-                                skin.setPosition(float(j * skin_cell_size), float(i * skin_cell_size));
-                                window_1.draw(skin);
-                                break;
-                            case 5:
-                                skin_texture.loadFromFile("images/snake_2.png");
-                                skin.setTexture(skin_texture);
-                                skin.setPosition(float(j * skin_cell_size), float(i * skin_cell_size));
-                                window_1.draw(skin);
-                                break;
-                            case 7:
-                                skin_texture.loadFromFile("images/snake_3.png");
-                                skin.setTexture(skin_texture);
-                                skin.setPosition(float(j * skin_cell_size), float(i * skin_cell_size));
-                                window_1.draw(skin);
-                                break;
-                            case 9:
-                                skin_texture.loadFromFile("images/snake_4.png");
-                                skin.setTexture(skin_texture);
-                                skin.setPosition(float(j * skin_cell_size), float(i * skin_cell_size));
-                                window_1.draw(skin);
-                                break;
-                        }
-                    }
+                }
             }
-
         }
     }
     high_draw_arrow(window_1);
@@ -1027,6 +1043,8 @@ void high_difficulty_menu_control(sf::RenderWindow &window_main)
                             break;
                         case 6:
                             menu_type = 2;
+                            break;
+                        default:
                             break;
                     }
                     window_main.close();
@@ -1260,6 +1278,8 @@ void high_settings_menu_control(sf::RenderWindow &window_main)
                             set_op = false;
                             menu_type = 0;
                             color_menu = 0;
+                            break;
+                        default:
                             break;
                     }
                     window_main.close();
@@ -1809,6 +1829,8 @@ void high_random_event()
             high_game_state.snake_length += 3;
             length_increase = true;
             break;
+        default:
+            break;
     }
 }
 
@@ -1825,7 +1847,6 @@ int high_random_bonus()
             break;
         case 1:
             return 1;
-            break;
         case 2:
             high_game_state.speed = 130;
             break;
@@ -1835,17 +1856,20 @@ int high_random_bonus()
             }
             break;
         case 4:
-            high_game_state.count_of_lifes += 5;
+            high_game_state.count_of_lives += 5;
             x = 0; y = 220; z = 255;
-            lifes_color = 5;
+            lives_color = 5;
+            break;
+        default:
             break;
     }
+    return 0;
 }
 
 void high_normal_game()
 {
     high_game_state.speed = high_game_state.speed_last;
-    if (lifes_color == 0) {
+    if (lives_color == 0) {
         x = r; y = g; z = b;
     }
     invert_control = false;
@@ -1885,7 +1909,8 @@ void high_pause_menu_control(sf::RenderWindow &window_pause, sf::RenderWindow& w
                             x = r; y = g; z = b;
                             high_normal_game();
                             break;
-
+                        default:
+                            break;
                     }
                     window_pause.close();
                     break;
@@ -2012,7 +2037,7 @@ void high_make_move()
                 }
 
                 if(count_of_hearts == 5){
-                    high_game_state.count_of_lifes++;
+                    high_game_state.count_of_lives++;
                     count_of_hearts = 0;
                 }
 
@@ -2023,11 +2048,11 @@ void high_make_move()
                 break;
             case FIELD_CELL_TYPE_WALL:
                 game_over_sound.play();
-                if (high_game_state.count_of_lifes != 0) {
-                    rall_back = true;
+                if (high_game_state.count_of_lives != 0) {
+                    roll_back = true;
                     if (event_yellow) {
-                        lifes_color--;
-                        switch (lifes_color) {
+                        lives_color--;
+                        switch (lives_color) {
                             case 4:
                                 x = 255; y = 20; z = 147;
                                 break;
@@ -2054,12 +2079,12 @@ void high_make_move()
             default:
                 game_over_sound.play();
                 if (high_game_state.field[high_game_state.snake_position_y][high_game_state.snake_position_x] > 1) {
-                    if (high_game_state.count_of_lifes != 0) {
-                        rall_back = true;
+                    if (high_game_state.count_of_lives != 0) {
+                        roll_back = true;
                         if (event_yellow) {
-                            //rall_back = true;
-                            lifes_color--;
-                            switch (lifes_color) {
+                            //roll_back = true;
+                            lives_color--;
+                            switch (lives_color) {
                                 case 4:
                                     x = 255;
                                     y = 20;
@@ -2094,7 +2119,7 @@ void high_make_move()
         }
     }
 
-    if (!rall_back) {
+    if (!roll_back) {
         for (int j = 0; j < high_field_size_y; j++) {
             for (int i = 0; i < high_field_size_x; i++) {
                 if (high_game_state.field[j][i] > FIELD_CELL_TYPE_NONE) {
@@ -2123,11 +2148,11 @@ void high_start_game()
     event_green = false;
     count_of_apples = 0;
     count_of_red_apples = 0;
-    high_game_state.count_of_lifes = 0;
+    high_game_state.count_of_lives = 0;
     length_increase = false;
     score_decrease = false;
     r = x, g = y, b = z;
-    lifes_color = 0;
+    lives_color = 0;
     event_green = false;
     event_yellow = false;
     pause = false;
@@ -2159,7 +2184,8 @@ void high_lose_menu_control(sf::RenderWindow &window_main)
                             lose_color = 1;
                             restart = false;
                             break;
-
+                        default:
+                            break;
                     }
                     window_main.close();
                     break;
@@ -2472,7 +2498,7 @@ void high_graphics_game(){
             }
 
             if (!game_paused) {
-                if (!rall_back) {
+                if (!roll_back) {
                     high_make_move();
                 }
                 else {
@@ -2481,16 +2507,16 @@ void high_graphics_game(){
                         high_game_last_states.pop_back();
                     }
                     else {
-                        if(high_game_state.count_of_lifes > 0) {
-                            high_game_state.count_of_lifes--;
+                        if(high_game_state.count_of_lives > 0) {
+                            high_game_state.count_of_lives--;
                         }
-                        rall_back = false;
+                        roll_back = false;
                     }
                 }
             }
 
             if (game_over) {
-                if (!rall_back) {
+                if (!roll_back) {
                     game_music.stop();
                     sf::sleep(sf::seconds(1));
                     window.close();

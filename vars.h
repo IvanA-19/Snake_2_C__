@@ -92,7 +92,7 @@ static bool set_op = false;
 static bool op_main = false;
 
 struct GameState {
-    int field[field_size_y][field_size_x];
+    int field[field_size_y][field_size_x]{};
     int snake_position_x = field_size_x / 2;
     int snake_position_y = field_size_y / 2;
     int snake_length = 4;
@@ -100,12 +100,12 @@ struct GameState {
     int score = 0;
     int last_score = 0;
     int speed = 100;
-    int speed_last;
-    int count_of_lifes = 0;
+    int speed_last = speed;
+    int count_of_lives = 0;
 };
 
 struct HighGameState {
-    int field[high_field_size_y][high_field_size_x];
+    int field[high_field_size_y][high_field_size_x]{};
     int snake_position_x = high_field_size_x / 2;
     int snake_position_y = high_field_size_y / 2;
     int snake_length = 4;
@@ -113,8 +113,8 @@ struct HighGameState {
     int score = 0;
     int last_score = 0;
     int speed = 100;
-    int speed_last;
-    int count_of_lifes = 0;
+    int speed_last = speed;
+    int count_of_lives = 0;
 };
 
 static GameState game_state;
@@ -125,7 +125,7 @@ static std::vector <GameState> game_last_states;
 
 static std::vector <HighGameState> high_game_last_states;
 
-static bool rall_back = false;
+static bool roll_back = false;
 
 static sf::Font font_menu;
 
@@ -172,7 +172,7 @@ static int difficulty_color = 0;
 static int pause_color = 1;
 static int volume_color = 1;
 static int level_color = 0;
-static int lifes_color = 0;
+static int lives_color = 0;
 
 static int game_level = 0;
 static int volume_level = 30;
