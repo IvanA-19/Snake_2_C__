@@ -4,34 +4,6 @@
 #include "vars.h"
 
 
-void high_set_sounds(){
-    game_music.openFromFile("sounds/music_game.ogg");
-
-    apple_buffer.loadFromFile("sounds/apple_2.wav");
-    apple_sound.setBuffer(apple_buffer);
-
-    game_over_buffer.loadFromFile("sounds/game_over.wav");
-    game_over_sound.setBuffer(game_over_buffer);
-
-    yellow_apple_buffer.loadFromFile("sounds/yellow_apple.wav");
-    yellow_apple_sound.setBuffer(yellow_apple_buffer);
-
-    menu_buffer.loadFromFile("sounds/menu.wav");
-    menu_sound.setBuffer(menu_buffer);
-
-    enter_buffer.loadFromFile("sounds/enter.wav");
-    enter_sound.setBuffer(enter_buffer);
-
-    green_apple_buffer.loadFromFile("sounds/green_apple.wav");
-    green_apple_sound.setBuffer(green_apple_buffer);
-
-    heart_buffer.loadFromFile("sounds/heart.wav");
-    heart_sound.setBuffer(heart_buffer);
-
-    life_up_buffer.loadFromFile("sounds/life_up.wav");
-    life_up_sound.setBuffer(life_up_buffer);
-}
-
 void high_set_fonts()
 {
     font_menu.loadFromFile("fonts/BigOldBoldy-dEjR.ttf");
@@ -74,14 +46,14 @@ void high_set_fonts()
             text_menu_items.back().setCharacterSize(80);
             break;
         case 2:
-            for (int i = 0; i < settings_menu_items.size() - 1; i++) {
+            for (int i = 0; i < high_settings_menu_items.size() - 1; i++) {
                 text_menu_items.emplace_back(sf::Text());
-                text_menu_items.back().setString(settings_menu_items.at(i));
+                text_menu_items.back().setString(high_settings_menu_items.at(i));
                 text_menu_items.back().setFont(font_menu);
                 text_menu_items.back().setCharacterSize(40);
             }
             text_menu_items.emplace_back(sf::Text());
-            text_menu_items.back().setString(settings_menu_items.at(7));
+            text_menu_items.back().setString(high_settings_menu_items.at(7));
             text_menu_items.back().setFont(font_menu);
             text_menu_items.back().setCharacterSize(60);
             break;
@@ -181,6 +153,35 @@ void high_set_fonts()
         default:
             break;
     }
+}
+
+
+void high_set_sounds(){
+    game_music.openFromFile("sounds/music_game.ogg");
+
+    apple_buffer.loadFromFile("sounds/apple_2.wav");
+    apple_sound.setBuffer(apple_buffer);
+
+    game_over_buffer.loadFromFile("sounds/game_over.wav");
+    game_over_sound.setBuffer(game_over_buffer);
+
+    yellow_apple_buffer.loadFromFile("sounds/yellow_apple.wav");
+    yellow_apple_sound.setBuffer(yellow_apple_buffer);
+
+    menu_buffer.loadFromFile("sounds/menu.wav");
+    menu_sound.setBuffer(menu_buffer);
+
+    enter_buffer.loadFromFile("sounds/enter.wav");
+    enter_sound.setBuffer(enter_buffer);
+
+    green_apple_buffer.loadFromFile("sounds/green_apple.wav");
+    green_apple_sound.setBuffer(green_apple_buffer);
+
+    heart_buffer.loadFromFile("sounds/heart.wav");
+    heart_sound.setBuffer(heart_buffer);
+
+    life_up_buffer.loadFromFile("sounds/life_up.wav");
+    life_up_sound.setBuffer(life_up_buffer);
 }
 
 void high_menu_control(sf::RenderWindow& window_main)
@@ -289,7 +290,7 @@ void high_draw_main_menu(sf::RenderWindow& window_main)
         case 2:
             window_main.clear(sf::Color(0, 0, 0));
             text_menu_items.at(7).move(menu_position_x -85, 30);
-            text_menu_items.at(settings_color).setFillColor(sf::Color(0, 0,255));
+            text_menu_items.at(high_settings_color).setFillColor(sf::Color(0, 0,255));
             text_menu_items.at(7).setFillColor(sf::Color(255, 255, 0));
             window_main.draw(text_menu_items.at(7));
             break;
@@ -388,10 +389,11 @@ void high_draw_main_menu(sf::RenderWindow& window_main)
     }
     else if(menu_type == 2){
         menu_position_y = 160;
-        for (int i = 0; i < settings_menu_items.size() - 1; i++) {
+        for (int i = 0; i < high_settings_menu_items.size() - 1; i++) {
             text_menu_items.at(i).move(menu_position_x, menu_position_y);
             menu_position_y += 60;
             window_main.draw(text_menu_items.at(i));
+
         }
     }
     else if(menu_type == 4){
@@ -551,7 +553,7 @@ void high_help_menu_control(sf::RenderWindow &window_main)
 
 void high_open_help_menu()
 {
-    sf::RenderWindow window_main(sf::VideoMode( main_menu_width, main_menu_height), "Main_menu", sf::Style::Close);
+    sf::RenderWindow window_main(sf::VideoMode( main_menu_width, main_menu_height), "Help", sf::Style::Close);
     auto image = sf::Image{};
     image.loadFromFile("images/icon.png");
     window_main.setIcon(image.getSize().x, image.getSize().y, image.getPixelsPtr());
@@ -568,8 +570,7 @@ void high_open_help_menu()
     }
 }
 
-void high_chose_window_color(sf::RenderWindow& window_2) //выбор цвета фона
-{
+void high_chose_window_color(sf::RenderWindow& window_2){
     sf::Event event;
 
     while (window_2.pollEvent(event))
@@ -1255,7 +1256,7 @@ void high_settings_menu_control(sf::RenderWindow &window_main)
             switch (event.key.code) {
                 case sf::Keyboard::Enter:
                     enter_sound.play();
-                    switch(settings_color){
+                    switch(high_settings_color){
                         case 0:
                             menu_type = 3;
                             break;
@@ -1286,17 +1287,17 @@ void high_settings_menu_control(sf::RenderWindow &window_main)
                     break;
                 case sf::Keyboard::Down:
                     menu_sound.play();
-                    settings_color++;
-                    if(settings_color == 7){
-                        settings_color = 0;
+                    high_settings_color++;
+                    if(high_settings_color == 7){
+                        high_settings_color = 0;
                     }
                     pause = true;
                     break;
                 case sf::Keyboard::Up:
                     menu_sound.play();
-                    settings_color--;
-                    if(settings_color == -1){
-                        settings_color = 6;
+                    high_settings_color--;
+                    if(high_settings_color == -1){
+                        high_settings_color = 6;
                     }
                     pause = true;
                     break;
@@ -2016,6 +2017,9 @@ void high_make_move()
                 count_of_apples = 0;
                 high_random_event();
                 event_green = true;
+                if (lives_color == 0) {
+                    x = 50; y = 185; z = 50;
+                }
                 break;
             case FIELD_CELL_TYPE_YELLOW_APPLE:
                 yellow_apple_sound.play();
@@ -2390,7 +2394,6 @@ void high_game_control(bool& invert_control, sf::RenderWindow& window)
     }
 }
 
-
 void high_check_win() {
     for (int i = 0; i < high_field_size_y; i++) {
         for (int j = 0; j < high_field_size_x; j++) {
@@ -2422,7 +2425,7 @@ void high_graphics_game(){
         }
 
         if(set_op){
-            settings_color = 0;
+            high_settings_color = 0;
             high_open_settings_menu();
             new_game = false;
         }
@@ -2448,7 +2451,7 @@ void high_graphics_game(){
         }
 
         if(set_op){
-            settings_color = 0;
+            high_settings_color = 0;
             new_game = false;
             continue;
         }
@@ -2480,7 +2483,7 @@ void high_graphics_game(){
 
         high_start_game();
 
-        sf::RenderWindow window(sf::VideoMode(high_window_width, high_window_height), "snake", sf::Style::Close);
+        sf::RenderWindow window(sf::VideoMode(high_window_width, high_window_height), "Snake", sf::Style::Close);
 
         auto image = sf::Image{};
         image.loadFromFile("images/icon.png");

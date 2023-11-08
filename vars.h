@@ -127,6 +127,11 @@ static std::vector <HighGameState> high_game_last_states;
 
 static bool roll_back = false;
 
+static std::vector<std::string> graphics_menu_items = {"High graphics", "Quit", "Choose graphics"};
+
+static int graphics_color = 0;
+static bool graphics_pause;
+
 static sf::Font font_menu;
 
 static std::vector <sf::Text> text_menu_items;
@@ -137,6 +142,9 @@ static std::vector<std::string> menu_items = {"Start new game", "Level", "Settin
                                               "By Vanyok77797", "Version 7.9.7"};
 
 static std::vector <std::string> settings_menu_items{"Type of control", "Field color", "Snake skin", "Walls",
+                                                     "Difficulty level", "Volume", "Graphics", "Back to main menu", "Game settings"};
+
+static std::vector <std::string> high_settings_menu_items{"Type of control", "Field color", "Snake skin", "Walls",
                                                      "Difficulty level", "Volume", "Back to main menu", "Game settings"};
 
 static std::vector<std::string> control_menu_items = {"Cursors", "W, A, S, D", "Back to settings", "Type of game control"};
@@ -203,6 +211,11 @@ static sf::Sound life_up_sound;
 static sf::SoundBuffer life_up_buffer;
 
 static sf::Music game_music;
+
+static bool low_graphics = true;
+static bool high_graphics = false;
+static bool graphics_switched = false;
+static int high_settings_color = 0;
 
 void low_graphics_game();
 void high_graphics_game();

@@ -80,7 +80,7 @@ void set_fonts()
                 text_menu_items.back().setCharacterSize(40);
             }
             text_menu_items.emplace_back(sf::Text());
-            text_menu_items.back().setString(settings_menu_items.at(7));
+            text_menu_items.back().setString(settings_menu_items.at(8));
             text_menu_items.back().setFont(font_menu);
             text_menu_items.back().setCharacterSize(60);
             break;
@@ -182,7 +182,113 @@ void set_fonts()
     }
 }
 
+void set_graphics_fonts(){
+    font_menu.loadFromFile("fonts/BigOldBoldy-dEjR.ttf");
+    for (int i = 0; i < control_menu_items.size() - 1; i++) {
+        text_menu_items.emplace_back(sf::Text());
+        text_menu_items.back().setString(graphics_menu_items.at(i));
+        text_menu_items.back().setFont(font_menu);
+        text_menu_items.back().setCharacterSize(42);
+    }
+    text_menu_items.emplace_back(sf::Text());
+    text_menu_items.back().setString(graphics_menu_items.at(2));
+    text_menu_items.back().setFont(font_menu);
+    text_menu_items.back().setCharacterSize(50);
+}
 
+void graphics_menu(sf::RenderWindow& graphics_window){
+    const float menu_width = 554;
+    float menu_height = 120;
+
+    const float menu_position_x = (float(main_menu_width) - menu_width) / 2;
+    float menu_position_y = (float(main_menu_height) - menu_height) / 2 - 30;
+
+    graphics_window.clear(sf::Color(0, 0, 0));
+    text_menu_items.at(2).move(menu_position_x - 70, 20);
+    text_menu_items.at(2).setFillColor(sf::Color(30, 255,25));
+    graphics_window.draw(text_menu_items.at(2));
+    text_menu_items.at(graphics_color).setFillColor(sf::Color(30, 206, 150));
+
+    for (int i = 0; i < graphics_menu_items.size() - 1; i++) {
+        text_menu_items.at(i).move(menu_position_x + 25, menu_position_y - 75);
+        menu_position_y += 60;
+        graphics_window.draw(text_menu_items.at(i));
+    }
+}
+
+void control_graphics_menu(sf::RenderWindow &graphics_window)
+{
+    sf::Event event;
+
+    while (graphics_window.pollEvent(event))
+    {
+        if(event.type == sf::Event::Closed){
+            graphics_window.close();
+        }
+        if (event.type == sf::Event::KeyPressed) {
+            switch (event.key.code) {
+                case sf::Keyboard::Enter:
+                    enter_sound.play();
+                    switch(graphics_color){
+                        case 0:
+                            enter_sound.play();
+                            text_menu_items.clear();
+                            low_graphics = false;
+                            high_graphics = true;
+                            graphics_switched = true;
+                            set_fonts();
+                            graphics_window.close();
+                            break;
+                        case 1:
+                            enter_sound.play();
+                            text_menu_items.clear();
+                            set_fonts();
+                            graphics_window.close();
+                            break;
+                    }
+                    break;
+                case sf::Keyboard::Down:
+                    menu_sound.play();
+                    graphics_color++;
+                    if(graphics_color == 2){
+                        graphics_color = 0;
+                    }
+                    graphics_pause = true;
+                    break;
+                case sf::Keyboard::Up:
+                    menu_sound.play();
+                    graphics_color--;
+                    if(graphics_color == -1){
+                        graphics_color = 1;
+                    }
+                    graphics_pause = true;
+                    break;
+                case sf::Keyboard::Escape:
+                    set_fonts();
+                    graphics_window.close();
+                    break;
+            }
+        }
+    }
+}
+
+void open_graphics_menu(){
+    sf::RenderWindow graphics_window(sf::VideoMode(main_menu_width, main_menu_height - 180), "Snake", sf::Style::Close);
+    auto image = sf::Image{};
+    image.loadFromFile("images/icon.png");
+    graphics_window.setIcon(image.getSize().x, image.getSize().y, image.getPixelsPtr());
+    graphics_pause = true;
+    while (graphics_window.isOpen()) {
+        control_graphics_menu(graphics_window);
+        set_graphics_fonts();
+        if(graphics_pause){
+            graphics_menu(graphics_window);
+            text_menu_items.clear();
+            graphics_pause = false;
+            graphics_window.display();
+        }
+    }
+}
 
 void menu_control(sf::RenderWindow& window_main)
 {
@@ -289,10 +395,10 @@ void draw_main_menu(sf::RenderWindow& window_main)
             break;
         case 2:
             window_main.clear(sf::Color(0, 0, 0));
-            text_menu_items.at(7).move(menu_position_x -85, 30);
+            text_menu_items.at(8).move(menu_position_x -85, 30);
             text_menu_items.at(settings_color).setFillColor(sf::Color(0, 0,255));
-            text_menu_items.at(7).setFillColor(sf::Color(255, 255, 0));
-            window_main.draw(text_menu_items.at(7));
+            text_menu_items.at(8).setFillColor(sf::Color(255, 255, 0));
+            window_main.draw(text_menu_items.at(8));
             break;
         case 3:
             window_main.clear(sf::Color(0, 0, 0));
@@ -386,7 +492,7 @@ void draw_main_menu(sf::RenderWindow& window_main)
         }
     }
     else if(menu_type == 2){
-        menu_position_y = 160;
+        menu_position_y = 120;
         for (int i = 0; i < settings_menu_items.size() - 1; i++) {
             text_menu_items.at(i).move(menu_position_x, menu_position_y);
             menu_position_y += 60;
@@ -481,8 +587,6 @@ void control_menu_control(sf::RenderWindow &window_main)
     }
 }
 
-
-
 void open_control_menu()
 {
     sf::RenderWindow window_main(sf::VideoMode(main_menu_width, main_menu_height), "Type of control", sf::Style::Close);
@@ -553,11 +657,9 @@ void help_menu_control(sf::RenderWindow &window_main)
     }
 }
 
-
-
 void open_help_menu()
 {
-    sf::RenderWindow window_main(sf::VideoMode( main_menu_width, main_menu_height), "Main_menu", sf::Style::Close);
+    sf::RenderWindow window_main(sf::VideoMode( main_menu_width, main_menu_height), "Help", sf::Style::Close);
     auto image = sf::Image{};
     image.loadFromFile("images/icon.png");
     window_main.setIcon(image.getSize().x, image.getSize().y, image.getPixelsPtr());
@@ -574,8 +676,7 @@ void open_help_menu()
     }
 }
 
-void chose_window_color(sf::RenderWindow& window_2) //выбор цвета фона
-{
+void chose_window_color(sf::RenderWindow& window_2){
     sf::Event event;
 
     while (window_2.pollEvent(event))
@@ -1171,6 +1272,7 @@ void open_level_menu()
         }
     }
 }
+
 void set_volume_level(){
     game_music.setVolume(music_level);
     apple_sound.setVolume(float(volume_level));
@@ -1273,6 +1375,9 @@ void settings_menu_control(sf::RenderWindow &window_main)
                             menu_type = 6;
                             break;
                         case 6:
+                            open_graphics_menu();
+                            break;
+                        case 7:
                             set_op = false;
                             menu_type = 0;
                             color_menu = 0;
@@ -1285,7 +1390,7 @@ void settings_menu_control(sf::RenderWindow &window_main)
                 case sf::Keyboard::Down:
                     menu_sound.play();
                     settings_color++;
-                    if(settings_color == 7){
+                    if(settings_color == 8){
                         settings_color = 0;
                     }
                     pause = true;
@@ -1294,11 +1399,9 @@ void settings_menu_control(sf::RenderWindow &window_main)
                     menu_sound.play();
                     settings_color--;
                     if(settings_color == -1){
-                        settings_color = 6;
+                        settings_color = 7;
                     }
                     pause = true;
-                    break;
-                default:
                     break;
             }
         }
@@ -1506,6 +1609,7 @@ void clear_field()
     add_green_apple(); // генерация зеленого ябллока
     add_apple(); // генерация красного яблока
 }
+
 void draw_field(sf::RenderWindow& window)
 {
     sf::Texture none_texture;
@@ -2269,7 +2373,6 @@ void game_control(bool& invert_control, sf::RenderWindow& window)
     }
 }
 
-
 void check_win() {
     for (int i = 0; i < field_size_y; i++) {
         for (int j = 0; j < field_size_x; j++) {
@@ -2303,6 +2406,7 @@ void low_graphics_game()
 
         if(set_op){
             settings_color = 0;
+            graphics_color = 0;
             open_settings_menu();
             new_game = false;
         }
@@ -2329,9 +2433,16 @@ void low_graphics_game()
 
         if(set_op){
             settings_color = 0;
+            graphics_color = 0;
             new_game = false;
+            if(high_graphics && graphics_switched){
+                high_graphics_game();
+                break;
+            }
             continue;
         }
+
+
 
         if(menu_type == 7){
             open_level_menu();

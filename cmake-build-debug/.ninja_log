@@ -1,14 +1,12 @@
 # ninja log v5
-13	2817	6904851957369865	CMakeFiles/Snake_2_C__.dir/high_graphics_version.cpp.obj	9e210a5550579b14
-1	232	6918847192874423	build.ninja	771aaf0ca640c35
-6	5923	6887702257882672	CMakeFiles/Snake_2_C__.dir/main.cpp.obj	83c69e85a21b88ff
-2818	5015	6904851979268401	Snake_2_C__.exe	df3f4fa7206c2e72
-56	6293	6887702262119293	CMakeFiles/Snake_2_C__.dir/low_graphics_version.cpp.obj	9bd027d8984dd000
-42	3226	7012165568081814	CMakeFiles/Snake_2_C__.dir/main.cpp.obj	83c69e85a21b88ff
-20	3588	7012165571748268	CMakeFiles/Snake_2_C__.dir/high_graphics_version.cpp.obj	9e210a5550579b14
-10	9686	7012165908582972	CMakeFiles/Snake_2_C__.dir/low_graphics_version.cpp.obj	9bd027d8984dd000
-9687	12125	7012165932869021	Snake_2_C__.exe	df3f4fa7206c2e72
-25	3998	7012185655347070	CMakeFiles/Snake_2_C__.dir/main.cpp.obj	83c69e85a21b88ff
-54	4532	7012185660722599	CMakeFiles/Snake_2_C__.dir/high_graphics_version.cpp.obj	9e210a5550579b14
-42	4536	7012185660774705	CMakeFiles/Snake_2_C__.dir/low_graphics_version.cpp.obj	9bd027d8984dd000
-4536	6295	7012185678196420	Snake_2_C__.exe	df3f4fa7206c2e72
+5	3865	7211375903686252	CMakeFiles/Snake_2_C__.dir/high_graphics_version.cpp.obj	b2afdae2154fb2f7
+1	232	7210985357714791	build.ninja	771aaf0ca640c35
+12	3942	7211370582313057	CMakeFiles/Snake_2_C__.dir/main.cpp.obj	fe7bdf689fbdcd83
+3866	5643	7211375921340795	Snake_2_C__.exe	3c77c782e30a58a4
+25	4469	7211370587599530	CMakeFiles/Snake_2_C__.dir/low_graphics_version.cpp.obj	78dfc81ab0ff40a
+6	2475	7211379079816893	CMakeFiles/Snake_2_C__.dir/low_graphics_version.cpp.obj	78dfc81ab0ff40a
+2477	4001	7211379094905164	Snake_2_C__.exe	3c77c782e30a58a4
+8	3937	7211380389289888	CMakeFiles/Snake_2_C__.dir/low_graphics_version.cpp.obj	78dfc81ab0ff40a
+3940	6161	7211380411344545	Snake_2_C__.exe	3c77c782e30a58a4
+8	6076	7211380675213724	CMakeFiles/Snake_2_C__.dir/low_graphics_version.cpp.obj	78dfc81ab0ff40a
+6077	7450	7211380688860115	Snake_2_C__.exe	3c77c782e30a58a4
