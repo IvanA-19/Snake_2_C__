@@ -92,7 +92,7 @@ static bool set_op = false;
 static bool op_main = false;
 
 struct GameState {
-    int field[field_size_y][field_size_x];
+    int field[field_size_y][field_size_x]{};
     int snake_position_x = field_size_x / 2;
     int snake_position_y = field_size_y / 2;
     int snake_length = 4;
@@ -100,12 +100,12 @@ struct GameState {
     int score = 0;
     int last_score = 0;
     int speed = 100;
-    int speed_last;
-    int count_of_lifes = 0;
+    int speed_last = speed;
+    int count_of_lives = 0;
 };
 
 struct HighGameState {
-    int field[high_field_size_y][high_field_size_x];
+    int field[high_field_size_y][high_field_size_x]{};
     int snake_position_x = high_field_size_x / 2;
     int snake_position_y = high_field_size_y / 2;
     int snake_length = 4;
@@ -113,8 +113,8 @@ struct HighGameState {
     int score = 0;
     int last_score = 0;
     int speed = 100;
-    int speed_last;
-    int count_of_lifes = 0;
+    int speed_last = speed;
+    int count_of_lives = 0;
 };
 
 static GameState game_state;
@@ -125,7 +125,12 @@ static std::vector <GameState> game_last_states;
 
 static std::vector <HighGameState> high_game_last_states;
 
-static bool rall_back = false;
+static bool roll_back = false;
+
+static std::vector<std::string> graphics_menu_items = {"High graphics", "Quit", "Choose graphics"};
+
+static int graphics_color = 0;
+static bool graphics_pause;
 
 static sf::Font font_menu;
 
@@ -134,9 +139,12 @@ static std::vector <sf::Text> text_menu_items;
 static std::vector <std::string> lose_menu_items{"Your score: ", "Restart", "Exit to main menu", "GAME OVER"};
 
 static std::vector<std::string> menu_items = {"Start new game", "Level", "Settings", "Help", "Quit", "SNAKE",
-                                              "By Vanyok77797", "Version 4.2.3"};
+                                              "By Vanyok77797", "Version 7.9.7"};
 
 static std::vector <std::string> settings_menu_items{"Type of control", "Field color", "Snake skin", "Walls",
+                                                     "Difficulty level", "Volume", "Graphics", "Back to main menu", "Game settings"};
+
+static std::vector <std::string> high_settings_menu_items{"Type of control", "Field color", "Snake skin", "Walls",
                                                      "Difficulty level", "Volume", "Back to main menu", "Game settings"};
 
 static std::vector<std::string> control_menu_items = {"Cursors", "W, A, S, D", "Back to settings", "Type of game control"};
@@ -172,7 +180,7 @@ static int difficulty_color = 0;
 static int pause_color = 1;
 static int volume_color = 1;
 static int level_color = 0;
-static int lifes_color = 0;
+static int lives_color = 0;
 
 static int game_level = 0;
 static int volume_level = 30;
@@ -204,5 +212,10 @@ static sf::SoundBuffer life_up_buffer;
 
 static sf::Music game_music;
 
+static bool low_graphics = true;
+static bool high_graphics = false;
+static bool graphics_switched = false;
+static int high_settings_color = 0;
 
-
+void low_graphics_game();
+void high_graphics_game();

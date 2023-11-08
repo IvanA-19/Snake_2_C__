@@ -1,7 +1,6 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
 #include <cstdlib>
-#include "Low_graphics_version.h"
 #include "vars.h"
 
 void set_sounds(){
@@ -81,7 +80,7 @@ void set_fonts()
                 text_menu_items.back().setCharacterSize(40);
             }
             text_menu_items.emplace_back(sf::Text());
-            text_menu_items.back().setString(settings_menu_items.at(7));
+            text_menu_items.back().setString(settings_menu_items.at(8));
             text_menu_items.back().setFont(font_menu);
             text_menu_items.back().setCharacterSize(60);
             break;
@@ -129,7 +128,7 @@ void set_fonts()
             text_menu_items.back().setCharacterSize(70);
 
             text_menu_items.emplace_back(sf::Text());
-            text_menu_items.back().setString(pause_menu_items.at(4) + std::to_string(game_state.count_of_lifes));
+            text_menu_items.back().setString(pause_menu_items.at(4) + std::to_string(game_state.count_of_lives));
             text_menu_items.back().setFont(font_menu);
             text_menu_items.back().setCharacterSize(40);
 
@@ -178,10 +177,118 @@ void set_fonts()
             text_menu_items.back().setFont(font_menu);
             text_menu_items.back().setCharacterSize(60);
             break;
+        default:
+            break;
     }
 }
 
+void set_graphics_fonts(){
+    font_menu.loadFromFile("fonts/BigOldBoldy-dEjR.ttf");
+    for (int i = 0; i < control_menu_items.size() - 1; i++) {
+        text_menu_items.emplace_back(sf::Text());
+        text_menu_items.back().setString(graphics_menu_items.at(i));
+        text_menu_items.back().setFont(font_menu);
+        text_menu_items.back().setCharacterSize(42);
+    }
+    text_menu_items.emplace_back(sf::Text());
+    text_menu_items.back().setString(graphics_menu_items.at(2));
+    text_menu_items.back().setFont(font_menu);
+    text_menu_items.back().setCharacterSize(50);
+}
 
+void graphics_menu(sf::RenderWindow& graphics_window){
+    const float menu_width = 554;
+    float menu_height = 120;
+
+    const float menu_position_x = (float(main_menu_width) - menu_width) / 2;
+    float menu_position_y = (float(main_menu_height) - menu_height) / 2 - 30;
+
+    graphics_window.clear(sf::Color(0, 0, 0));
+    text_menu_items.at(2).move(menu_position_x - 70, 20);
+    text_menu_items.at(2).setFillColor(sf::Color(30, 255,25));
+    graphics_window.draw(text_menu_items.at(2));
+    text_menu_items.at(graphics_color).setFillColor(sf::Color(30, 206, 150));
+
+    for (int i = 0; i < graphics_menu_items.size() - 1; i++) {
+        text_menu_items.at(i).move(menu_position_x + 25, menu_position_y - 75);
+        menu_position_y += 60;
+        graphics_window.draw(text_menu_items.at(i));
+    }
+}
+
+void control_graphics_menu(sf::RenderWindow &graphics_window)
+{
+    sf::Event event;
+
+    while (graphics_window.pollEvent(event))
+    {
+        if(event.type == sf::Event::Closed){
+            graphics_window.close();
+        }
+        if (event.type == sf::Event::KeyPressed) {
+            switch (event.key.code) {
+                case sf::Keyboard::Enter:
+                    enter_sound.play();
+                    switch(graphics_color){
+                        case 0:
+                            enter_sound.play();
+                            text_menu_items.clear();
+                            low_graphics = false;
+                            high_graphics = true;
+                            graphics_switched = true;
+                            set_fonts();
+                            graphics_window.close();
+                            break;
+                        case 1:
+                            enter_sound.play();
+                            text_menu_items.clear();
+                            set_fonts();
+                            graphics_window.close();
+                            break;
+                    }
+                    break;
+                case sf::Keyboard::Down:
+                    menu_sound.play();
+                    graphics_color++;
+                    if(graphics_color == 2){
+                        graphics_color = 0;
+                    }
+                    graphics_pause = true;
+                    break;
+                case sf::Keyboard::Up:
+                    menu_sound.play();
+                    graphics_color--;
+                    if(graphics_color == -1){
+                        graphics_color = 1;
+                    }
+                    graphics_pause = true;
+                    break;
+                case sf::Keyboard::Escape:
+                    set_fonts();
+                    graphics_window.close();
+                    break;
+            }
+        }
+    }
+}
+
+void open_graphics_menu(){
+    sf::RenderWindow graphics_window(sf::VideoMode(main_menu_width, main_menu_height - 180), "Snake", sf::Style::Close);
+    auto image = sf::Image{};
+    image.loadFromFile("images/icon.png");
+    graphics_window.setIcon(image.getSize().x, image.getSize().y, image.getPixelsPtr());
+    graphics_pause = true;
+    while (graphics_window.isOpen()) {
+        control_graphics_menu(graphics_window);
+        set_graphics_fonts();
+        if(graphics_pause){
+            graphics_menu(graphics_window);
+            text_menu_items.clear();
+            graphics_pause = false;
+            graphics_window.display();
+        }
+    }
+}
 
 void menu_control(sf::RenderWindow& window_main)
 {
@@ -230,6 +337,8 @@ void menu_control(sf::RenderWindow& window_main)
                             break;
                         case 4:
                             exit_game = true;
+                            break;
+                        default:
                             break;
                     }
                     enter_sound.play();
@@ -286,10 +395,10 @@ void draw_main_menu(sf::RenderWindow& window_main)
             break;
         case 2:
             window_main.clear(sf::Color(0, 0, 0));
-            text_menu_items.at(7).move(menu_position_x -85, 30);
+            text_menu_items.at(8).move(menu_position_x -85, 30);
             text_menu_items.at(settings_color).setFillColor(sf::Color(0, 0,255));
-            text_menu_items.at(7).setFillColor(sf::Color(255, 255, 0));
-            window_main.draw(text_menu_items.at(7));
+            text_menu_items.at(8).setFillColor(sf::Color(255, 255, 0));
+            window_main.draw(text_menu_items.at(8));
             break;
         case 3:
             window_main.clear(sf::Color(0, 0, 0));
@@ -383,7 +492,7 @@ void draw_main_menu(sf::RenderWindow& window_main)
         }
     }
     else if(menu_type == 2){
-        menu_position_y = 160;
+        menu_position_y = 120;
         for (int i = 0; i < settings_menu_items.size() - 1; i++) {
             text_menu_items.at(i).move(menu_position_x, menu_position_y);
             menu_position_y += 60;
@@ -450,6 +559,8 @@ void control_menu_control(sf::RenderWindow &window_main)
                         case 2:
                             menu_type = 2;
                             break;
+                        default:
+                            break;
                     }
                     window_main.close();
                     break;
@@ -469,12 +580,12 @@ void control_menu_control(sf::RenderWindow &window_main)
                     }
                     control_pause = true;
                     break;
+                default:
+                    break;
             }
         }
     }
 }
-
-
 
 void open_control_menu()
 {
@@ -546,11 +657,9 @@ void help_menu_control(sf::RenderWindow &window_main)
     }
 }
 
-
-
 void open_help_menu()
 {
-    sf::RenderWindow window_main(sf::VideoMode( main_menu_width, main_menu_height), "Main_menu", sf::Style::Close);
+    sf::RenderWindow window_main(sf::VideoMode( main_menu_width, main_menu_height), "Help", sf::Style::Close);
     auto image = sf::Image{};
     image.loadFromFile("images/icon.png");
     window_main.setIcon(image.getSize().x, image.getSize().y, image.getPixelsPtr());
@@ -567,8 +676,7 @@ void open_help_menu()
     }
 }
 
-void chose_window_color(sf::RenderWindow& window_2) //выбор цвета фона
-{
+void chose_window_color(sf::RenderWindow& window_2){
     sf::Event event;
 
     while (window_2.pollEvent(event))
@@ -757,6 +865,8 @@ void check_event_2(sf::RenderWindow& window_wall)
                             wall = 3;
                             window_wall.close();
                             break;
+                        default:
+                            break;
                     }
             }
         }
@@ -779,7 +889,7 @@ void draw_wall_choice(sf::RenderWindow& window_wall)
     sf::Sprite wall;
     for (int i = 0; i < skin_length + 2; i++) {
         for (int j = 0; j < skin_count + 5; j++) {
-            if (i != 0 && i != 5) {
+            if(i != 0 && i != 5) {
                 switch (j) {
                     case 1:
                         wall_texture.loadFromFile("images/wall.png");
@@ -804,6 +914,8 @@ void draw_wall_choice(sf::RenderWindow& window_wall)
                         wall.setTexture(wall_texture);
                         wall.setPosition(float(j * wall_cell_size), float(i * wall_cell_size));
                         window_wall.draw(wall);
+                        break;
+                    default:
                         break;
                 }
             }
@@ -874,6 +986,8 @@ void check_event(sf::RenderWindow& window_1)
                         case 9:
                             skin = 4;
                             break;
+                        default:
+                            break;
                     }
                     window_1.close();
                     break;
@@ -892,87 +1006,87 @@ void draw_arrow(sf::RenderWindow& window_1)
     window_1.draw(arrow);
 }
 
-void draw_skin_choice(sf::RenderWindow& window_1)
-{
+void draw_skin_choice(sf::RenderWindow& window_1) {
     sf::Texture skin_texture;
     sf::Sprite skin;
     for (int i = 0; i < skin_length + 5; i++) {
         for (int j = 0; j < skin_count + 5; j++) {
-            switch (i) {
-                case 1:
+            if (i == 1) {
+                switch (j) {
+                    case 1:
+                        skin_texture.loadFromFile("images/head.png");
+                        skin.setTexture(skin_texture);
+                        skin.setPosition(float(j * skin_cell_size), float(i * skin_cell_size));
+                        window_1.draw(skin);
+                        break;
+                    case 3:
+                        skin_texture.loadFromFile("images/head_1.png");
+                        skin.setTexture(skin_texture);
+                        skin.setPosition(float(j * skin_cell_size), float(i * skin_cell_size));
+                        window_1.draw(skin);
+                        break;
+                    case 5:
+                        skin_texture.loadFromFile("images/head_2.png");
+                        skin.setTexture(skin_texture);
+                        skin.setPosition(float(j * skin_cell_size), float(i * skin_cell_size));
+                        window_1.draw(skin);
+                        break;
+                    case 7:
+                        skin_texture.loadFromFile("images/head_3.png");
+                        skin.setTexture(skin_texture);
+                        skin.setPosition(float(j * skin_cell_size), float(i * skin_cell_size));
+                        window_1.draw(skin);
+                        break;
+                    case 9:
+                        skin_texture.loadFromFile("images/head_4.png");
+                        skin.setTexture(skin_texture);
+                        skin.setPosition(float(j * skin_cell_size), float(i * skin_cell_size));
+                        window_1.draw(skin);
+                        break;
+                    default:
+                        break;
+                }
+            } else {
+                if (i != 0 && i != 5) {
                     switch (j) {
                         case 1:
-                            skin_texture.loadFromFile("images/head.png");
+                            skin_texture.loadFromFile("images/snake.png");
                             skin.setTexture(skin_texture);
                             skin.setPosition(float(j * skin_cell_size), float(i * skin_cell_size));
                             window_1.draw(skin);
                             break;
                         case 3:
-                            skin_texture.loadFromFile("images/head_1.png");
+                            skin_texture.loadFromFile("images/snake_1.png");
                             skin.setTexture(skin_texture);
                             skin.setPosition(float(j * skin_cell_size), float(i * skin_cell_size));
                             window_1.draw(skin);
                             break;
                         case 5:
-                            skin_texture.loadFromFile("images/head_2.png");
+                            skin_texture.loadFromFile("images/snake_2.png");
                             skin.setTexture(skin_texture);
                             skin.setPosition(float(j * skin_cell_size), float(i * skin_cell_size));
                             window_1.draw(skin);
                             break;
                         case 7:
-                            skin_texture.loadFromFile("images/head_3.png");
+                            skin_texture.loadFromFile("images/snake_3.png");
                             skin.setTexture(skin_texture);
                             skin.setPosition(float(j * skin_cell_size), float(i * skin_cell_size));
                             window_1.draw(skin);
                             break;
                         case 9:
-                            skin_texture.loadFromFile("images/head_4.png");
+                            skin_texture.loadFromFile("images/snake_4.png");
                             skin.setTexture(skin_texture);
                             skin.setPosition(float(j * skin_cell_size), float(i * skin_cell_size));
                             window_1.draw(skin);
                             break;
+                        default:
+                            break;
                     }
-                    break;
-                default:
-                    if (i != 0 && i != 5) {
-                        switch (j) {
-                            case 1:
-                                skin_texture.loadFromFile("images/snake.png");
-                                skin.setTexture(skin_texture);
-                                skin.setPosition(float(j * skin_cell_size), float(i * skin_cell_size));
-                                window_1.draw(skin);
-                                break;
-                            case 3:
-                                skin_texture.loadFromFile("images/snake_1.png");
-                                skin.setTexture(skin_texture);
-                                skin.setPosition(float(j * skin_cell_size), float(i * skin_cell_size));
-                                window_1.draw(skin);
-                                break;
-                            case 5:
-                                skin_texture.loadFromFile("images/snake_2.png");
-                                skin.setTexture(skin_texture);
-                                skin.setPosition(float(j * skin_cell_size), float(i * skin_cell_size));
-                                window_1.draw(skin);
-                                break;
-                            case 7:
-                                skin_texture.loadFromFile("images/snake_3.png");
-                                skin.setTexture(skin_texture);
-                                skin.setPosition(float(j * skin_cell_size), float(i * skin_cell_size));
-                                window_1.draw(skin);
-                                break;
-                            case 9:
-                                skin_texture.loadFromFile("images/snake_4.png");
-                                skin.setTexture(skin_texture);
-                                skin.setPosition(float(j * skin_cell_size), float(i * skin_cell_size));
-                                window_1.draw(skin);
-                                break;
-                        }
-                    }
+                }
             }
-
         }
+        draw_arrow(window_1);
     }
-    draw_arrow(window_1);
 }
 
 void choose_skin()
@@ -1034,6 +1148,8 @@ void difficulty_menu_control(sf::RenderWindow &window_main)
                         case 6:
                             menu_type = 2;
                             break;
+                        default:
+                            break;
                     }
                     window_main.close();
                     break;
@@ -1052,6 +1168,8 @@ void difficulty_menu_control(sf::RenderWindow &window_main)
                         difficulty_color = 6;
                     }
                     difficulty_pause = true;
+                    break;
+                default:
                     break;
             }
         }
@@ -1108,6 +1226,8 @@ void level_menu_control(sf::RenderWindow &window_main)
                             op_main = true;
                             menu_type = 0;
                             break;
+                        default:
+                            break;
                     }
                     window_main.close();
                     break;
@@ -1126,6 +1246,8 @@ void level_menu_control(sf::RenderWindow &window_main)
                         level_color = 4;
                     }
                     game_level_pause = true;
+                    break;
+                default:
                     break;
             }
         }
@@ -1150,6 +1272,7 @@ void open_level_menu()
         }
     }
 }
+
 void set_volume_level(){
     game_music.setVolume(music_level);
     apple_sound.setVolume(float(volume_level));
@@ -1196,6 +1319,8 @@ void volume_menu_control(sf::RenderWindow& window_volume)
                     enter_sound.play();
                     menu_type = 2;
                     window_volume.close();
+                    break;
+                default:
                     break;
             }
         }
@@ -1250,9 +1375,14 @@ void settings_menu_control(sf::RenderWindow &window_main)
                             menu_type = 6;
                             break;
                         case 6:
+                            open_graphics_menu();
+                            break;
+                        case 7:
                             set_op = false;
                             menu_type = 0;
                             color_menu = 0;
+                            break;
+                        default:
                             break;
                     }
                     window_main.close();
@@ -1260,7 +1390,7 @@ void settings_menu_control(sf::RenderWindow &window_main)
                 case sf::Keyboard::Down:
                     menu_sound.play();
                     settings_color++;
-                    if(settings_color == 7){
+                    if(settings_color == 8){
                         settings_color = 0;
                     }
                     pause = true;
@@ -1269,7 +1399,7 @@ void settings_menu_control(sf::RenderWindow &window_main)
                     menu_sound.play();
                     settings_color--;
                     if(settings_color == -1){
-                        settings_color = 6;
+                        settings_color = 7;
                     }
                     pause = true;
                     break;
@@ -1472,11 +1602,14 @@ void clear_field()
                 }
             }
             break;
+        default:
+            break;
     }
 
     add_green_apple(); // генерация зеленого ябллока
     add_apple(); // генерация красного яблока
 }
+
 void draw_field(sf::RenderWindow& window)
 {
     sf::Texture none_texture;
@@ -1626,7 +1759,7 @@ void draw_field(sf::RenderWindow& window)
 
 void grow_snake()
 {
-    for (int j = 0; j < field_size_y; j++) {
+    for(int j = 0; j < field_size_y; j++) {
         for (int i = 0; i < field_size_x; i++) {
             if (game_state.field[j][i] > FIELD_CELL_TYPE_NONE) {
                 game_state.field[j][i]++;
@@ -1675,6 +1808,8 @@ void random_event()
             game_state.snake_length += 3;
             length_increase = true;
             break;
+        default:
+            break;
     }
 }
 
@@ -1685,13 +1820,12 @@ int random_bonus()
 
     bonus = rand() % 5;
 
-    switch (bonus) {
+    switch(bonus) {
         case 0:
             game_state.score += 15;
             break;
         case 1:
             return 1;
-            break;
         case 2:
             game_state.speed = 130;
             break;
@@ -1701,17 +1835,22 @@ int random_bonus()
             }
             break;
         case 4:
-            game_state.count_of_lifes += 5;
-            x = 0; y = 220; z = 255;
-            lifes_color = 5;
+            game_state.count_of_lives += 5;
+            x = 0;
+            y = 220;
+            z = 255;
+            lives_color = 5;
+            break;
+        default:
             break;
     }
+    return 0;
 }
 
 void normal_game()
 {
     game_state.speed = game_state.speed_last;
-    if (lifes_color == 0) {
+    if (lives_color == 0) {
         x = r; y = g; z = b;
     }
     invert_control = false;
@@ -1857,7 +1996,7 @@ void make_move()
                 count_of_apples = 0;
                 random_event();
                 event_green = true;
-                if (lifes_color == 0) {
+                if (lives_color == 0) {
                     x = 50; y = 185; z = 50;
                 }
                 break;
@@ -1881,7 +2020,7 @@ void make_move()
                 }
 
                 if(count_of_hearts == 3){
-                    game_state.count_of_lifes++;
+                    game_state.count_of_lives++;
                     count_of_hearts = 0;
                 }
 
@@ -1892,11 +2031,11 @@ void make_move()
                 break;
             case FIELD_CELL_TYPE_WALL:
                 game_over_sound.play();
-                if (game_state.count_of_lifes != 0) {
-                    rall_back = true;
+                if (game_state.count_of_lives != 0) {
+                    roll_back = true;
                     if (event_yellow) {
-                        lifes_color--;
-                        switch (lifes_color) {
+                        lives_color--;
+                        switch (lives_color) {
                             case 4:
                                 x = 255; y = 20; z = 147;
                                 break;
@@ -1923,12 +2062,12 @@ void make_move()
             default:
                 game_over_sound.play();
                 if (game_state.field[game_state.snake_position_y][game_state.snake_position_x] > 1) {
-                    if (game_state.count_of_lifes != 0) {
-                        rall_back = true;
+                    if (game_state.count_of_lives != 0) {
+                        roll_back = true;
                         if (event_yellow) {
-                            //rall_back = true;
-                            lifes_color--;
-                            switch (lifes_color) {
+                            //roll_back = true;
+                            lives_color--;
+                            switch (lives_color) {
                                 case 4:
                                     x = 255;
                                     y = 20;
@@ -1963,7 +2102,7 @@ void make_move()
         }
     }
 
-    if (!rall_back) {
+    if (!roll_back) {
         for (int j = 0; j < field_size_y; j++) {
             for (int i = 0; i < field_size_x; i++) {
                 if (game_state.field[j][i] > FIELD_CELL_TYPE_NONE) {
@@ -1992,11 +2131,11 @@ void start_game()
     event_green = false;
     count_of_apples = 0;
     count_of_red_apples = 0;
-    game_state.count_of_lifes = 0;
+    game_state.count_of_lives = 0;
     length_increase = false;
     score_decrease = false;
     r = x, g = y, b = z;
-    lifes_color = 0;
+    lives_color = 0;
     event_green = false;
     event_yellow = false;
     pause = false;
@@ -2028,7 +2167,8 @@ void lose_menu_control(sf::RenderWindow &window_main)
                             lose_color = 1;
                             restart = false;
                             break;
-
+                        default:
+                            break;
                     }
                     window_main.close();
                     break;
@@ -2233,7 +2373,6 @@ void game_control(bool& invert_control, sf::RenderWindow& window)
     }
 }
 
-
 void check_win() {
     for (int i = 0; i < field_size_y; i++) {
         for (int j = 0; j < field_size_x; j++) {
@@ -2267,6 +2406,7 @@ void low_graphics_game()
 
         if(set_op){
             settings_color = 0;
+            graphics_color = 0;
             open_settings_menu();
             new_game = false;
         }
@@ -2293,9 +2433,16 @@ void low_graphics_game()
 
         if(set_op){
             settings_color = 0;
+            graphics_color = 0;
             new_game = false;
+            if(high_graphics && graphics_switched){
+                high_graphics_game();
+                break;
+            }
             continue;
         }
+
+
 
         if(menu_type == 7){
             open_level_menu();
@@ -2342,7 +2489,7 @@ void low_graphics_game()
             }
 
             if (!game_paused) {
-                if (!rall_back) {
+                if (!roll_back) {
                     make_move();
                 }
                 else {
@@ -2351,16 +2498,16 @@ void low_graphics_game()
                         game_last_states.pop_back();
                     }
                     else {
-                        if(game_state.count_of_lifes > 0) {
-                            game_state.count_of_lifes--;
+                        if(game_state.count_of_lives > 0) {
+                            game_state.count_of_lives--;
                         }
-                        rall_back = false;
+                        roll_back = false;
                     }
                 }
             }
 
             if (game_over) {
-                if (!rall_back) {
+                if (!roll_back) {
                     game_music.stop();
                     sf::sleep(sf::seconds(1));
                     window.close();
